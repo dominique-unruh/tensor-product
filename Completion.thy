@@ -7,7 +7,7 @@ Authors:
 
 theory Completion
   imports 
-    Complex_Inner_Product Bounded_Operators NSA_Miscellany
+    "Bounded_Operators.Complex_Inner_Product" "Bounded_Operators.Bounded_Operators" "Bounded_Operators.NSA_Miscellany"
 
 begin
 

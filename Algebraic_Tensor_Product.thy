@@ -9,9 +9,9 @@ Authors:
 
 theory Algebraic_Tensor_Product
   imports
-    General_Results_Missing
-    Complex_Inner_Product
-    Bounded_Operators
+    "Bounded_Operators.General_Results_Missing"
+    "Bounded_Operators.Complex_Inner_Product"
+    "Bounded_Operators.Bounded_Operators"
     "HOL-Library.Adhoc_Overloading"
     Free_Vector_Spaces
 begin

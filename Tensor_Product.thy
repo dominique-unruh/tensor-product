@@ -9,8 +9,8 @@ Authors:
 
 theory Tensor_Product
   imports
-    Bounded_Operators
-    Complex_L2 
+    "Bounded_Operators.Bounded_Operators"
+    "Bounded_Operators.Complex_L2"
     "HOL-Library.Adhoc_Overloading" 
     Completion
     Algebraic_Tensor_Product
@@ -418,7 +418,7 @@ text\<open>Hilbert tensor product of bounded operators\<close>
 lift_definition htensorOp :: \<open>('a::chilbert_space, 'b::chilbert_space) bounded
  \<Rightarrow> ('c::chilbert_space, 'd::chilbert_space) bounded \<Rightarrow> (('a \<otimes>\<^sub>h 'c), ('b \<otimes>\<^sub>h 'd)) bounded\<close>   (infixl "\<^sub>H\<otimes>" 70)
   is \<open>\<lambda> f::('a, 'b) bounded. \<lambda> g::('c, 'd) bounded. \<lambda> z::('a \<otimes>\<^sub>a 'c) completion. (completion_map (f \<^sub>A\<otimes> g)) *\<^sub>v z\<close>
-  sorry
+  by (cheat htensorOp)
 
 section \<open>Tensor product ell2\<close>
 

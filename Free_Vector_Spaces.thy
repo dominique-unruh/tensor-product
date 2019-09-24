@@ -9,9 +9,9 @@ Authors:
 
 theory Free_Vector_Spaces
   imports
-    Complex_Inner_Product
+    "Bounded_Operators.Complex_Inner_Product"
     "HOL-Library.Adhoc_Overloading"
-    General_Results_Missing
+    "Bounded_Operators.General_Results_Missing"
 
 begin
 

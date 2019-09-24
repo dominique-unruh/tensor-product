@@ -1,5 +1,5 @@
 theory ToDo_Tensor
-  imports Tensor_Product ToDo
+  imports Tensor_Product "Bounded_Operators.ToDo"
 begin
 
 lemma cinner_tensor: "\<langle>\<gamma> \<otimes> \<psi>, \<delta> \<otimes> \<phi>\<rangle> = \<langle>\<psi>, \<phi>\<rangle> * \<langle>\<gamma>, \<delta>\<rangle>"
@@ -30,22 +30,22 @@ lemma ket_product: "ket (a,b) = ket a \<otimes> ket b"
 lemma tensorOp_applyOp_distr:
   includes bounded_notation
   shows "(A \<otimes> B) *\<^sub>v (\<psi> \<otimes> \<phi>) = (A *\<^sub>v \<psi>) \<otimes> (B *\<^sub>v \<phi>)"
-  using cinner_ext_ell2 sorry
+  using cinner_ext_ell2 by (cheat tensorOp_applyOp_distr)
 
 lemma assoc_op_apply_tensor[simp]:
   includes bounded_notation
   shows "assoc_op *\<^sub>v (\<psi>\<otimes>(\<phi>\<otimes>\<tau>)) = (\<psi>\<otimes>\<phi>)\<otimes>\<tau>"
-  using cinner_ext_ell2 sorry
+  using cinner_ext_ell2 by (cheat assoc_op_apply_tensor)
 
 lemma comm_op_apply_tensor[simp]: 
   includes bounded_notation
   shows "comm_op *\<^sub>v (\<psi>\<otimes>\<phi>) = (\<phi>\<otimes>\<psi>)"
-  using cinner_ext_ell2 sorry
+  using cinner_ext_ell2 by (cheat comm_op_apply_tensor)
 
 lemma assoc_op_adj_apply_tensor[simp]:
   includes bounded_notation
   shows "assoc_op* *\<^sub>v ((\<psi>\<otimes>\<phi>)\<otimes>\<tau>) = \<psi>\<otimes>(\<phi>\<otimes>\<tau>)"
-  using cinner_ext_ell2 sorry
+  using cinner_ext_ell2 by (cheat assoc_op_adj_apply_tensor)
 
 lemma span_tensor: "Span G \<otimes> Span H = Span {g\<otimes>h|g h. g\<in>G \<and> h\<in>H}"
   by (cheat span_tensor)
