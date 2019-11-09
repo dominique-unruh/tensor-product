@@ -1320,7 +1320,7 @@ lemma swap_atensor_existence_unique:
   \<open>\<exists>!H. clinear H \<and> (\<forall>x::'a::complex_vector. \<forall> y::'b::complex_vector.  H (x \<otimes>\<^sub>a y) = y \<otimes>\<^sub>a x)\<close>
 proof-
   define h::\<open>'a \<Rightarrow> 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a\<close> where
-    \<open>h x y = ((case_prod (\<otimes>\<^sub>a)) \<circ> swap) (x,y)\<close> for x y
+    \<open>h x y = ((case_prod (\<otimes>\<^sub>a)) \<circ> prod.swap) (x,y)\<close> for x y
   have \<open>cbilinear h\<close>
     unfolding cbilinear_def proof
     show "\<forall>y. clinear (\<lambda>x. h x y)"
@@ -1332,8 +1332,8 @@ proof-
        apply (simp add: complex_vector.module_axioms)
       unfolding module_hom_axioms_def apply auto unfolding h_def
        apply auto
-       apply (simp add: General_Results_Missing.swap_def atensor_distr_right )
-      by (simp add: General_Results_Missing.swap_def atensor_mult_right )
+       apply (simp add: atensor_distr_right)
+      by (simp add: atensor_mult_right)
     show "\<forall>x. clinear (h x)"
       unfolding clinear_def Vector_Spaces.linear_def apply auto
         apply (simp add: complex_vector.vector_space_axioms)
@@ -1343,12 +1343,12 @@ proof-
        apply (simp add: complex_vector.module_axioms)
       unfolding module_hom_axioms_def apply auto unfolding h_def
        apply auto
-       apply (simp add: General_Results_Missing.swap_def atensor_distr_left )
-      by (simp add: General_Results_Missing.swap_def atensor_mult_left )
+       apply (simp add: atensor_distr_left)
+      by (simp add: atensor_mult_left)
   qed
   hence \<open>\<exists>!H. clinear H \<and> (\<forall>x y. h x y = H (x \<otimes>\<^sub>a y))\<close>
     using atensor_universal_property by blast
-  hence \<open>\<exists>!H. clinear H \<and> (\<forall>x::'a. \<forall> y::'b. ((case_prod (\<otimes>\<^sub>a)) \<circ> swap) (x, y) = H (x \<otimes>\<^sub>a y))\<close>
+  hence \<open>\<exists>!H. clinear H \<and> (\<forall>x::'a. \<forall> y::'b. ((case_prod (\<otimes>\<^sub>a)) \<circ> prod.swap) (x, y) = H (x \<otimes>\<^sub>a y))\<close>
     unfolding h_def by auto
   hence \<open>\<exists>!H. clinear H \<and> (\<forall>x::'a. \<forall> y::'b. (case_prod (\<otimes>\<^sub>a)) (y, x) = H (x \<otimes>\<^sub>a y))\<close>
     unfolding swap_def by auto
@@ -1406,7 +1406,7 @@ proof-
   have \<open>finite S'\<close>
     using S'_def assms(1) by auto    
   moreover have \<open>complex_vector.dependent (snd ` S')\<close>
-    by (metis General_Results_Missing.swap_def S'_def assms(2) image_cong prod.swap_def swap_set_snd)
+    by (metis S'_def assms(2) swap_set_snd)
   ultimately have \<open>\<exists> R'. card (snd ` R') < card (snd ` S') \<and>
               card (fst ` R') \<le> card (snd ` R') \<and>
               x' = (\<Sum>z\<in>R'. (case_prod (\<otimes>\<^sub>a)) z)\<close>
@@ -1418,12 +1418,12 @@ proof-
     by blast
   define R where \<open>R = prod.swap ` R'\<close>
   have \<open>snd ` R = fst ` R'\<close>
-    by (metis General_Results_Missing.swap_def R_def image_cong prod.swap_def swap_set_snd)    
+    by (metis R_def swap_set_snd)    
   have \<open>fst ` R = snd ` R'\<close>
-    by (metis General_Results_Missing.swap_def R_def image_cong prod.swap_def swap_set_fst)
+    by (metis R_def swap_set_fst)
   have \<open>card (fst ` R) < card (fst ` S)\<close>
     using \<open>card (snd ` R') < card (snd ` S')\<close>
-    by (metis General_Results_Missing.swap_def S'_def \<open>fst ` R = snd ` R'\<close> image_cong prod.swap_def swap_set_snd)
+    by (metis S'_def \<open>fst ` R = snd ` R'\<close> swap_set_snd)
   moreover have \<open>card (snd ` R) \<le> card (fst ` R)\<close>
     using \<open>card (fst ` R') \<le> card (snd ` R')\<close>
     by (simp add: \<open>fst ` R = snd ` R'\<close> \<open>snd ` R = fst ` R'\<close>)
@@ -1434,7 +1434,7 @@ proof-
     also have \<open>\<dots> = (\<Sum>z\<in>prod.swap ` (prod.swap ` S). (case_prod (\<otimes>\<^sub>a)) z)\<close>
     proof-
       have \<open>prod.swap \<circ> prod.swap = id\<close>
-        by (simp add: swap_involution)
+        by (simp)
       hence \<open>prod.swap ` (prod.swap ` S) = S\<close>
         by (simp add: image_comp)        
       thus ?thesis by simp
