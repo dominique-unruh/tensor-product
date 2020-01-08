@@ -15,7 +15,7 @@ proof -
     apply (transfer fixing: \<psi> \<phi> \<delta> \<gamma>)
     by (rule cinner_tensor)
   hence "(addState \<psi>* *\<^sub>o addState \<phi>) *\<^sub>v \<delta> = (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C idOp) *\<^sub>v \<delta>" for \<delta> :: "'b ell2"
-    by (rule cinner_ext_ell2)
+    by (metis (no_types, lifting) adjoint_D adjoint_I adjoint_twice)
   thus ?thesis
     by (rule bounded_ext)
 qed
@@ -30,22 +30,22 @@ lemma ket_product: "ket (a,b) = ket a \<otimes> ket b"
 lemma tensorOp_applyOp_distr:
   includes bounded_notation
   shows "(A \<otimes> B) *\<^sub>v (\<psi> \<otimes> \<phi>) = (A *\<^sub>v \<psi>) \<otimes> (B *\<^sub>v \<phi>)"
-  using cinner_ext_ell2 sorry
+  sorry
 
 lemma assoc_op_apply_tensor[simp]:
   includes bounded_notation
   shows "assoc_op *\<^sub>v (\<psi>\<otimes>(\<phi>\<otimes>\<tau>)) = (\<psi>\<otimes>\<phi>)\<otimes>\<tau>"
-  using cinner_ext_ell2 sorry
+  sorry
 
 lemma comm_op_apply_tensor[simp]: 
   includes bounded_notation
   shows "comm_op *\<^sub>v (\<psi>\<otimes>\<phi>) = (\<phi>\<otimes>\<psi>)"
-  using cinner_ext_ell2 sorry
+  sorry
 
 lemma assoc_op_adj_apply_tensor[simp]:
   includes bounded_notation
   shows "assoc_op* *\<^sub>v ((\<psi>\<otimes>\<phi>)\<otimes>\<tau>) = \<psi>\<otimes>(\<phi>\<otimes>\<tau>)"
-  using cinner_ext_ell2 sorry
+  sorry
 
 lemma span_tensor: "Span G \<otimes> Span H = Span {g\<otimes>h|g h. g\<in>G \<and> h\<in>H}"
   sorry
@@ -53,7 +53,6 @@ lemma span_tensor: "Span G \<otimes> Span H = Span {g\<otimes>h|g h. g\<in>G \<a
 lemma span_tensors:
   "closure (span {C1 \<otimes> C2| (C1::(_,_) l2bounded) (C2::(_,_) l2bounded). True}) = UNIV"
   sorry
-
 
 
 end

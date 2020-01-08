@@ -723,11 +723,12 @@ proof-
   have \<open>\<exists> t r. finite t \<and> t \<subseteq> A \<and> (\<Sum>a\<in>t. r a *\<^sub>C a) = u\<close>
   proof -
     have "\<forall>A. {a. \<exists>C f. (a::'a) = (\<Sum>a\<in>C. f a *\<^sub>C a) \<and> finite C \<and> C \<subseteq> A} = Complex_Vector_Spaces.span A"
-      by (simp add: Complex_Vector_Spaces.span_raw_def complex_vector.span_explicit)
+      using Complex_Vector_Spaces.span_raw_def complex_vector.span_explicit
+      by auto
     hence "\<forall>A a. (\<exists>C f. (a::'a) = (\<Sum>a\<in>C. f a *\<^sub>C a) \<and> finite C \<and> C \<subseteq> A) \<or> a \<notin> Complex_Vector_Spaces.span A"
       by blast
     thus ?thesis
-      by (metis (no_types) Complex_Vector_Spaces.span_raw_def assms(1))
+      by (metis (no_types) assms(1))
   qed
   then obtain t r where \<open>finite t\<close> and \<open>t \<subseteq> A\<close> and \<open>(\<Sum>a\<in>t. r a *\<^sub>C a) = u\<close>
     by blast
@@ -1600,7 +1601,7 @@ proof(rule classical)
          complex_vector.independent (snd ` R))\<close>
   hence \<open>complex_vector.dependent (fst ` R) \<or> 
          complex_vector.dependent (snd ` R)\<close>
-    by blast
+    by (metis Complex_Vector_Spaces.dependent_raw_def)    
   hence \<open>\<exists> T. max_complexity_pair T < max_complexity_pair R \<and> x = (\<Sum>z\<in>T. (case_prod (\<otimes>\<^sub>a)) z)\<close>
     using \<open>finite R\<close>  \<open>x = (\<Sum>z\<in>R. (case_prod (\<otimes>\<^sub>a)) z)\<close> 
       atensor_reduction[where S = "R" and x = "x"] by blast    
@@ -1766,7 +1767,7 @@ proof-
         hence \<open>H(x \<otimes>\<^sub>a y) = 0\<close>
           by (simp add: \<open>\<forall>x\<in>A. \<forall>y\<in>B. x \<otimes>\<^sub>a y \<noteq> u \<otimes>\<^sub>a v \<longrightarrow> H (x \<otimes>\<^sub>a y) = 0\<close> \<open>x \<in> A\<close> \<open>y \<in> B\<close>)
         thus ?thesis
-          using \<open>r = x \<otimes>\<^sub>a y\<close> by auto          
+          using \<open>r = x \<otimes>\<^sub>a y\<close> by auto
       qed
       hence \<open>(\<Sum>s\<in>S - {u \<otimes>\<^sub>a v}. (f s) *\<^sub>C H s) = 0\<close>
         using sum_not_0 by auto
@@ -1786,8 +1787,9 @@ proof-
     using complex_vector.independent_explicit_finite_subsets by force
   moreover have \<open>( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) ) = {a\<otimes>\<^sub>ab| a b. a\<in>A \<and> b\<in>B}\<close>
     by auto
-  ultimately show ?thesis 
-    by simp
+  ultimately show ?thesis
+    by (simp add: Complex_Vector_Spaces.dependent_raw_def) 
+    
 qed
 
 lemma atensor_complex_independent_case_prod:
@@ -1875,9 +1877,9 @@ proof-
     thus ?thesis
       by (simp add: \<open>s = A u \<otimes>\<^sub>a B v\<close>) 
   qed
-  thus \<open>complex_independent ( (range (\<lambda> k::'i\<times>'j. (A (fst k))\<otimes>\<^sub>a(B (snd k)))) )\<close>
-    using complex_vector.independent_explicit_finite_subsets 
-    by force
+  thus ?thesis
+    using complex_vector.independent_explicit_finite_subsets
+    by (smt Complex_Vector_Spaces.dependent_raw_def)     
 qed
 
 lemma atensor_complex_inj_family:
@@ -1939,14 +1941,16 @@ proof-
   define A where \<open>A = complex_vector.extend_basis {a}\<close>
   define B where \<open>B = complex_vector.extend_basis {b}\<close>
   have \<open>complex_vector.independent A\<close>
-    by (simp add: A_def \<open>a \<noteq> 0\<close> complex_vector.independent_extend_basis)
+    using A_def \<open>a \<noteq> 0\<close> complex_vector.independent_extend_basis
+    by (metis Complex_Vector_Spaces.dependent_raw_def complex_vector.dependent_single)
   moreover have \<open>complex_vector.independent B\<close>
-    using B_def \<open>b \<noteq> 0\<close> complex_vector.dependent_single complex_vector.independent_extend_basis 
-    by blast
+    using B_def \<open>b \<noteq> 0\<close> complex_vector.dependent_single complex_vector.independent_extend_basis
+    by (metis Complex_Vector_Spaces.dependent_raw_def)    
   ultimately have \<open>complex_vector.independent {a\<otimes>\<^sub>ab| a b. a\<in>A \<and> b\<in>B}\<close>
     by (simp add: atensor_complex_independent)
   hence \<open>0 \<notin> {a\<otimes>\<^sub>ab| a b. a\<in>A \<and> b\<in>B}\<close>
-    by (meson complex_vector.dependent_zero)
+    using complex_vector.dependent_zero
+    by (metis (no_types, lifting) Complex_Vector_Spaces.dependent_raw_def)
   moreover have \<open>a \<otimes>\<^sub>a b \<in> {a\<otimes>\<^sub>ab| a b. a\<in>A \<and> b\<in>B}\<close>
   proof -
     have "complex_independent {b}"
@@ -1969,7 +1973,8 @@ lemma tensor_zero_divisors_left:
 
 lemma tensor_zero_divisors_right:
   \<open>a \<otimes>\<^sub>a 0 = 0\<close>
-  by (simp add: additive_imples_zero atensor_distr_right)
+  by (metis swap_atensorI2 tensor_zero_divisors_left)
+
 
 lemma tensor_inj_fst:
   fixes v\<^sub>1 v\<^sub>2 :: \<open>'a::complex_vector\<close> and w :: \<open>'b::complex_vector\<close>
@@ -1997,7 +2002,7 @@ proof-
   proof(rule classical)
     assume \<open>\<not>(complex_vector.dependent {v\<^sub>1, v\<^sub>2})\<close>
     hence \<open>complex_vector.independent {v\<^sub>1, v\<^sub>2}\<close>
-      by simp
+      by (simp add: Complex_Vector_Spaces.dependent_raw_def)      
     have \<open>v\<^sub>1 \<noteq> v\<^sub>2\<close>
       by (metis \<open>complex_independent {v\<^sub>1, v\<^sub>2}\<close> assms(2) assms(3) complex_vector.dependent_single insert_absorb singletonI swap_atensorI2 tensor_inj_fst)
     define A::\<open>bool \<Rightarrow> 'a\<close> where \<open>A x = (if x then v\<^sub>1 else v\<^sub>2)\<close> for x
@@ -2031,7 +2036,10 @@ proof-
   proof-
     from \<open>complex_vector.dependent {v\<^sub>1, v\<^sub>2}\<close>
     have \<open>\<exists> c::complex. c *\<^sub>C v\<^sub>1 = v\<^sub>2\<close>
+      sorry
+(*
       by (metis (no_types, hide_lams) Complex_Vector_Spaces.dependent_raw_def assms(1) assms(3) complex_vector.dependent_single complex_vector.independent_insert complex_vector.scale_zero_left complex_vector.span_breakdown_eq empty_iff eq_iff_diff_eq_0 insert_commute tensor_eq_independent1 tensor_inj_fst)
+*)
     then obtain c where \<open>c *\<^sub>C v\<^sub>1 = v\<^sub>2\<close>
       by blast
     from \<open>v\<^sub>1 \<otimes>\<^sub>a w\<^sub>1 = v\<^sub>2 \<otimes>\<^sub>a w\<^sub>2\<close>
@@ -2049,7 +2057,7 @@ proof-
     ultimately have \<open>v\<^sub>1 \<otimes>\<^sub>a (w\<^sub>1 - c *\<^sub>C w\<^sub>2) = 0\<close>
       by simp
     moreover have \<open>w\<^sub>1 - c *\<^sub>C w\<^sub>2 \<noteq> 0\<close>
-      by (metis assms(1) assms(2) complex_vector.independent_insert complex_vector.span_breakdown_eq complex_vector.span_empty insert_absorb singletonI singleton_insert_inj_eq)
+      by (metis Complex_Vector_Spaces.dependent_raw_def assms(1) assms(2) complex_vector.independent_insert complex_vector.span_breakdown_eq complex_vector.span_empty singletonD singletonI)      
     ultimately show ?thesis
       using \<open>c *\<^sub>C v\<^sub>1 = v\<^sub>2\<close> complex_vector.scale_eq_0_iff tensor_no_zero_divisors 
       by blast 
@@ -2084,8 +2092,9 @@ proof(rule classical)
     using A_def \<open>u \<noteq> 0\<close> complex_vector.dependent_single complex_vector.extend_basis_superset 
     by blast
   have \<open>complex_vector.independent A\<close>
-    using \<open>u \<noteq> 0\<close> unfolding A_def
-    by (simp add: complex_vector.independent_extend_basis)
+    unfolding A_def
+    using \<open>u \<noteq> 0\<close> complex_vector.independent_extend_basis
+    by (metis Complex_Vector_Spaces.dependent_raw_def complex_vector.dependent_single)
   hence \<open>\<exists> H::'a \<otimes>\<^sub>a 'b \<Rightarrow> complex. clinear H \<and> H (u \<otimes>\<^sub>a v) = 1 \<and>
     (\<forall>x\<in>A. \<forall>y\<in>B. x \<otimes>\<^sub>a y \<noteq> u \<otimes>\<^sub>a v \<longrightarrow> H (x \<otimes>\<^sub>a y) = 0)\<close>
     using \<open>complex_vector.independent B\<close> tensor_Kronecker_delta
@@ -2110,10 +2119,14 @@ proof(rule classical)
       have \<open>b \<noteq> v\<close>
         using \<open>b\<in>B-{v}\<close> by blast
       have  \<open>complex_vector.independent {b, v}\<close>
-        by (smt \<open>b \<in> B\<close> assms(3) assms(5) complex_vector.dependent_def complex_vector.dependent_insertD complex_vector.dependent_single complex_vector.span_breakdown_eq complex_vector.span_empty complex_vector.span_zero insertE insert_Diff insert_absorb singleton_iff)
-          (* > 1 s *)
+      proof -
+        have "\<forall>B b c. {c::'b, b} \<subseteq> insert c (insert b B)"
+          by blast
+        thus ?thesis
+          by (metis (full_types) Complex_Vector_Spaces.dependent_raw_def \<open>b \<in> B\<close> assms(3) assms(5) complex_vector.independent_mono insert_absorb)
+      qed
       have \<open>(\<phi> b) \<otimes>\<^sub>a b \<noteq> u \<otimes>\<^sub>a v\<close>
-        using \<open>b \<noteq> v\<close> \<open>complex_independent {b, v}\<close> \<open>u \<noteq> 0\<close> tensor_eq_independent2 by blast
+        using \<open>b \<noteq> v\<close> \<open>complex_vector.independent {b, v}\<close> \<open>u \<noteq> 0\<close> tensor_eq_independent2 by blast
       have \<open>\<phi> b \<in> complex_vector.span A\<close>
         unfolding A_def
         by (simp add: \<open>u \<noteq> 0\<close>)
@@ -2134,7 +2147,7 @@ proof(rule classical)
           using \<open>A' \<subseteq> A\<close> by blast
         thus ?thesis
           using \<open>\<forall>x\<in>A. \<forall>y\<in>B. x \<otimes>\<^sub>a y \<noteq> u \<otimes>\<^sub>a v \<longrightarrow> H (x \<otimes>\<^sub>a y) = 0\<close>
-          using \<open>b \<in> B\<close> \<open>b \<noteq> v\<close> \<open>complex_independent {b, v}\<close> \<open>u \<noteq> 0\<close> tensor_eq_independent2 by blast
+           \<open>b \<in> B\<close> \<open>b \<noteq> v\<close> \<open>complex_vector.independent {b, v}\<close> \<open>u \<noteq> 0\<close> tensor_eq_independent2 by blast
       qed
       hence \<open>(\<Sum> a \<in> A'. (f a) *\<^sub>C H (a \<otimes>\<^sub>a b)) = 0\<close>
         by simp
@@ -3111,13 +3124,13 @@ proof
     for x::\<open>'a \<otimes>\<^sub>a 'b\<close>
   proof-
     have \<open>\<exists> U. complex_vector.independent U \<and> complex_vector.span U = (UNIV::'a set)\<close>
-      using complex_vector.independent_empty complex_vector.independent_extend_basis complex_vector.span_extend_basis 
-      by auto
+      using complex_vector.independent_empty complex_vector.independent_extend_basis complex_vector.span_extend_basis
+      by (metis Complex_Vector_Spaces.dependent_raw_def)      
     then obtain U where \<open>complex_vector.independent U\<close> and \<open>complex_vector.span U = (UNIV::'a set)\<close>
       by blast
     have \<open>\<exists> V. complex_vector.independent V \<and> complex_vector.span V = (UNIV::'b set)\<close>
-      using complex_vector.independent_empty complex_vector.independent_extend_basis complex_vector.span_extend_basis 
-      by auto
+      using complex_vector.independent_empty complex_vector.independent_extend_basis complex_vector.span_extend_basis
+      by (metis Complex_Vector_Spaces.dependent_raw_def)      
     then obtain V where \<open>complex_vector.independent V\<close> and \<open>complex_vector.span V = (UNIV::'b set)\<close>
       by blast
     have \<open>x \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close>
@@ -5415,8 +5428,6 @@ lift_definition atensorOp_bounded :: \<open>('a::complex_inner, 'b::complex_inne
  \<Rightarrow> ('c::complex_inner, 'd::complex_inner ) bounded \<Rightarrow> ('a \<otimes>\<^sub>a 'c,  'b \<otimes>\<^sub>a 'd) bounded\<close> (infixl "\<^sub>A\<otimes>" 70)
   is \<open>\<lambda> f g. f \<otimes>\<^sub>A g\<close>
   using Algebraic_Tensor_Product.algebraic_tensor_product_bounded by blast
-
-
 
 unbundle no_free_notation
 
