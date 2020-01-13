@@ -542,7 +542,9 @@ proof-
     by (metis comp_eq_elim f_inv_into_f)
   hence \<open>x \<in> complex_vector.span (range inclusion_free) \<Longrightarrow> G x = (universal_free f) x\<close>
     for x
-    by (meson \<open>clinear (universal_free f)\<close> assms(1) complex_vector.module_hom_eq_on_span)
+    using \<open>clinear (universal_free f)\<close> assms(1) complex_vector.module_hom_eq_on_span
+    by (metis (mono_tags, lifting) Complex_Vector_Spaces.span_raw_def)
+
   hence \<open>G x = (universal_free f) x\<close>
     for x
     by (simp add: free_span)      
@@ -954,8 +956,7 @@ proof
           moreover have \<open>finite {a |a. x \<down> a \<noteq> 0}\<close>
             using times_free_vec by force
           ultimately have \<open>f (\<Sum>a\<in>S. a) = (\<Sum>a\<in>S. f a)\<close>
-            using general_sum_from_addition
-            by (simp add: general_sum_from_addition S_def)
+            sorry
           thus ?thesis unfolding S_def f_def \<gamma>_def
             using \<open>finite {a |a. x \<down> a \<noteq> 0}\<close> free_regular_for_sum_general 
             by fastforce

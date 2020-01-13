@@ -397,7 +397,8 @@ lift_definition sgn_completion :: \<open>'a completion \<Rightarrow> 'a completi
       qed
       moreover have \<open>(f1 n - f2 n) /\<^sub>R L =  f1 n /\<^sub>R L - f2 n /\<^sub>R L\<close>
         for n
-        by (simp add: scale_right_diff_distrib)        
+        using scale_right_diff_distrib
+        by (simp add: ordered_field_class.sign_simps(26))
       ultimately have \<open>Vanishes (\<lambda>n. f1 n /\<^sub>R L - f2 n /\<^sub>R L)\<close>
         by simp
       thus ?thesis unfolding L_def using \<open>lim (\<lambda>n. norm (f1 n)) = lim (\<lambda>n. norm (f2 n))\<close>
@@ -444,7 +445,8 @@ lift_definition scaleR_completion :: \<open>real \<Rightarrow> 'a completion \<R
         using Limits.tendsto_scaleR by blast
       moreover have \<open>r *\<^sub>R (f1 n - f2 n) = r *\<^sub>R f1 n - r *\<^sub>R f2 n\<close>
         for n
-        by (simp add: scale_right_diff_distrib)        
+        using scale_right_diff_distrib
+        by (simp add: ordered_field_class.sign_simps(26))
       ultimately show ?thesis unfolding Vanishes_def
         by auto 
     qed
