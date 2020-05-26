@@ -1,5 +1,5 @@
 theory ToDo_Tensor
-  imports Tensor_Product "Bounded_Operators.ToDo"
+  imports Tensor_Product 
 begin
 
 lemma cinner_tensor: "\<langle>\<gamma> \<otimes> \<psi>, \<delta> \<otimes> \<phi>\<rangle> = \<langle>\<psi>, \<phi>\<rangle> * \<langle>\<gamma>, \<delta>\<rangle>"

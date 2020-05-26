@@ -11,7 +11,6 @@ theory Free_Vector_Spaces
   imports
     "Bounded_Operators.Complex_Inner_Product"
     "HOL-Library.Adhoc_Overloading"
-    "Bounded_Operators.General_Results_Missing"
 
 begin
 
