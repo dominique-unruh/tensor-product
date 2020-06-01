@@ -7,7 +7,7 @@ Authors:
 
 theory Completion
   imports 
-    "Bounded_Operators.Complex_Inner_Product" "Bounded_Operators.Bounded_Operators" "Bounded_Operators.NSA_Miscellany"
+    "Bounded_Operators.Complex_Inner_Product" "Bounded_Operators.Bounded_Operators"
 
 begin
 
@@ -907,7 +907,7 @@ proof
            + norm (rep_completion (X i) (m + T i + T j) - rep_completion (X j) (m + T i + T j))
            + inverse (of_nat (Suc j)) )\<close>
         for i j
-        using NSA_Miscellany.lim_ge
+        using lim_ge
         by simp
       moreover have \<open>lim ( \<lambda> m.
              inverse (of_nat (Suc i))
@@ -1796,13 +1796,13 @@ lemma inclusion_completion_cinner:
 
 lemma completion_map_Cauchy:
   fixes f :: \<open>'a::complex_normed_vector \<Rightarrow> 'b::complex_normed_vector\<close> and x :: \<open>'a completion\<close>
-  assumes \<open>bounded_clinear f\<close>
+  assumes \<open>cbounded_linear f\<close>
   shows \<open>Cauchy (\<lambda> n. f (rep_completion x n))\<close>
 proof-
   have \<open>Cauchy (rep_completion x)\<close>
     by (simp add: Cauchy_rep_completion)    
   thus ?thesis
-    by (simp add: bounded_clinear_Cauchy assms)
+    by (simp add: cbounded_linear_Cauchy assms)
 qed
 
 (* TODO: This could be more generally defined as mapping a continuous function
@@ -1819,28 +1819,28 @@ lift_definition completion_map' :: \<open>('a::complex_normed_vector, 'b::comple
 
 
 lemma compeltion_map_well_defined:
-  assumes \<open>completion_rel x y\<close> and \<open>bounded_clinear f\<close>
+  assumes \<open>completion_rel x y\<close> and \<open>cbounded_linear f\<close>
   shows \<open>completion_rel (\<lambda> n. f (x n)) (\<lambda> n. f (y n))\<close>
   using assms unfolding completion_rel_def apply auto 
-    apply (simp add: bounded_clinear_Cauchy)
-   apply (simp add: bounded_clinear_Cauchy)
+    apply (simp add: cbounded_linear_Cauchy)
+   apply (simp add: cbounded_linear_Cauchy)
   unfolding Vanishes_def
 proof-
-  assume \<open>bounded_clinear f\<close> and \<open>Cauchy x\<close> and \<open>Cauchy y\<close> and \<open>(\<lambda>n. x n - y n) \<longlonglongrightarrow> 0\<close>
+  assume \<open>cbounded_linear f\<close> and \<open>Cauchy x\<close> and \<open>Cauchy y\<close> and \<open>(\<lambda>n. x n - y n) \<longlonglongrightarrow> 0\<close>
   have \<open>isCont f 0\<close>
-    using \<open>bounded_clinear f\<close>
+    using \<open>cbounded_linear f\<close>
     by (simp add: bounded_linear_continuous)    
   moreover have \<open>f 0 = 0\<close>
-    using \<open>bounded_clinear f\<close> Complex_Vector_Spaces.complex_vector.linear_0
-    unfolding bounded_clinear_def
+    using \<open>cbounded_linear f\<close> Complex_Vector_Spaces.complex_vector.linear_0
+    unfolding cbounded_linear_def
     by blast
   ultimately have  \<open>(\<lambda>n. f (x n - y n)) \<longlonglongrightarrow> 0\<close>
     using  \<open>(\<lambda>n. x n - y n) \<longlonglongrightarrow> 0\<close> isCont_tendsto_compose 
     by fastforce 
   moreover have \<open>f (x n - y n) = f (x n) - f (y n)\<close>
     for n
-    using \<open>bounded_clinear f\<close> unfolding bounded_clinear_def clinear_def
-    using assms(2) bounded_clinear_def complex_vector.linear_diff 
+    using \<open>cbounded_linear f\<close> unfolding cbounded_linear_def clinear_def
+    using assms(2) cbounded_linear_def complex_vector.linear_diff 
     by blast 
   ultimately show \<open>(\<lambda>n. f (x n) - f (y n)) \<longlonglongrightarrow> 0\<close>
     by simp
@@ -1860,7 +1860,7 @@ proof
         and b2 :: "'a completion"
     proof transfer
       fix F::\<open>'a\<Rightarrow>'b\<close> and b1 b2::\<open>'a completion\<close>
-      assume \<open>bounded_clinear F\<close>
+      assume \<open>cbounded_linear F\<close>
       have \<open>completion_rel (rep_completion b1) (rep_completion b1)\<close>
         using Quotient_completion Quotient_rep_reflp by fastforce
       moreover have \<open>completion_rel (rep_completion b2) (rep_completion b2)\<close>
@@ -1874,13 +1874,13 @@ proof
         by (simp add: Quotient3_completion rep_abs_rsp_left) 
       hence \<open>completion_rel (\<lambda>n. F (rep_completion (b1 + b2) n))
         (\<lambda>n. F ( (rep_completion b1 n) +  (rep_completion b2 n) ))\<close>
-        using \<open>bounded_clinear F\<close> compeltion_map_well_defined 
+        using \<open>cbounded_linear F\<close> compeltion_map_well_defined 
         by blast
       moreover have \<open>F ( (rep_completion b1 n) +  (rep_completion b2 n) )
           = F (rep_completion b1 n) + F (rep_completion b2 n)\<close>
         for n
-        using  \<open>bounded_clinear F\<close> unfolding bounded_clinear_def clinear_def
-        using \<open>bounded_clinear F\<close> bounded_clinear_def complex_vector.linear_add 
+        using  \<open>cbounded_linear F\<close> unfolding cbounded_linear_def clinear_def
+        using \<open>cbounded_linear F\<close> cbounded_linear_def complex_vector.linear_add 
         by blast 
       ultimately show \<open>completion_rel (\<lambda>n. F (rep_completion (b1 + b2) n))
         (\<lambda>n. F (rep_completion b1 n) + F (rep_completion b2 n))\<close>
@@ -1891,7 +1891,7 @@ proof
         and b :: "'a completion"
     proof transfer
       fix F::\<open>'a\<Rightarrow>'b\<close> and b::\<open>'a completion\<close> and r::complex
-      assume \<open>bounded_clinear F\<close>
+      assume \<open>cbounded_linear F\<close>
       have \<open>completion_rel (rep_completion b) (rep_completion b)\<close>
         using Quotient_completion Quotient_rep_reflp by fastforce
       hence \<open>completion_rel (\<lambda>n. r *\<^sub>C (rep_completion b) n) (\<lambda>n. r *\<^sub>C (rep_completion b) n)\<close>
@@ -1903,12 +1903,12 @@ proof
         by (simp add: Quotient3_completion rep_abs_rsp_left)
       hence \<open>completion_rel (\<lambda>n. F (rep_completion (r *\<^sub>C b) n))
         (\<lambda>n. F (r *\<^sub>C (rep_completion b n)))\<close>
-        using \<open>bounded_clinear F\<close> compeltion_map_well_defined 
+        using \<open>cbounded_linear F\<close> compeltion_map_well_defined 
         by blast
       moreover have \<open>F ( r *\<^sub>C (rep_completion b n) )
           = r *\<^sub>C (F (rep_completion b n)) \<close>
         for n
-        using  \<open>bounded_clinear F\<close> unfolding bounded_clinear_def clinear_def
+        using  \<open>cbounded_linear F\<close> unfolding cbounded_linear_def clinear_def
         by (simp add: clinear_def complex_vector.linear_scale)        
       ultimately show \<open>completion_rel (\<lambda>n. F (rep_completion (r *\<^sub>C b) n))
         (\<lambda>n. r *\<^sub>C F ( (rep_completion b n)))\<close>
@@ -1919,10 +1919,10 @@ proof
   show "\<exists>K. \<forall>x. norm (completion_map' F (x::'a completion)::'b completion) \<le> norm x * K"
     for F :: "('a, 'b) bounded"
   proof-
-    have \<open>bounded_clinear (times_bounded_vec F)\<close>
+    have \<open>cbounded_linear (times_bounded_vec F)\<close>
       using times_bounded_vec by blast
     hence \<open>\<exists> K. \<forall> x. norm ((times_bounded_vec F) x) \<le> norm x * K \<and> K > 0\<close>
-      unfolding bounded_clinear_def
+      unfolding cbounded_linear_def
       by (smt norm_mult norm_not_less_zero vector_choose_size zero_less_mult_iff) 
     then obtain K where \<open>\<forall> x. norm ((times_bounded_vec F) x) \<le> norm x * K\<close> and \<open>K > 0\<close>
       by blast
@@ -1936,7 +1936,7 @@ proof
     have \<open>completion_rel (\<lambda>n. times_bounded_vec F (rep_completion x n)) (\<lambda>n. times_bounded_vec F (rep_completion x n))\<close>
       for x
       unfolding completion_rel_def apply auto
-       apply (simp add: \<open>bounded_clinear (times_bounded_vec F)\<close> completion_map_Cauchy)
+       apply (simp add: \<open>cbounded_linear (times_bounded_vec F)\<close> completion_map_Cauchy)
       unfolding Vanishes_def by auto
     hence \<open>norm (abs_completion (\<lambda>n. times_bounded_vec F (rep_completion x n)))
           = lim (\<lambda>n. norm (times_bounded_vec F (rep_completion x n)) )\<close>
@@ -1954,7 +1954,7 @@ proof
       moreover have \<open>convergent (\<lambda>n. norm (rep_completion x n) * K)\<close>
         by (metis (no_types) Cauchy_convergent \<open>0 < K\<close> \<open>\<And>x. Cauchy (\<lambda>n. norm (rep_completion x n))\<close> convergent_mult_const_right_iff less_numeral_extra(3))
       moreover have \<open>convergent (\<lambda>n. norm (times_bounded_vec F (rep_completion x n)) )\<close>
-        using Cauchy_convergent_iff \<open>bounded_clinear (times_bounded_vec F)\<close> completion_map_Cauchy convergent_norm
+        using Cauchy_convergent_iff \<open>cbounded_linear (times_bounded_vec F)\<close> completion_map_Cauchy convergent_norm
         using Cauchy_convergent_norm by blast        
       ultimately show ?thesis
         by (simp add: lim_leq) 

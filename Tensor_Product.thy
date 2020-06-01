@@ -326,16 +326,16 @@ lift_definition htensor_bounded::
 \<Rightarrow> (('a \<otimes>\<^sub>h 'b), ('c \<otimes>\<^sub>h 'd)) bounded\<close> is htensor_map
 proof
   show "clinear (htensor_map f::'a \<otimes>\<^sub>h 'b \<Rightarrow> 'c \<otimes>\<^sub>h 'd)"
-    if "bounded_clinear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
+    if "cbounded_linear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
     for f :: "('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion"
     using that
-    by (smt bounded_clinear.is_clinear clinearI complex_vector.linear_add complex_vector.linear_scale htensor_map_def plus_htensor.abs_eq plus_htensor.rep_eq scaleC_htensor.abs_eq scaleC_htensor.rep_eq) 
+    by (smt cbounded_linear.is_clinear clinearI complex_vector.linear_add complex_vector.linear_scale htensor_map_def plus_htensor.abs_eq plus_htensor.rep_eq scaleC_htensor.abs_eq scaleC_htensor.rep_eq) 
   show "\<exists>K. \<forall>x. norm (htensor_map f (x::'a \<otimes>\<^sub>h 'b)::'c \<otimes>\<^sub>h 'd) \<le> norm x * K"
-    if "bounded_clinear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
+    if "cbounded_linear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
     for f :: "('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion"
   proof-
     have \<open>\<exists> K. \<forall> x. norm (f x) \<le> norm x * K\<close>
-      using that unfolding bounded_clinear_def
+      using that unfolding cbounded_linear_def
       by simp 
     then obtain K where \<open>\<And> x. norm (f x) \<le> norm x * K\<close>
       by blast
@@ -489,7 +489,7 @@ lemma tensor_times[simp]: "(U1 \<otimes> U2) *\<^sub>o (V1 \<otimes> V2) = (U1 *
 
 lift_definition addState :: "'a ell2 \<Rightarrow> ('b ell2,('b*'a) ell2) bounded" is
   \<open>\<lambda>\<psi> \<phi>. tensorVec \<phi> \<psi>\<close>
-  apply (rule_tac K="norm ell2" in bounded_clinear_intro)
+  apply (rule_tac K="norm ell2" in cbounded_linear_intro)
   by (auto simp: tensor_norm_ell2 tensor_plus_ell2)
 
 
