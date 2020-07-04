@@ -16,7 +16,7 @@ theory Tensor_Product
     Algebraic_Tensor_Product
 
 begin
-unbundle bounded_notation
+unbundle cblinfun_notation
 
 section \<open>Hilbert tensor product\<close>
 
@@ -322,8 +322,8 @@ definition htensor_map::
 
 lift_definition htensor_bounded::
   \<open>(('a::chilbert_space \<otimes>\<^sub>a 'b::chilbert_space) completion,
-   ('c::chilbert_space \<otimes>\<^sub>a 'd::chilbert_space) completion) bounded 
-\<Rightarrow> (('a \<otimes>\<^sub>h 'b), ('c \<otimes>\<^sub>h 'd)) bounded\<close> is htensor_map
+   ('c::chilbert_space \<otimes>\<^sub>a 'd::chilbert_space) completion) cblinfun 
+\<Rightarrow> (('a \<otimes>\<^sub>h 'b), ('c \<otimes>\<^sub>h 'd)) cblinfun\<close> is htensor_map
 proof
   show "clinear (htensor_map f::'a \<otimes>\<^sub>h 'b \<Rightarrow> 'c \<otimes>\<^sub>h 'd)"
     if "cbounded_linear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
@@ -413,20 +413,20 @@ proof -
     by (metis htensor_cinner_mult norm_eq_sqrt_cinner norm_mult real_sqrt_mult)
 qed 
 
-
+(* Ask to Dominique: how to prove this *)
 text\<open>Hilbert tensor product of bounded operators\<close>
-lift_definition htensorOp :: \<open>('a::chilbert_space, 'b::chilbert_space) bounded
- \<Rightarrow> ('c::chilbert_space, 'd::chilbert_space) bounded \<Rightarrow> (('a \<otimes>\<^sub>h 'c), ('b \<otimes>\<^sub>h 'd)) bounded\<close>   (infixl "\<^sub>H\<otimes>" 70)
-  is \<open>\<lambda> f::('a, 'b) bounded. \<lambda> g::('c, 'd) bounded. \<lambda> z::('a \<otimes>\<^sub>a 'c) completion. (completion_map (f \<^sub>A\<otimes> g)) *\<^sub>v z\<close>
+lift_definition htensorOp :: \<open>('a::chilbert_space, 'b::chilbert_space) cblinfun
+ \<Rightarrow> ('c::chilbert_space, 'd::chilbert_space) cblinfun \<Rightarrow> (('a \<otimes>\<^sub>h 'c), ('b \<otimes>\<^sub>h 'd)) cblinfun\<close>   (infixl "\<^sub>H\<otimes>" 70)
+  is \<open>\<lambda> f::('a, 'b) cblinfun. \<lambda> g::('c, 'd) cblinfun. \<lambda> z::('a \<otimes>\<^sub>a 'c) completion. (completion_map (f \<^sub>A\<otimes> g)) *\<^sub>V z\<close>
   sorry
 
 section \<open>Tensor product ell2\<close>
 
-unbundle bounded_notation
+unbundle blinfun_notation
 
-consts "tensorOp" :: "('a ell2,'b ell2) bounded \<Rightarrow> ('c ell2,'d ell2) bounded \<Rightarrow> (('a*'c) ell2,('b*'d) ell2) bounded"
+consts "tensorOp" :: "('a ell2,'b ell2) cblinfun \<Rightarrow> ('c ell2,'d ell2) cblinfun \<Rightarrow> (('a*'c) ell2,('b*'d) ell2) cblinfun"
 
-type_synonym ('a, 'b) l2bounded = "('a ell2,'b ell2) bounded"
+type_synonym ('a, 'b) l2bounded = "('a ell2,'b ell2) cblinfun"
 
 lift_definition "tensorVec" :: "'a ell2 \<Rightarrow> 'c ell2 \<Rightarrow> ('a*'c) ell2" is
   "\<lambda>\<psi> \<phi> (x,y). \<psi> x * \<phi> y"
@@ -441,27 +441,27 @@ adhoc_overloading tensor tensorOp tensorSpace tensorVec
 lemma idOp_tensor_idOp[simp]: "idOp\<otimes>idOp = idOp"
   sorry
 
-definition "comm_op" :: "(('a*'b) ell2, ('b*'a) ell2) bounded" where
+definition "comm_op" :: "(('a*'b) ell2, ('b*'a) ell2) cblinfun" where
   "comm_op = classical_operator (\<lambda>(a,b). Some (b,a))"
 
 lemma adj_comm_op[simp]: "adjoint comm_op = comm_op"
   sorry
 
 lemma
-  comm_op_swap[simp]: "comm_op *\<^sub>o (A\<otimes>B) *\<^sub>o comm_op = B\<otimes>A"
-  for A::"('a ell2,'b ell2) bounded" and B::"('c ell2,'d ell2) bounded"
+  comm_op_swap[simp]: "comm_op o\<^sub>C\<^sub>L (A\<otimes>B) o\<^sub>C\<^sub>L comm_op = B\<otimes>A"
+  for A::"('a ell2,'b ell2) cblinfun" and B::"('c ell2,'d ell2) cblinfun"
   sorry
 
-lemma comm_op_times_comm_op[simp]: "comm_op  *\<^sub>o comm_op = idOp"
+lemma comm_op_times_comm_op[simp]: "comm_op  o\<^sub>C\<^sub>L comm_op = idOp"
 proof -
-  have "comm_op  *\<^sub>o (idOp \<otimes> idOp)  *\<^sub>o comm_op = idOp \<otimes> idOp" by (simp del: idOp_tensor_idOp)
+  have "comm_op  o\<^sub>C\<^sub>L (idOp \<otimes> idOp)  o\<^sub>C\<^sub>L comm_op = idOp \<otimes> idOp" by (simp del: idOp_tensor_idOp)
   thus ?thesis by simp
 qed
 
 lemma unitary_comm_op[simp]: "unitary comm_op"
   unfolding unitary_def sorry
 
-definition "assoc_op" :: "(('a*('b*'c)) ell2, (('a*'b)*'c) ell2) bounded" where
+definition "assoc_op" :: "(('a*('b*'c)) ell2, (('a*'b)*'c) ell2) cblinfun" where
   "assoc_op = classical_operator (\<lambda>(a,(b,c)). Some ((a,b),c))"
 
 lemma unitary_assoc_op[simp]: "unitary assoc_op"
@@ -475,19 +475,19 @@ lemma tensor_scalar_mult2[simp]: "A \<otimes> (a *\<^sub>C B) = a *\<^sub>C (A \
   sorry
 lemma tensor_scalar_mult2_ell2[simp]: "A \<otimes> (a *\<^sub>C B) = a *\<^sub>C (A \<otimes> B)" for a::complex and A::"_ ell2" and B::"_ ell2"
   sorry
-lemma tensor_plus: "(A+B) \<otimes> C = A \<otimes> C + B \<otimes> C" for A B C :: "(_,_)bounded"
+lemma tensor_plus: "(A+B) \<otimes> C = A \<otimes> C + B \<otimes> C" for A B C :: "(_,_) cblinfun"
   sorry
 lemma tensor_plus_ell2: "(A+B) \<otimes> C = A \<otimes> C + B \<otimes> C" for A B C :: "_ ell2"
   sorry
 lemma tensor_norm_ell2: "norm (\<psi> \<otimes> \<phi>) = norm \<psi> * norm \<phi>" for \<psi> \<phi> :: "_ ell2"
   sorry
 
-lemma tensor_times[simp]: "(U1 \<otimes> U2) *\<^sub>o (V1 \<otimes> V2) = (U1 *\<^sub>o V1) \<otimes> (U2 *\<^sub>o V2)"
+lemma tensor_times[simp]: "(U1 \<otimes> U2) o\<^sub>C\<^sub>L (V1 \<otimes> V2) = (U1 o\<^sub>C\<^sub>L V1) \<otimes> (U2 o\<^sub>C\<^sub>L V2)"
   for V1 :: "('a1,'b1) l2bounded" and U1 :: "('b1,'c1) l2bounded"
     and V2 :: "('a2,'b2) l2bounded" and U2 :: "('b2,'c2) l2bounded"
   sorry
 
-lift_definition addState :: "'a ell2 \<Rightarrow> ('b ell2,('b*'a) ell2) bounded" is
+lift_definition addState :: "'a ell2 \<Rightarrow> ('b ell2,('b*'a) ell2) cblinfun" is
   \<open>\<lambda>\<psi> \<phi>. tensorVec \<phi> \<psi>\<close>
   apply (rule_tac K="norm ell2" in cbounded_linear_intro)
   by (auto simp: tensor_norm_ell2 tensor_plus_ell2)
@@ -495,7 +495,7 @@ lift_definition addState :: "'a ell2 \<Rightarrow> ('b ell2,('b*'a) ell2) bounde
 
 (* TODO: this is simply the adjoint of addState (1::unit ell2), and addState y is best defined as x \<rightarrow> x \<otimes> y (lifted).
    Do we even use remove_qvar_unit_op then? *)
-consts remove_qvar_unit_op :: "(('a*unit) ell2,'a ell2) bounded"
+consts remove_qvar_unit_op :: "(('a*unit) ell2,'a ell2) cblinfun"
 
 
 (* definition addState :: "'a ell2 \<Rightarrow> ('b,'b*'a) l2bounded" where
@@ -519,6 +519,6 @@ lemma tensor_isometry[simp]:
   shows "isometry (U\<otimes>V)"
   using assms unfolding isometry_def by simp
 
-unbundle no_bounded_notation
+unbundle no_cblinfun_notation
 
 end

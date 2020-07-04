@@ -5450,8 +5450,8 @@ proof-
     using tendsto_dist_iff by auto 
 qed
 
-lift_definition atensorOp_bounded :: \<open>('a::complex_inner, 'b::complex_inner) bounded
- \<Rightarrow> ('c::complex_inner, 'd::complex_inner ) bounded \<Rightarrow> ('a \<otimes>\<^sub>a 'c,  'b \<otimes>\<^sub>a 'd) bounded\<close> (infixl "\<^sub>A\<otimes>" 70)
+lift_definition atensorOp_bounded :: \<open>('a::complex_inner, 'b::complex_inner) cblinfun
+ \<Rightarrow> ('c::complex_inner, 'd::complex_inner ) cblinfun \<Rightarrow> ('a \<otimes>\<^sub>a 'c,  'b \<otimes>\<^sub>a 'd) cblinfun\<close> (infixl "\<^sub>A\<otimes>" 70)
   is \<open>\<lambda> f g. f \<otimes>\<^sub>A g\<close>
   using Algebraic_Tensor_Product.algebraic_tensor_product_bounded by blast
 

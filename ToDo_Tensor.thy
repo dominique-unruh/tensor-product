@@ -6,18 +6,18 @@ lemma cinner_tensor: "\<langle>\<gamma> \<otimes> \<psi>, \<delta> \<otimes> \<p
   sorry
 
 lemma addState_adj_times_addState[simp]: 
-  includes bounded_notation
+  includes cblinfun_notation no_blinfun_notation
   fixes \<psi> \<phi> :: "'a ell2"
-  shows "addState \<psi>* *\<^sub>o addState \<phi> = \<langle>\<psi>, \<phi>\<rangle> *\<^sub>C (idOp::('b ell2,'b ell2) bounded)"
+  shows "addState \<psi>* o\<^sub>C\<^sub>L addState \<phi> = \<langle>\<psi>, \<phi>\<rangle> *\<^sub>C (idOp::('b ell2,'b ell2) cblinfun)"
 proof -
-  have "\<langle>\<gamma>, (addState \<psi>* *\<^sub>o addState \<phi>) *\<^sub>v \<delta>\<rangle> = \<langle>\<gamma>, (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C idOp) *\<^sub>v \<delta>\<rangle>" for \<gamma> \<delta> :: "'b ell2"
+  have "\<langle>\<gamma>, (addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta>\<rangle> = \<langle>\<gamma>, (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C idOp) *\<^sub>V \<delta>\<rangle>" for \<gamma> \<delta> :: "'b ell2"
     apply (simp add: times_applyOp adjoint_I')
     apply (transfer fixing: \<psi> \<phi> \<delta> \<gamma>)
     by (rule cinner_tensor)
-  hence "(addState \<psi>* *\<^sub>o addState \<phi>) *\<^sub>v \<delta> = (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C idOp) *\<^sub>v \<delta>" for \<delta> :: "'b ell2"
+  hence "(addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta> = (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C idOp) *\<^sub>V \<delta>" for \<delta> :: "'b ell2"
     by (metis (no_types, lifting) adjoint_D adjoint_I adjoint_twice)
   thus ?thesis
-    by (rule bounded_ext)
+    by (rule cblinfun_ext)
 qed
 
 lemma [simp]: "norm \<psi>=1 \<Longrightarrow> isometry (addState \<psi>)"
@@ -28,23 +28,23 @@ lemma ket_product: "ket (a,b) = ket a \<otimes> ket b"
   sorry
 
 lemma tensorOp_applyOp_distr:
-  includes bounded_notation
-  shows "(A \<otimes> B) *\<^sub>v (\<psi> \<otimes> \<phi>) = (A *\<^sub>v \<psi>) \<otimes> (B *\<^sub>v \<phi>)"
+  includes cblinfun_notation no_blinfun_notation
+  shows "(A \<otimes> B) *\<^sub>V (\<psi> \<otimes> \<phi>) = (A *\<^sub>V \<psi>) \<otimes> (B *\<^sub>V \<phi>)"
   sorry
 
 lemma assoc_op_apply_tensor[simp]:
-  includes bounded_notation
-  shows "assoc_op *\<^sub>v (\<psi>\<otimes>(\<phi>\<otimes>\<tau>)) = (\<psi>\<otimes>\<phi>)\<otimes>\<tau>"
+  includes cblinfun_notation no_blinfun_notation
+  shows "assoc_op *\<^sub>V (\<psi>\<otimes>(\<phi>\<otimes>\<tau>)) = (\<psi>\<otimes>\<phi>)\<otimes>\<tau>"
   sorry
 
 lemma comm_op_apply_tensor[simp]: 
-  includes bounded_notation
-  shows "comm_op *\<^sub>v (\<psi>\<otimes>\<phi>) = (\<phi>\<otimes>\<psi>)"
+  includes cblinfun_notation no_blinfun_notation
+  shows "comm_op *\<^sub>V (\<psi>\<otimes>\<phi>) = (\<phi>\<otimes>\<psi>)"
   sorry
 
 lemma assoc_op_adj_apply_tensor[simp]:
-  includes bounded_notation
-  shows "assoc_op* *\<^sub>v ((\<psi>\<otimes>\<phi>)\<otimes>\<tau>) = \<psi>\<otimes>(\<phi>\<otimes>\<tau>)"
+  includes cblinfun_notation no_blinfun_notation
+  shows "assoc_op* *\<^sub>V ((\<psi>\<otimes>\<phi>)\<otimes>\<tau>) = \<psi>\<otimes>(\<phi>\<otimes>\<tau>)"
   sorry
 
 lemma span_tensor: "Span G \<otimes> Span H = Span {g\<otimes>h|g h. g\<in>G \<and> h\<in>H}"

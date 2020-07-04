@@ -1810,7 +1810,7 @@ qed
 
    The fact that it maps a bounded linear function to a bounded linear function
    would then be a simple corollary. *)
-lift_definition completion_map' :: \<open>('a::complex_normed_vector, 'b::complex_normed_vector) bounded
+lift_definition completion_map' :: \<open>('a::complex_normed_vector, 'b::complex_normed_vector) cblinfun
  \<Rightarrow> ('a completion \<Rightarrow> 'b completion)\<close>
   is \<open>\<lambda> f x. (\<lambda> n. f (rep_completion x n))\<close>
   using completion_map_Cauchy 
@@ -1847,12 +1847,12 @@ proof-
 qed
 
 
-lift_definition completion_map :: \<open>('a::complex_normed_vector, 'b::complex_normed_vector) bounded
- \<Rightarrow> ('a completion, 'b completion) bounded\<close>
+lift_definition completion_map :: \<open>('a::complex_normed_vector, 'b::complex_normed_vector) cblinfun
+ \<Rightarrow> ('a completion, 'b completion) cblinfun\<close>
   is completion_map'
 proof
-  show "clinear (completion_map' (F::('a, 'b) bounded))"
-    for F :: "('a, 'b) bounded"
+  show "clinear (completion_map' (F::('a, 'b) cblinfun))"
+    for F :: "('a, 'b) cblinfun"
     unfolding clinear_def
   proof
     show "completion_map' F (b1 + b2) = completion_map' F b1 + completion_map' F b2"
@@ -1917,14 +1917,14 @@ proof
 
   qed
   show "\<exists>K. \<forall>x. norm (completion_map' F (x::'a completion)::'b completion) \<le> norm x * K"
-    for F :: "('a, 'b) bounded"
+    for F :: "('a, 'b) cblinfun"
   proof-
-    have \<open>cbounded_linear (times_bounded_vec F)\<close>
-      using times_bounded_vec by blast
-    hence \<open>\<exists> K. \<forall> x. norm ((times_bounded_vec F) x) \<le> norm x * K \<and> K > 0\<close>
+    have \<open>cbounded_linear (cblinfun_apply F)\<close>
+      using cblinfun_apply by auto      
+    hence \<open>\<exists> K. \<forall> x. norm ((cblinfun_apply F) x) \<le> norm x * K \<and> K > 0\<close>
       unfolding cbounded_linear_def
       by (smt norm_mult norm_not_less_zero vector_choose_size zero_less_mult_iff) 
-    then obtain K where \<open>\<forall> x. norm ((times_bounded_vec F) x) \<le> norm x * K\<close> and \<open>K > 0\<close>
+    then obtain K where \<open>\<forall> x. norm ((cblinfun_apply F) x) \<le> norm x * K\<close> and \<open>K > 0\<close>
       by blast
     have \<open>Cauchy (rep_completion x)\<close>
       for x::\<open>'a completion\<close>
@@ -1933,28 +1933,28 @@ proof
     hence \<open>Cauchy (\<lambda>n. norm (rep_completion x n))\<close>
       for x::\<open>'a completion\<close>
       by (simp add: Cauchy_convergent_norm)
-    have \<open>completion_rel (\<lambda>n. times_bounded_vec F (rep_completion x n)) (\<lambda>n. times_bounded_vec F (rep_completion x n))\<close>
+    have \<open>completion_rel (\<lambda>n. cblinfun_apply F (rep_completion x n)) (\<lambda>n. cblinfun_apply F (rep_completion x n))\<close>
       for x
       unfolding completion_rel_def apply auto
-       apply (simp add: \<open>cbounded_linear (times_bounded_vec F)\<close> completion_map_Cauchy)
+       apply (simp add: \<open>cbounded_linear (cblinfun_apply F)\<close> completion_map_Cauchy)
       unfolding Vanishes_def by auto
-    hence \<open>norm (abs_completion (\<lambda>n. times_bounded_vec F (rep_completion x n)))
-          = lim (\<lambda>n. norm (times_bounded_vec F (rep_completion x n)) )\<close>
+    hence \<open>norm (abs_completion (\<lambda>n. cblinfun_apply F (rep_completion x n)))
+          = lim (\<lambda>n. norm (cblinfun_apply F (rep_completion x n)) )\<close>
       for x
       unfolding norm_completion_def apply auto
       by (metis (no_types) norm_completion.abs_eq norm_completion.rep_eq)
-    also have \<open>lim (\<lambda>n. norm (times_bounded_vec F (rep_completion x n)) )
+    also have \<open>lim (\<lambda>n. norm (cblinfun_apply F (rep_completion x n)) )
              \<le> lim (\<lambda>n. norm (rep_completion x n) * K )\<close>
       for x
     proof-
-      have \<open>norm (times_bounded_vec F (rep_completion x n))
+      have \<open>norm (cblinfun_apply F (rep_completion x n))
           \<le> norm (rep_completion x n) * K\<close>
         for n
-        by (simp add: \<open>\<forall>x. norm (times_bounded_vec F x) \<le> norm x * K\<close>)
+        by (simp add: \<open>\<forall>x. norm (cblinfun_apply F x) \<le> norm x * K\<close>)
       moreover have \<open>convergent (\<lambda>n. norm (rep_completion x n) * K)\<close>
         by (metis (no_types) Cauchy_convergent \<open>0 < K\<close> \<open>\<And>x. Cauchy (\<lambda>n. norm (rep_completion x n))\<close> convergent_mult_const_right_iff less_numeral_extra(3))
-      moreover have \<open>convergent (\<lambda>n. norm (times_bounded_vec F (rep_completion x n)) )\<close>
-        using Cauchy_convergent_iff \<open>cbounded_linear (times_bounded_vec F)\<close> completion_map_Cauchy convergent_norm
+      moreover have \<open>convergent (\<lambda>n. norm (cblinfun_apply F (rep_completion x n)) )\<close>
+        using Cauchy_convergent_iff \<open>cbounded_linear (cblinfun_apply F)\<close> completion_map_Cauchy convergent_norm
         using Cauchy_convergent_norm by blast        
       ultimately show ?thesis
         by (simp add: lim_leq) 
@@ -2034,10 +2034,10 @@ proof
       thus ?thesis
         using of_real_eq_iff by blast 
     qed
-    hence \<open>\<forall>x. norm (abs_completion (\<lambda>n. times_bounded_vec F (rep_completion x n))) \<le> norm x * K\<close>
+    hence \<open>\<forall>x. norm (abs_completion (\<lambda>n. cblinfun_apply F (rep_completion x n))) \<le> norm x * K\<close>
       unfolding norm_completion_def
       apply auto
-      using \<open>\<forall> x. norm ((times_bounded_vec F) x) \<le> norm x * K\<close>
+      using \<open>\<forall> x. norm ((cblinfun_apply F) x) \<le> norm x * K\<close>
       by (metis calculation norm_completion.rep_eq)      
     thus ?thesis
       unfolding completion_map'_def
