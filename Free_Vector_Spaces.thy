@@ -11,7 +11,7 @@ theory Free_Vector_Spaces
   imports
     "Bounded_Operators.Complex_Inner_Product"
     "HOL-Library.Adhoc_Overloading"
-
+    Preliminaries
 begin
 
 typedef 'a free = \<open>{f::'a \<Rightarrow> complex. finite {x | x. f x \<noteq> 0}}\<close>
