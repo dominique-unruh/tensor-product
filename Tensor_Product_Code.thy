@@ -2,7 +2,7 @@ theory Tensor_Product_Code
   imports Tensor_Product Bounded_Operators.Bounded_Operators_Code
 begin
 
-(* TODO: Dominique copies from QRHL *)
+unbundle cblinfun_notation
 
 definition "matrix_tensor (A::'a::times mat) (B::'a mat) =
   mat (dim_row A*dim_row B) (dim_col A*dim_col B) 
@@ -38,5 +38,19 @@ definition "vec_tensor (A::'a::times vec) (B::'a vec) =
 lemma tensorVec_code[code]: "vec_of_ell2 (\<psi> \<otimes> \<phi>) = vec_tensor (vec_of_ell2 \<psi>) (vec_of_ell2 \<phi>)"
   for \<psi>::"'a::enum ell2" and \<phi>::"'b::enum ell2"
   sorry
+
+(* See comment at definition of remove_qvar_unit_op before proving *)
+lemma mat_of_cblinfun_remove_qvar_unit_op[code]:
+  "mat_of_cblinfun (remove_qvar_unit_op::(_,'a::enum) l2bounded) = mat_of_cblinfun (idOp::(_,'a) l2bounded)" 
+  sorry
+
+(* TODO: more direct code equation (w/o remove_qvar_unit_op) *)
+lemma addState_remove_qvar_unit_op[code]: "addState \<psi> = idOp \<otimes> (vector_to_cblinfun \<psi>) o\<^sub>C\<^sub>L remove_qvar_unit_op*"
+  sorry
+
+lemma tensorSpace_SPAN[code]: "tensorSpace (SPAN A) (SPAN B) = SPAN [vec_tensor a b. a<-A, b<-B]"
+  sorry
+
+unbundle no_cblinfun_notation
 
 end
