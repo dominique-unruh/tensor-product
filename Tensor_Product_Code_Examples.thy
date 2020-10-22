@@ -2,7 +2,7 @@ theory Tensor_Product_Code_Examples
   imports Tensor_Product_Code Bounded_Operators.Bounded_Operators_Code_Examples
 begin
 
-value "tensorOp (idOp :: (bool ell2,_) cblinfun) (idOp :: (bool ell2,_) cblinfun)" 
+value "tensorOp (idOp :: (bool ell2,_) cblinfun) (idOp :: (bool ell2,_) cblinfun)"
 
 value "assoc_op :: ((bool*bool*bool) ell2,_) cblinfun"
 

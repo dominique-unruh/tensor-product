@@ -179,7 +179,8 @@ proof-
   ultimately have \<open>c *\<^sub>R (p1 - p2) \<in> atensor_kernel\<close>
     by (simp add: \<open>complex_vector.subspace atensor_kernel\<close> complex_vector.subspace_scale scaleR_scaleC)
   show \<open>c *\<^sub>R p1 - c *\<^sub>R p2 \<in> atensor_kernel\<close>
-    by (metis \<open>c *\<^sub>R (p1 - p2) \<in> atensor_kernel\<close> ordered_field_class.sign_simps(26))
+    by (metis \<open>c *\<^sub>R (p1 - p2) \<in> atensor_kernel\<close> ordered_field_class.sign_simps(27))
+    
 qed
 
 lift_definition scaleC_atensor :: \<open>complex \<Rightarrow> 'a \<otimes>\<^sub>a 'b \<Rightarrow> 'a \<otimes>\<^sub>a 'b\<close>
@@ -1769,7 +1770,7 @@ proof-
           using \<open>r = x \<otimes>\<^sub>a y\<close> by auto
       qed
       hence \<open>(\<Sum>s\<in>S - {u \<otimes>\<^sub>a v}. (f s) *\<^sub>C H s) = 0\<close>
-        using sum_not_0 by auto
+        by simp        
       thus ?thesis by simp
     qed
     also have \<open>\<dots>  = f (u \<otimes>\<^sub>a v)\<close>
@@ -1861,7 +1862,7 @@ proof-
           using \<open>r = A x \<otimes>\<^sub>a B y\<close> by auto          
       qed
       hence \<open>(\<Sum>s\<in>S - {A u \<otimes>\<^sub>a B v}. (f s) *\<^sub>C H s) = 0\<close>
-        using sum_not_0 by auto
+        by auto
       thus ?thesis
         using  \<open>A u \<otimes>\<^sub>a B v \<in> S\<close> \<open>finite S\<close> eq_iff_diff_eq_0 sum_diff1
         by auto
@@ -2820,7 +2821,7 @@ definition dist_atensor :: \<open>'a \<otimes>\<^sub>a 'b \<Rightarrow> 'a \<oti
   \<open>dist_atensor x y = norm (x - y)\<close> for x y
 
 definition uniformity_atensor :: \<open>(('a \<otimes>\<^sub>a 'b) \<times> ('a \<otimes>\<^sub>a 'b)) filter\<close>
-  where  \<open>uniformity_atensor = (INF e:{0<..}. principal {((f::'a \<otimes>\<^sub>a 'b), (g::'a \<otimes>\<^sub>a 'b)). dist f g < e})\<close>
+  where  \<open>uniformity_atensor = (INF e\<in>{0<..}. principal {((f::'a \<otimes>\<^sub>a 'b), (g::'a \<otimes>\<^sub>a 'b)). dist f g < e})\<close>
 
 definition open_atensor :: \<open>('a \<otimes>\<^sub>a 'b) set \<Rightarrow> bool\<close>
   where \<open>open_atensor = (\<lambda> U::('a \<otimes>\<^sub>a 'b) set. (\<forall>x\<in>U. eventually (\<lambda>(x', y). x' = x \<longrightarrow> y \<in> U) uniformity))\<close>
@@ -3924,7 +3925,9 @@ proof-
     have \<open>\<And> z. norm (f z) \<le> norm z * K\<close>
       unfolding K_def
       using \<open>cbounded_linear f\<close>
-      by (simp add: cbounded_linear.bounded_linear linordered_field_class.sign_simps(24) onorm)
+       cbounded_linear.bounded_linear onorm
+      by (simp add: cbounded_linear.bounded_linear onorm ordered_field_class.sign_simps(47))
+
     have \<open>z \<in> range (case_prod (\<otimes>\<^sub>a)) \<Longrightarrow> norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) z) \<le> norm z * K\<close>
       for z
     proof-
@@ -4789,7 +4792,8 @@ proof-
             and g = "swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a)"]
         by (simp add: algebraic_tensor_product_bounded assms cbounded_linear.bounded_linear swap_atensor_cbounded_linear)     
       ultimately show ?thesis 
-        by (smt linordered_field_class.sign_simps(23) mult_mono)
+        using mult_mono
+        by (smt assms(2) assms(4) mult_cancel_right2 onorm_swap_atensor)
     qed
     finally show ?thesis
       by (simp add: f1 fun.map_comp)           
@@ -4876,10 +4880,12 @@ proof-
             by (metis linear mult_nonneg_nonpos2 norm_ge_zero)
           obtain rr :: real where
             "\<forall>a. norm (f a) \<le> rr * norm a"
-            by (metis \<open>\<exists>K. \<forall>x. norm (f x) \<le> norm x * K\<close> linordered_field_class.sign_simps(24))            
+            using \<open>\<exists>K. \<forall>x. norm (f x) \<le> norm x * K\<close>
+            by (metis mult.commute)
           hence "\<exists>r. norm (f (aa r)) \<le> norm (aa r) * r \<and> 0 \<le> r"
-            using ff1
-            by (metis mult_zero_left order.trans ordered_field_class.sign_simps(46)) 
+            using ff1 mult_zero_left order.trans
+            by (metis ordered_field_class.sign_simps(47)) 
+
         }
         thus ?thesis
           by (metis (full_types))
