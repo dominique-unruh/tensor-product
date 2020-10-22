@@ -398,7 +398,7 @@ lift_definition sgn_completion :: \<open>'a completion \<Rightarrow> 'a completi
       moreover have \<open>(f1 n - f2 n) /\<^sub>R L =  f1 n /\<^sub>R L - f2 n /\<^sub>R L\<close>
         for n
         using scale_right_diff_distrib
-        by (simp add: ordered_field_class.sign_simps(26))
+        by (simp add: ordered_field_class.sign_simps(27))        
       ultimately have \<open>Vanishes (\<lambda>n. f1 n /\<^sub>R L - f2 n /\<^sub>R L)\<close>
         by simp
       thus ?thesis unfolding L_def using \<open>lim (\<lambda>n. norm (f1 n)) = lim (\<lambda>n. norm (f2 n))\<close>
@@ -446,7 +446,7 @@ lift_definition scaleR_completion :: \<open>real \<Rightarrow> 'a completion \<R
       moreover have \<open>r *\<^sub>R (f1 n - f2 n) = r *\<^sub>R f1 n - r *\<^sub>R f2 n\<close>
         for n
         using scale_right_diff_distrib
-        by (simp add: ordered_field_class.sign_simps(26))
+        by (simp add: ordered_field_class.sign_simps(27))
       ultimately show ?thesis unfolding Vanishes_def
         by auto 
     qed
@@ -539,7 +539,7 @@ proof-
 qed
 
 definition uniformity_completion :: \<open>('a completion \<times> 'a completion) filter\<close>
-  where  \<open>uniformity_completion = (INF e:{0<..}. principal {((f::'a completion), (g::'a completion)). dist f g < e})\<close>
+  where  \<open>uniformity_completion = (INF e\<in>{0<..}. principal {((f::'a completion), (g::'a completion)). dist f g < e})\<close>
 
 definition open_completion :: \<open>('a completion) set \<Rightarrow> bool\<close>
   where \<open>open_completion = (\<lambda> U::('a completion) set. (\<forall>x\<in>U. eventually (\<lambda>(x', y). x' = x \<longrightarrow> y \<in> U) uniformity))\<close>
