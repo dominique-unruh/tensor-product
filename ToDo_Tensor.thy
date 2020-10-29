@@ -51,7 +51,7 @@ lemma span_tensor: "Span G \<otimes> Span H = Span {g\<otimes>h|g h. g\<in>G \<a
   sorry
 
 lemma span_tensors:
-  "closure (span {C1 \<otimes> C2| (C1::(_,_) l2bounded) (C2::(_,_) l2bounded). True}) = UNIV"
+  "closure (cspan {C1 \<otimes> C2| (C1::(_,_) l2bounded) (C2::(_,_) l2bounded). True}) = UNIV"
   sorry
 
 
