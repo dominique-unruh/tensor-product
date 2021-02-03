@@ -3947,7 +3947,7 @@ proof-
       also have \<open>\<dots> = norm (f x) * norm y\<close>
         by (simp add: atensor_norm_mult)
       also have \<open>\<dots> \<le> (norm x * K) * norm y\<close>
-        by (smt \<open>\<And>z. norm (f z) \<le> norm z * K\<close> mult_nonneg_nonneg mult_nonneg_nonpos norm_not_less_zero real_mult_le_cancel_iff1)
+        by (simp add: \<open>\<And>z. norm (f z) \<le> norm z * K\<close> mult_mono')
       also have \<open>\<dots> = (norm x * norm y) * K\<close>
         by auto
       also have \<open>\<dots> = norm (x \<otimes>\<^sub>a y) * K\<close>
