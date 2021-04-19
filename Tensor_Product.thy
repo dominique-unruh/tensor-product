@@ -160,20 +160,12 @@ proof
 
   show "0 \<le> \<langle>x::'a \<otimes>\<^sub>h 'b, x\<rangle>"
     for x :: "'a \<otimes>\<^sub>h 'b"
-    by (simp add: cinner_htensor.rep_eq)
+    using cinner_ge_zero cinner_htensor.rep_eq by auto
 
   show "(\<langle>x::'a \<otimes>\<^sub>h 'b, x\<rangle> = 0) = (x = 0)"
     for x :: "'a \<otimes>\<^sub>h 'b"
-  proof
-    show "x = 0"
-      if "\<langle>x, x\<rangle> = 0"
-      using that
-      using Rep_htensor_inject cinner_htensor.rep_eq zero_htensor.rep_eq by fastforce 
-    show "\<langle>x, x\<rangle> = 0"
-      if "x = 0"
-      using that
-      by (simp add: cinner_htensor.abs_eq zero_htensor_def) 
-  qed
+    using Rep_htensor_inject Tensor_Product.zero_htensor.rep_eq cinner_htensor.rep_eq by fastforce
+
   show "norm (x::'a \<otimes>\<^sub>h 'b) = sqrt (cmod \<langle>x, x\<rangle>)"
     for x :: "'a \<otimes>\<^sub>h 'b"
     using cinner_htensor.rep_eq norm_eq_sqrt_cinner norm_htensor.rep_eq by auto

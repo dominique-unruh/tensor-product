@@ -9,8 +9,8 @@ Authors:
 
 theory Preliminaries_Tensor_Product
   imports
-    "Bounded_Operators.Preliminaries"
-
+    Main
+    HOL.Vector_Spaces
 begin
 
 lemma big_sum_reordering_fst:

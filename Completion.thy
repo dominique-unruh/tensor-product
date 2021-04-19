@@ -1619,17 +1619,16 @@ proof
 
   show "0 \<le> \<langle>x::'a completion, x\<rangle>"
     for x :: "'a completion"
-    apply transfer
+(*     apply transfer
     unfolding completion_rel_def
-    apply auto unfolding Vanishes_def apply auto
-  proof-
+    apply auto unfolding Vanishes_def apply auto *)
+  proof (transfer, unfold completion_rel_def Vanishes_def)
     fix x::\<open>nat \<Rightarrow> 'a\<close>
-    assume \<open>Cauchy x\<close>
-    have \<open>0 \<le> \<langle>x n, x n\<rangle>\<close>
-      for n
-      by simp
-    have \<open>\<langle>x n, x n\<rangle> \<in> \<real>\<close>
-      for n
+    assume \<open>Cauchy x \<and> Cauchy x \<and> (\<lambda>n. x n - x n) \<longlonglongrightarrow> 0\<close>
+    then have \<open>Cauchy x\<close> by simp
+    have \<open>0 \<le> \<langle>x n, x n\<rangle>\<close> for n
+      by (meson cinner_ge_zero)
+    have \<open>\<langle>x n, x n\<rangle> \<in> \<real>\<close> for n
       by (simp add: cinner_real)
     hence \<open>\<langle>x n, x n\<rangle> = Re \<langle>x n, x n\<rangle>\<close>
       for n by simp
@@ -1653,7 +1652,7 @@ proof
         by (simp add: \<open>convergent (\<lambda>n. Re \<langle>x n, x n\<rangle>)\<close>)
       ultimately show ?thesis by simp
     qed
-    thus  \<open>0 \<le> lim (\<lambda>n. \<langle>x n, x n\<rangle>)\<close>
+    then show \<open>0 \<le> lim (\<lambda>n. \<langle>x n, x n\<rangle>)\<close>
       by (simp add: \<open>0 \<le> lim (\<lambda>n. Re \<langle>x n, x n\<rangle>)\<close>)
   qed
 

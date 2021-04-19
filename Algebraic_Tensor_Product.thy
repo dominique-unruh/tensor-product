@@ -3228,27 +3228,11 @@ proof
         unfolding g_atensor_cbilinear_def
         by blast
       also have \<open>\<dots> > 0\<close>
-      proof-
-        have \<open>\<langle>x, x\<rangle> > 0\<close>
-        proof-
-          have \<open>x \<noteq> 0\<close>
-            using \<open>0 \<notin> A\<close> \<open>x \<in> A\<close> by auto
-          thus ?thesis
-            by simp 
-        qed
-        moreover have \<open>\<langle>y, y\<rangle> > 0\<close>
-        proof-
-          have \<open>y \<noteq> 0\<close>
-            using \<open>0 \<notin> B\<close> \<open>y \<in> B\<close> by auto
-          thus ?thesis
-            by simp 
-        qed
-        ultimately show ?thesis by simp
-      qed
+        by (metis \<open>0 \<notin> A\<close> \<open>0 \<notin> B\<close> \<open>x \<in> A\<close> \<open>y \<in> B\<close> cinner_gt_zero_iff ordered_semiring_strict_class.mult_pos_pos)
       finally show \<open>\<langle>a, a\<rangle> > 0\<close>
         by blast
     qed
-    moreover have \<open>a\<in>t \<Longrightarrow> a'\<in>t \<Longrightarrow> a \<noteq> a' \<Longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
+  moreover have \<open>a\<in>t \<Longrightarrow> a'\<in>t \<Longrightarrow> a \<noteq> a' \<Longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
       for a a'
     proof-
       assume \<open>a\<in>t\<close> and \<open>a'\<in>t\<close> and \<open>a \<noteq> a'\<close>
@@ -3308,7 +3292,7 @@ proof
     proof-
       assume \<open>a\<in>t\<close>
       hence \<open>\<langle>a, a\<rangle> > 0\<close>
-        by (simp add: \<open>\<forall>a\<in>t. 0 < \<langle>a, a\<rangle>\<close>)
+        using \<open>\<forall>a\<in>t. 0 < \<langle>a, a\<rangle>\<close> by fastforce
       hence \<open>\<langle>a, a\<rangle> \<ge> 0\<close>
         by simp
       moreover have \<open>(norm (r a))^2 \<ge> 0\<close>
@@ -3318,7 +3302,7 @@ proof
         by (metis mult_left_mono mult_not_zero)        
     qed
     ultimately show ?thesis
-      by (simp add: sum_nonneg) 
+      by (metis (no_types, lifting) sum_nonneg)
   qed
 
   show "(\<langle>x, x\<rangle> = 0) = (x = 0)"
@@ -3925,7 +3909,7 @@ proof-
       unfolding K_def
       using \<open>cbounded_linear f\<close>
        cbounded_linear.bounded_linear onorm
-      by (simp add: cbounded_linear.bounded_linear onorm ordered_field_class.sign_simps(47))
+      by (simp add: cbounded_linear.bounded_linear onorm algebra_simps)
 
     have \<open>z \<in> range (case_prod (\<otimes>\<^sub>a)) \<Longrightarrow> norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) z) \<le> norm z * K\<close>
       for z
@@ -4873,22 +4857,7 @@ proof-
         unfolding cbounded_linear_def
         by blast
       hence \<open>\<exists> K. \<forall> x. norm (f x) \<le> norm x * K \<and> K \<ge> 0\<close>
-      proof - (* sledgehammer *)
-        { fix aa :: "real \<Rightarrow> 'a"
-          have ff1: "\<forall>a r. r * norm (a::'a) \<le> 0 \<or> 0 \<le> r"
-            by (metis linear mult_nonneg_nonpos2 norm_ge_zero)
-          obtain rr :: real where
-            "\<forall>a. norm (f a) \<le> rr * norm a"
-            using \<open>\<exists>K. \<forall>x. norm (f x) \<le> norm x * K\<close>
-            by (metis mult.commute)
-          hence "\<exists>r. norm (f (aa r)) \<le> norm (aa r) * r \<and> 0 \<le> r"
-            using ff1 mult_zero_left order.trans
-            by (metis ordered_field_class.sign_simps(47)) 
-
-        }
-        thus ?thesis
-          by (metis (full_types))
-      qed
+        by (metis assms(1) bounded_linear.nonneg_bounded cbounded_linear.bounded_linear)
       then obtain K where \<open>\<And> x. norm (f x) \<le> norm x * K\<close> and \<open>K \<ge> 0\<close>
         by blast
       have \<open>(norm (f x))/(norm x) \<le>  K\<close>
