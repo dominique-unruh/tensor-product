@@ -324,7 +324,8 @@ proof
     by (smt cbounded_linear.clinear complex_vector.linear_add htensor_map_def plus_htensor.abs_eq plus_htensor.rep_eq)
   show \<open>htensor_map f (c *\<^sub>C b) = c *\<^sub>C htensor_map f b\<close> for c b
     using \<open>cbounded_linear f\<close>
-    by (simp add: Complex_Vector_Spaces0.linear_cmul cbounded_linear_def htensor_map_def scaleC_htensor.abs_eq scaleC_htensor.rep_eq)
+    by (simp add: Complex_Vector_Spaces0.linear_cmul cbounded_linear_def htensor_map_def 
+                  complex_vector.linear_scale scaleC_htensor.abs_eq scaleC_htensor.rep_eq)
   show "\<exists>K. \<forall>x. norm (htensor_map f (x::'a \<otimes>\<^sub>h 'b)::'c \<otimes>\<^sub>h 'd) \<le> norm x * K"
     if "cbounded_linear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
     for f :: "('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion"
