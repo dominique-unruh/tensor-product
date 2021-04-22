@@ -29,7 +29,7 @@ definition atensor_kernel::\<open>( (('a::complex_vector) \<times> ('b::complex_
 lemma subspace_atensor_kernel:
   \<open>complex_vector.subspace atensor_kernel\<close>
   unfolding atensor_kernel_def
-  using Complex_Vector_Spaces.complex_vector.subspace_span
+  using complex_vector.subspace_span
   by blast
 
 definition atensor_rel :: "(('a::complex_vector) \<times> ('b::complex_vector)) free \<Rightarrow> ('a \<times> 'b) free \<Rightarrow> bool"
@@ -722,9 +722,9 @@ lemma span_tensor_span:
 proof-
   have \<open>\<exists> t r. finite t \<and> t \<subseteq> A \<and> (\<Sum>a\<in>t. r a *\<^sub>C a) = u\<close>
   proof -
-    have "\<forall>A. {a. \<exists>C f. (a::'a) = (\<Sum>a\<in>C. f a *\<^sub>C a) \<and> finite C \<and> C \<subseteq> A} = Complex_Vector_Spaces.span A"
+    have "\<forall>A. {a. \<exists>C f. (a::'a) = (\<Sum>a\<in>C. f a *\<^sub>C a) \<and> finite C \<and> C \<subseteq> A} = cspan A"
       by (simp add: complex_vector.span_explicit)
-    hence "\<forall>A a. (\<exists>C f. (a::'a) = (\<Sum>a\<in>C. f a *\<^sub>C a) \<and> finite C \<and> C \<subseteq> A) \<or> a \<notin> Complex_Vector_Spaces.span A"
+    hence "\<forall>A a. (\<exists>C f. (a::'a) = (\<Sum>a\<in>C. f a *\<^sub>C a) \<and> finite C \<and> C \<subseteq> A) \<or> a \<notin> cspan A"
       by blast
     thus ?thesis
       by (metis (no_types) assms(1))
@@ -2907,7 +2907,7 @@ proof
     also have \<open>\<dots> = (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. (cnj (r a)) * r' a' *\<^sub>C \<langle>a,  a'\<rangle>) )\<close>
     proof -
       have "\<forall>a. cnj (r a) *\<^sub>C (\<Sum>a'\<in>t'. r' a' *\<^sub>C \<langle>a, a'\<rangle>) = (\<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C \<langle>a, a'\<rangle>)"
-        by (metis (no_types) complex_scaleC_def complex_vector.scale_sum_right)
+        by (simp add: vector_space_over_itself.scale_sum_right)
       thus ?thesis
         by meson
     qed
@@ -3510,7 +3510,7 @@ proof-
   have \<open>z \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
     by (simp add: atensor_onto)
   hence \<open>\<exists> W. finite W \<and> W \<subseteq> (range (case_prod (\<otimes>\<^sub>a))) \<and> z \<in> complex_vector.span W\<close>
-    by (simp add: Complex_Vector_Spaces.span_finite)
+    using Complex_Vector_Spaces.span_finite by blast
   then obtain W where \<open>finite W\<close> and \<open>W \<subseteq> (range (case_prod (\<otimes>\<^sub>a)))\<close> and 
     \<open>z \<in> complex_vector.span W\<close> by blast
   from \<open>W \<subseteq> (range (case_prod (\<otimes>\<^sub>a)))\<close>
@@ -3896,11 +3896,11 @@ lemma algebraic_tensor_product_bounded_left:
 proof-
   define K where \<open>K = onorm f\<close>
   have f_clinear: \<open>clinear (f \<otimes>\<^sub>A (id::'c \<Rightarrow> _))\<close>
-    by (simp add: assms atensorOp_clinear cbounded_linear.is_clinear)
+    using assms atensorOp_clinear cbounded_linear.clinear complex_vector.module_hom_id by blast
   moreover have  "\<forall>z. norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) z) \<le> norm z * K"
   proof-
     have id_clinear: \<open>clinear (id::'c \<Rightarrow> _)\<close>
-      by (simp add: cbounded_linear.is_clinear)
+      by (simp add: complex_vector.module_hom_id)
     have \<open>K \<ge> 0\<close>
       unfolding K_def
       using onorm_pos_le \<open>cbounded_linear f\<close>
@@ -3921,7 +3921,7 @@ proof-
         by blast
       hence \<open>(f \<otimes>\<^sub>A id) z = (f x) \<otimes>\<^sub>a (id y)\<close>
         using f_clinear id_clinear
-        by (simp add: assms atensorOp_separation cbounded_linear.is_clinear)
+        by (simp add: assms atensorOp_separation cbounded_linear.clinear)
       also have \<open>\<dots> = (f x) \<otimes>\<^sub>a y\<close>
         by simp
       finally have \<open>(f \<otimes>\<^sub>A id) z = (f x) \<otimes>\<^sub>a y\<close>
@@ -3961,7 +3961,7 @@ proof-
       proof-
         have \<open>(f \<otimes>\<^sub>A id) ((\<phi> b) \<otimes>\<^sub>a b) = (f (\<phi> b)) \<otimes>\<^sub>a b\<close>
           for b
-          by (simp add: assms atensorOp_separation cbounded_linear.is_clinear)          
+          by (simp add: assms atensorOp_separation cbounded_linear.clinear complex_vector.module_hom_id)
         thus ?thesis by simp
       qed
       finally have \<open>(f \<otimes>\<^sub>A id) z = (\<Sum>b\<in>B. (f (\<phi> b)) \<otimes>\<^sub>a b)\<close>
@@ -4167,7 +4167,7 @@ proof-
       by blast
   qed
   ultimately show ?thesis
-    unfolding cbounded_linear_def by blast
+    using cbounded_linear_axioms_def cbounded_linear_def by blast
 qed
 
 lemma algebraic_tensor_product_bounded_left_cbounded_linear:
@@ -4184,7 +4184,7 @@ lemma algebraic_tensor_product_bounded_left_onorm:
 
 lemma swap_atensor_cbounded_linear':
   \<open>cbounded_linear (swap_atensor::(('a::complex_inner \<otimes>\<^sub>a 'b::complex_inner) \<Rightarrow> _))
-\<and> onorm (swap_atensor::(('a::complex_inner \<otimes>\<^sub>a 'b::complex_inner) \<Rightarrow> _)) \<le> 1\<close>
+      \<and> onorm (swap_atensor::(('a::complex_inner \<otimes>\<^sub>a 'b::complex_inner) \<Rightarrow> _)) \<le> 1\<close>
 proof-
   have "clinear (swap_atensor::'a \<otimes>\<^sub>a 'b \<Rightarrow> _ \<otimes>\<^sub>a _)"
     by (simp add: swap_atensorI1)
@@ -4420,12 +4420,10 @@ proof-
   qed
 
   have \<open>cbounded_linear (swap_atensor::(('a \<otimes>\<^sub>a 'b) \<Rightarrow> _))\<close>
-  proof
-    show "clinear (swap_atensor::'a \<otimes>\<^sub>a 'b \<Rightarrow> _ \<otimes>\<^sub>a _)"
-      by (simp add: swap_atensorI1)
-    show "\<exists>K. \<forall>x. norm (swap_atensor (x::'a \<otimes>\<^sub>a 'b)) \<le> norm x * K"
-      by (metis \<open>\<And>z. norm (swap_atensor z) \<le> norm z\<close> mult.comm_neutral)
-  qed
+    apply standard
+    apply (simp add: clinear_additive_D swap_atensorI1)
+    apply (simp add: complex_vector.linear_scale swap_atensorI1)
+    by (metis \<open>\<And>z. norm (swap_atensor z) \<le> norm z\<close> mult.comm_neutral)
   moreover have \<open>onorm (swap_atensor::(('a \<otimes>\<^sub>a 'b) \<Rightarrow> _)) \<le> 1\<close>
     using f2
     by (simp add: onorm_bound)
@@ -4445,29 +4443,29 @@ proof-
   have \<open>F (x \<otimes>\<^sub>a y) = 0\<close>
     for x y
     unfolding F_def
-    by (simp add: assms atensorOp_separation cbounded_linear.is_clinear swap_atensorI2)
+    by (simp add: assms atensorOp_separation cbounded_linear.clinear swap_atensorI2)
   moreover have \<open>clinear F\<close>
   proof-
     have \<open>clinear (swap_atensor \<circ> (f \<otimes>\<^sub>A g) \<circ> swap_atensor)\<close>
     proof-
       have \<open>clinear f\<close>
-        by (simp add: assms cbounded_linear.is_clinear)          
+        by (simp add: assms cbounded_linear.clinear)          
       moreover have \<open>clinear swap_atensor\<close>
         by (simp add: swap_atensorI1)
       ultimately show ?thesis
-        by (simp add: \<open>clinear swap_atensor\<close> Complex_Vector_Spaces.linear_compose assms(2) atensorOp_clinear cbounded_linear.is_clinear)
+        by (simp add: \<open>clinear swap_atensor\<close> Complex_Vector_Spaces.linear_compose assms(2) atensorOp_clinear cbounded_linear.clinear)
     qed
     moreover have \<open>clinear (g \<otimes>\<^sub>A f)\<close>
     proof-
       have \<open>clinear g\<close>
-        by (simp add: assms cbounded_linear.is_clinear)          
+        by (simp add: assms cbounded_linear.clinear)          
       moreover have \<open>clinear f\<close>
-        by (simp add: assms cbounded_linear.is_clinear)          
+        by (simp add: assms cbounded_linear.clinear)          
       ultimately show ?thesis
         by (simp add: atensorOp_clinear) 
     qed
     ultimately show ?thesis unfolding F_def
-      using cbounded_linear.is_clinear complex_vector.linear_compose_sub 
+      using cbounded_linear.clinear complex_vector.linear_compose_sub 
       by blast
   qed
   ultimately have \<open>z \<in> range (case_prod (\<otimes>\<^sub>a)) \<Longrightarrow> F z = 0\<close>
@@ -4497,7 +4495,7 @@ proof-
     by blast
   moreover have \<open>swap_atensor \<circ> (f \<otimes>\<^sub>A (id::'a\<Rightarrow>'a)) \<circ> swap_atensor = (id::'a\<Rightarrow>'a) \<otimes>\<^sub>A f\<close>
     using swap_atensor_conjugation
-    by (simp add: swap_atensor_conjugation assms) 
+    by (simp add: swap_atensor_conjugation assms id_cbounded_linear)
   thus ?thesis
     using \<open>cbounded_linear swap_atensor\<close> calculation comp_cbounded_linear 
     by fastforce 
@@ -4524,7 +4522,7 @@ proof-
     also have \<open>\<dots> = (id \<otimes>\<^sub>A g \<circ> f \<otimes>\<^sub>A id) (x \<otimes>\<^sub>a y) - ((f x) \<otimes>\<^sub>a (g y))\<close>
     proof-
       have \<open>(f \<otimes>\<^sub>A g) (x \<otimes>\<^sub>a y) = ((f x) \<otimes>\<^sub>a (g y))\<close>
-        by (simp add: assms(1) assms(2) atensorOp_separation cbounded_linear.is_clinear)
+        by (simp add: assms(1) assms(2) atensorOp_separation cbounded_linear.clinear)
       thus ?thesis
         by simp 
     qed
@@ -4537,9 +4535,9 @@ proof-
         have \<open>(id \<otimes>\<^sub>A g) ( (f \<otimes>\<^sub>A id) (x \<otimes>\<^sub>a y)) = (id \<otimes>\<^sub>A g) ((f x) \<otimes>\<^sub>a (id y))\<close>
         proof-
           have \<open>clinear f\<close>
-            by (simp add: assms(1) cbounded_linear.is_clinear)
+            by (simp add: assms(1) cbounded_linear.clinear)
           moreover have \<open>clinear (id::'c \<Rightarrow> 'c)\<close>
-            by (simp add: cbounded_linear.is_clinear)
+            by (simp add: complex_vector.module_hom_id)
           ultimately have \<open>(f \<otimes>\<^sub>A (id::'c \<Rightarrow> 'c)) (x \<otimes>\<^sub>a y) = (f x) \<otimes>\<^sub>a ((id::'c \<Rightarrow> 'c) y)\<close>
             by (simp add: atensorOp_separation)                       
           thus ?thesis by auto
@@ -4549,11 +4547,11 @@ proof-
         also have \<open>\<dots> = ((id (f x)) \<otimes>\<^sub>a (g y))\<close>
         proof-
           have \<open>clinear (id::'b \<Rightarrow> 'b)\<close>
-            by (simp add: cbounded_linear.is_clinear)
+            by (simp add: complex_vector.module_hom_id)
           moreover have \<open>clinear f\<close>
-            by (simp add: assms(1) cbounded_linear.is_clinear)
+            by (simp add: assms(1) cbounded_linear.clinear)
           ultimately show ?thesis
-            by (simp add: assms(2) atensorOp_separation cbounded_linear.is_clinear) 
+            by (simp add: assms(2) atensorOp_separation cbounded_linear.clinear) 
         qed
         also have \<open>\<dots> = ((f x) \<otimes>\<^sub>a (g y))\<close>
           by simp
@@ -4568,14 +4566,14 @@ proof-
     have \<open>clinear (\<lambda> z. (((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g) \<circ> (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))) z)\<close>
     proof-
       have \<open>clinear ((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g)\<close>
-        by (simp add: assms(2) atensorOp_clinear cbounded_linear.is_clinear)                  
+        by (simp add: assms(2) atensorOp_clinear cbounded_linear.clinear complex_vector.module_hom_id)
       moreover have \<open>clinear (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))\<close>
-        by (simp add: assms(1) atensorOp_clinear cbounded_linear.is_clinear)
+        using assms(1) atensorOp_clinear cbounded_linear_def complex_vector.module_hom_id by blast
       ultimately show ?thesis
         using Complex_Vector_Spaces.linear_compose by blast
     qed
     moreover have \<open>clinear (f \<otimes>\<^sub>A g)\<close>
-      by (simp add: assms(1) assms(2) atensorOp_clinear cbounded_linear.is_clinear)        
+      by (simp add: assms(1) assms(2) atensorOp_clinear cbounded_linear.clinear)        
     ultimately have \<open>clinear (\<lambda> z. (((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g) \<circ> (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))) z - (f \<otimes>\<^sub>A g) z)\<close>
       by (simp add: complex_vector.linear_compose_sub)
     thus ?thesis unfolding F_def by blast
@@ -4648,7 +4646,8 @@ proof-
         have \<open>cbounded_linear (swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a))\<close>
           by (simp add: swap_atensor_cbounded_linear)
         hence \<open>\<exists>K. \<forall>z. norm ((swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a)) z) \<le> norm z * K\<close>
-          unfolding cbounded_linear_def by blast
+          unfolding cbounded_linear_def
+          using cbounded_linear_axioms_def by blast
         then obtain K where \<open>\<And> z. norm ((swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a)) z) \<le> norm z * K\<close>
           by blast
         have \<open>norm ((swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a)) z) \<le> norm z * (abs K)\<close>
@@ -4721,7 +4720,7 @@ lemma algebraic_tensor_product_bounded_right_onorm:
   shows \<open>onorm ((id::('a::complex_inner \<Rightarrow> _)) \<otimes>\<^sub>A f) \<le> onorm f\<close>
 proof-
   have \<open>cbounded_linear (id::('a::complex_inner \<Rightarrow> _))\<close>
-    by simp
+    by (simp add: id_cbounded_linear)
   hence \<open>swap_atensor \<circ> (f \<otimes>\<^sub>A (id::'a\<Rightarrow>'a)) \<circ> swap_atensor = (id::'a\<Rightarrow>'a) \<otimes>\<^sub>A f\<close>    
     using \<open>cbounded_linear f\<close>
     by (simp add: swap_atensor_conjugation)
@@ -4761,7 +4760,7 @@ proof-
         proof-
           have \<open>cbounded_linear (f \<otimes>\<^sub>A (id::'a\<Rightarrow>'a))\<close>
             using \<open>cbounded_linear f\<close>
-            by (simp add: algebraic_tensor_product_bounded)
+            by (simp add: \<open>cbounded_linear id\<close> algebraic_tensor_product_bounded)
           moreover have \<open>cbounded_linear (swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a))\<close>
             by (simp add: swap_atensor_cbounded_linear)
           ultimately show ?thesis by (smt \<open>cbounded_linear (f \<otimes>\<^sub>A id \<circ> swap_atensor)\<close>)
@@ -4773,7 +4772,7 @@ proof-
       moreover  have \<open>onorm ( (f \<otimes>\<^sub>A (id::'a\<Rightarrow>'a)) \<circ> swap_atensor ) \<le> onorm (f \<otimes>\<^sub>A (id::'a\<Rightarrow>'a)) * (onorm (swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a)))\<close>
         using Operator_Norm.onorm_compose[where f = "(f \<otimes>\<^sub>A (id::'a\<Rightarrow>'a))"
             and g = "swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a)"]
-        by (simp add: algebraic_tensor_product_bounded assms cbounded_linear.bounded_linear swap_atensor_cbounded_linear)     
+        by (simp add: algebraic_tensor_product_bounded_left_cbounded_linear assms(1) cbounded_linear.bounded_linear swap_atensor_cbounded_linear)
       ultimately show ?thesis 
         using mult_mono
         by (smt assms(2) assms(4) mult_cancel_right2 onorm_swap_atensor)
@@ -4799,10 +4798,10 @@ lemma algebraic_tensor_product_bounded_norm':
 proof-
   have \<open>cbounded_linear ((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g)\<close>
     using  \<open>cbounded_linear f\<close>
-    by (simp add: algebraic_tensor_product_bounded assms(2))
+    by (simp add: algebraic_tensor_product_bounded assms(2) id_cbounded_linear)
   have \<open>cbounded_linear (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))\<close>
     using \<open>cbounded_linear g\<close>
-    by (simp add: algebraic_tensor_product_bounded assms(1))
+    by (simp add: algebraic_tensor_product_bounded assms(1) id_cbounded_linear)
   have \<open>(((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g) \<circ> (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))) z = (f \<otimes>\<^sub>A g) z\<close>
     for z
     by (simp add: assms(1) assms(2) tensor_from_id_comp)
@@ -4855,7 +4854,7 @@ proof-
       have \<open>\<exists> K. \<forall> x. norm (f x) \<le> norm x * K\<close>
         using \<open>cbounded_linear f\<close>
         unfolding cbounded_linear_def
-        by blast
+        by (simp add: assms(1) cbounded_linear.bounded)
       hence \<open>\<exists> K. \<forall> x. norm (f x) \<le> norm x * K \<and> K \<ge> 0\<close>
         by (metis assms(1) bounded_linear.nonneg_bounded cbounded_linear.bounded_linear)
       then obtain K where \<open>\<And> x. norm (f x) \<le> norm x * K\<close> and \<open>K \<ge> 0\<close>
@@ -4902,7 +4901,7 @@ proof-
       have \<open>\<exists> K. \<forall> x. norm (g x) \<le> norm x * K\<close>
         using \<open>cbounded_linear g\<close>
         unfolding cbounded_linear_def
-        by blast
+        by (simp add: assms(2) bounded_linear.bounded cbounded_linear.bounded_linear)
       hence \<open>\<exists> K. \<forall> x. norm (g x) \<le> norm x * K \<and> K \<ge> 0\<close>
       proof -
         have "\<exists>r. \<forall>c. 0 \<le> r \<and> norm (g c) \<le> norm c * r"
@@ -4957,7 +4956,7 @@ proof-
           by (simp add: algebraic_tensor_product_bounded assms(1) assms(2))
         hence \<open>\<exists>K. \<forall>x. norm ((f \<otimes>\<^sub>A g) x) \<le> norm x * K\<close>
           unfolding cbounded_linear_def
-          by blast
+          using cbounded_linear_axioms_def by blast
         hence \<open>\<exists>K. \<forall>x. norm ((f \<otimes>\<^sub>A g) x) \<le> norm x * K \<and> K \<ge> 0\<close>
         proof - (* sledgehammer *)
           { fix aa :: "real \<Rightarrow> 'a \<otimes>\<^sub>a 'c"
@@ -5030,7 +5029,7 @@ proof-
       for n
     proof-
       have \<open>(f \<otimes>\<^sub>A g) ((x n)\<otimes>\<^sub>a(y n)) = (f (x n))\<otimes>\<^sub>a(g (y n))\<close>
-        by (simp add: assms(1) assms(2) atensorOp_separation cbounded_linear.is_clinear)
+        by (simp add: assms(1) assms(2) atensorOp_separation cbounded_linear.clinear)
       hence \<open>norm ((f \<otimes>\<^sub>A g) ((x n)\<otimes>\<^sub>a(y n))) = norm ((f (x n))\<otimes>\<^sub>a(g (y n)))\<close>
         by simp
       also have \<open>\<dots> = norm (f (x n)) * norm (g (y n))\<close>

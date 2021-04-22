@@ -317,18 +317,21 @@ lift_definition htensor_bounded::
    ('c::chilbert_space \<otimes>\<^sub>a 'd::chilbert_space) completion) cblinfun 
 \<Rightarrow> (('a \<otimes>\<^sub>h 'b), ('c \<otimes>\<^sub>h 'd)) cblinfun\<close> is htensor_map
 proof
-  show "clinear (htensor_map f::'a \<otimes>\<^sub>h 'b \<Rightarrow> 'c \<otimes>\<^sub>h 'd)"
-    if "cbounded_linear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
-    for f :: "('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion"
-    using that
-    by (smt cbounded_linear.is_clinear clinearI complex_vector.linear_add complex_vector.linear_scale htensor_map_def plus_htensor.abs_eq plus_htensor.rep_eq scaleC_htensor.abs_eq scaleC_htensor.rep_eq) 
+  fix f :: "('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion"
+  assume "cbounded_linear f"
+  show "htensor_map f (b1 + b2) = htensor_map f b1 + htensor_map f b2" for b1 b2
+    using \<open>cbounded_linear f\<close>
+    by (smt cbounded_linear.clinear complex_vector.linear_add htensor_map_def plus_htensor.abs_eq plus_htensor.rep_eq)
+  show \<open>htensor_map f (c *\<^sub>C b) = c *\<^sub>C htensor_map f b\<close> for c b
+    using \<open>cbounded_linear f\<close>
+    by (simp add: Complex_Vector_Spaces0.linear_cmul cbounded_linear_def htensor_map_def scaleC_htensor.abs_eq scaleC_htensor.rep_eq)
   show "\<exists>K. \<forall>x. norm (htensor_map f (x::'a \<otimes>\<^sub>h 'b)::'c \<otimes>\<^sub>h 'd) \<le> norm x * K"
     if "cbounded_linear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
     for f :: "('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion"
   proof-
     have \<open>\<exists> K. \<forall> x. norm (f x) \<le> norm x * K\<close>
       using that unfolding cbounded_linear_def
-      by simp 
+      using cbounded_linear_axioms_def by blast
     then obtain K where \<open>\<And> x. norm (f x) \<le> norm x * K\<close>
       by blast
     have \<open>norm (htensor_map f x) \<le> norm x * K\<close>

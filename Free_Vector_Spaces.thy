@@ -542,7 +542,7 @@ proof-
   hence \<open>x \<in> complex_vector.span (range inclusion_free) \<Longrightarrow> G x = (universal_free f) x\<close>
     for x
     using \<open>clinear (universal_free f)\<close> assms(1) complex_vector.module_hom_eq_on_span
-    by (metis (mono_tags, lifting) Complex_Vector_Spaces.cspan_raw_def)
+    by (metis (mono_tags, lifting) cspan_raw_def)
 
   hence \<open>G x = (universal_free f) x\<close>
     for x

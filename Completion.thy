@@ -1830,7 +1830,7 @@ proof-
     using \<open>cbounded_linear f\<close>
     by (simp add: bounded_linear_continuous)    
   moreover have \<open>f 0 = 0\<close>
-    using \<open>cbounded_linear f\<close> Complex_Vector_Spaces.complex_vector.linear_0
+    using \<open>cbounded_linear f\<close> complex_vector.linear_0
     unfolding cbounded_linear_def
     by blast
   ultimately have  \<open>(\<lambda>n. f (x n - y n)) \<longlonglongrightarrow> 0\<close>
@@ -1850,79 +1850,69 @@ lift_definition completion_map :: \<open>('a::complex_normed_vector, 'b::complex
  \<Rightarrow> ('a completion, 'b completion) cblinfun\<close>
   is completion_map'
 proof
-  show "clinear (completion_map' (F::('a, 'b) cblinfun))"
-    for F :: "('a, 'b) cblinfun"
-    unfolding clinear_def
-  proof
-    show "completion_map' F (b1 + b2) = completion_map' F b1 + completion_map' F b2"
-      for b1 :: "'a completion"
-        and b2 :: "'a completion"
-    proof transfer
-      fix F::\<open>'a\<Rightarrow>'b\<close> and b1 b2::\<open>'a completion\<close>
-      assume \<open>cbounded_linear F\<close>
-      have \<open>completion_rel (rep_completion b1) (rep_completion b1)\<close>
-        using Quotient_completion Quotient_rep_reflp by fastforce
-      moreover have \<open>completion_rel (rep_completion b2) (rep_completion b2)\<close>
-        using Quotient_completion Quotient_rep_reflp by fastforce        
-      ultimately have \<open>completion_rel (\<lambda>n. rep_completion b1 n + rep_completion b2 n) (\<lambda>n. rep_completion b1 n + rep_completion b2 n)\<close>
-        unfolding completion_rel_def apply auto
-        by (simp add: Cauchy_add)
-      hence \<open>completion_rel (\<lambda>n.  (rep_completion (b1 + b2) n))
+  fix F :: "('a, 'b) cblinfun"
+  show "completion_map' F (b1 + b2) = completion_map' F b1 + completion_map' F b2" for b1 b2
+  proof transfer
+    fix F::\<open>'a\<Rightarrow>'b\<close> and b1 b2::\<open>'a completion\<close>
+    assume \<open>cbounded_linear F\<close>
+    have \<open>completion_rel (rep_completion b1) (rep_completion b1)\<close>
+      using Quotient_completion Quotient_rep_reflp by fastforce
+    moreover have \<open>completion_rel (rep_completion b2) (rep_completion b2)\<close>
+      using Quotient_completion Quotient_rep_reflp by fastforce        
+    ultimately have \<open>completion_rel (\<lambda>n. rep_completion b1 n + rep_completion b2 n) (\<lambda>n. rep_completion b1 n + rep_completion b2 n)\<close>
+      unfolding completion_rel_def apply auto
+      by (simp add: Cauchy_add)
+    hence \<open>completion_rel (\<lambda>n.  (rep_completion (b1 + b2) n))
         (\<lambda>n. (rep_completion b1 n) +  (rep_completion b2 n))\<close>
-        unfolding plus_completion_def apply auto
-        by (simp add: Quotient3_completion rep_abs_rsp_left) 
-      hence \<open>completion_rel (\<lambda>n. F (rep_completion (b1 + b2) n))
+      unfolding plus_completion_def apply auto
+      by (simp add: Quotient3_completion rep_abs_rsp_left) 
+    hence \<open>completion_rel (\<lambda>n. F (rep_completion (b1 + b2) n))
         (\<lambda>n. F ( (rep_completion b1 n) +  (rep_completion b2 n) ))\<close>
-        using \<open>cbounded_linear F\<close> compeltion_map_well_defined 
-        by blast
-      moreover have \<open>F ( (rep_completion b1 n) +  (rep_completion b2 n) )
+      using \<open>cbounded_linear F\<close> compeltion_map_well_defined 
+      by blast
+    moreover have \<open>F ( (rep_completion b1 n) +  (rep_completion b2 n) )
           = F (rep_completion b1 n) + F (rep_completion b2 n)\<close>
-        for n
-        using  \<open>cbounded_linear F\<close> unfolding cbounded_linear_def clinear_def
-        using \<open>cbounded_linear F\<close> cbounded_linear_def complex_vector.linear_add 
-        by blast 
-      ultimately show \<open>completion_rel (\<lambda>n. F (rep_completion (b1 + b2) n))
+      for n
+      using  \<open>cbounded_linear F\<close> unfolding cbounded_linear_def clinear_def
+      using \<open>cbounded_linear F\<close> cbounded_linear_def complex_vector.linear_add 
+      by blast 
+    ultimately show \<open>completion_rel (\<lambda>n. F (rep_completion (b1 + b2) n))
         (\<lambda>n. F (rep_completion b1 n) + F (rep_completion b2 n))\<close>
-        by simp
-    qed
-    show "completion_map' F (r *\<^sub>C b) = r *\<^sub>C completion_map' F b"
-      for r :: complex
-        and b :: "'a completion"
-    proof transfer
-      fix F::\<open>'a\<Rightarrow>'b\<close> and b::\<open>'a completion\<close> and r::complex
-      assume \<open>cbounded_linear F\<close>
-      have \<open>completion_rel (rep_completion b) (rep_completion b)\<close>
-        using Quotient_completion Quotient_rep_reflp by fastforce
-      hence \<open>completion_rel (\<lambda>n. r *\<^sub>C (rep_completion b) n) (\<lambda>n. r *\<^sub>C (rep_completion b) n)\<close>
-        unfolding completion_rel_def apply auto
-        by (simp add: Cauchy_scaleC)
-      hence \<open>completion_rel (\<lambda>n.  (rep_completion (r *\<^sub>C b) n))
-        (\<lambda>n. r *\<^sub>C (rep_completion b n))\<close>
-        unfolding scaleC_completion_def apply auto
-        by (simp add: Quotient3_completion rep_abs_rsp_left)
-      hence \<open>completion_rel (\<lambda>n. F (rep_completion (r *\<^sub>C b) n))
-        (\<lambda>n. F (r *\<^sub>C (rep_completion b n)))\<close>
-        using \<open>cbounded_linear F\<close> compeltion_map_well_defined 
-        by blast
-      moreover have \<open>F ( r *\<^sub>C (rep_completion b n) )
-          = r *\<^sub>C (F (rep_completion b n)) \<close>
-        for n
-        using  \<open>cbounded_linear F\<close> unfolding cbounded_linear_def clinear_def
-        by (simp add: clinear_def complex_vector.linear_scale)        
-      ultimately show \<open>completion_rel (\<lambda>n. F (rep_completion (r *\<^sub>C b) n))
-        (\<lambda>n. r *\<^sub>C F ( (rep_completion b n)))\<close>
-        by simp
-    qed
-
+      by simp
   qed
+  show "completion_map' F (r *\<^sub>C b) = r *\<^sub>C completion_map' F b" for r b
+  proof transfer
+    fix F::\<open>'a\<Rightarrow>'b\<close> and b::\<open>'a completion\<close> and r::complex
+    assume \<open>cbounded_linear F\<close>
+    have \<open>completion_rel (rep_completion b) (rep_completion b)\<close>
+      using Quotient_completion Quotient_rep_reflp by fastforce
+    hence \<open>completion_rel (\<lambda>n. r *\<^sub>C (rep_completion b) n) (\<lambda>n. r *\<^sub>C (rep_completion b) n)\<close>
+      unfolding completion_rel_def apply auto
+      by (simp add: Cauchy_scaleC)
+    hence \<open>completion_rel (\<lambda>n.  (rep_completion (r *\<^sub>C b) n))
+        (\<lambda>n. r *\<^sub>C (rep_completion b n))\<close>
+      unfolding scaleC_completion_def apply auto
+      by (simp add: Quotient3_completion rep_abs_rsp_left)
+    hence \<open>completion_rel (\<lambda>n. F (rep_completion (r *\<^sub>C b) n))
+        (\<lambda>n. F (r *\<^sub>C (rep_completion b n)))\<close>
+      using \<open>cbounded_linear F\<close> compeltion_map_well_defined 
+      by blast
+    moreover have \<open>F ( r *\<^sub>C (rep_completion b n) )
+          = r *\<^sub>C (F (rep_completion b n)) \<close>
+      for n
+      using  \<open>cbounded_linear F\<close> unfolding cbounded_linear_def clinear_def
+      by (simp add: clinear_def complex_vector.linear_scale)        
+    ultimately show \<open>completion_rel (\<lambda>n. F (rep_completion (r *\<^sub>C b) n))
+        (\<lambda>n. r *\<^sub>C F ( (rep_completion b n)))\<close>
+      by simp
+  qed
+
   show "\<exists>K. \<forall>x. norm (completion_map' F (x::'a completion)::'b completion) \<le> norm x * K"
-    for F :: "('a, 'b) cblinfun"
   proof-
-    have \<open>cbounded_linear (cblinfun_apply F)\<close>
+    interpret cbounded_linear \<open>cblinfun_apply F\<close>
       using cblinfun_apply by auto      
-    hence \<open>\<exists> K. \<forall> x. norm ((cblinfun_apply F) x) \<le> norm x * K \<and> K > 0\<close>
-      unfolding cbounded_linear_def
-      by (smt norm_mult norm_not_less_zero vector_choose_size zero_less_mult_iff) 
+    have \<open>\<exists> K. \<forall> x. norm ((cblinfun_apply F) x) \<le> norm x * K \<and> K > 0\<close>
+      using pos_bounded by blast
     then obtain K where \<open>\<forall> x. norm ((cblinfun_apply F) x) \<le> norm x * K\<close> and \<open>K > 0\<close>
       by blast
     have \<open>Cauchy (rep_completion x)\<close>
@@ -1932,11 +1922,10 @@ proof
     hence \<open>Cauchy (\<lambda>n. norm (rep_completion x n))\<close>
       for x::\<open>'a completion\<close>
       by (simp add: Cauchy_convergent_norm)
-    have \<open>completion_rel (\<lambda>n. cblinfun_apply F (rep_completion x n)) (\<lambda>n. cblinfun_apply F (rep_completion x n))\<close>
+    have f1: \<open>completion_rel (\<lambda>n. cblinfun_apply F (rep_completion x n)) (\<lambda>n. cblinfun_apply F (rep_completion x n))\<close>
       for x
-      unfolding completion_rel_def apply auto
-       apply (simp add: \<open>cbounded_linear (cblinfun_apply F)\<close> completion_map_Cauchy)
-      unfolding Vanishes_def by auto
+      unfolding completion_rel_def apply (auto simp: Vanishes_def)
+      by (simp add: cbounded_linear_axioms completion_map_Cauchy)
     hence \<open>norm (abs_completion (\<lambda>n. cblinfun_apply F (rep_completion x n)))
           = lim (\<lambda>n. norm (cblinfun_apply F (rep_completion x n)) )\<close>
       for x
@@ -1953,8 +1942,7 @@ proof
       moreover have \<open>convergent (\<lambda>n. norm (rep_completion x n) * K)\<close>
         by (metis (no_types) Cauchy_convergent \<open>0 < K\<close> \<open>\<And>x. Cauchy (\<lambda>n. norm (rep_completion x n))\<close> convergent_mult_const_right_iff less_numeral_extra(3))
       moreover have \<open>convergent (\<lambda>n. norm (cblinfun_apply F (rep_completion x n)) )\<close>
-        using Cauchy_convergent_iff \<open>cbounded_linear (cblinfun_apply F)\<close> completion_map_Cauchy convergent_norm
-        using Cauchy_convergent_norm by blast        
+        by (metis Cauchy_convergent Cauchy_convergent_norm completion_rel_def f1)
       ultimately show ?thesis
         by (simp add: lim_leq) 
     qed
