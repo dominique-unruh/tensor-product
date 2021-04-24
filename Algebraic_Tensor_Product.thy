@@ -2260,7 +2260,7 @@ lemma g_atensor_cbilinear_cbilinear:
               apply (simp add: scaleC_add_left)
              apply (simp add: ring_class.ring_distribs(1))
             apply (simp add: ring_class.ring_distribs(2))
-           apply (simp add: cinner_right_distrib semiring_normalization_rules(1))
+           apply (simp add: cinner_add_right semiring_normalization_rules(1))
           apply (simp add: scaleC_add_right)
          apply (simp add: scaleC_add_left)
         apply (simp add: ring_class.ring_distribs(1))
@@ -2269,7 +2269,7 @@ lemma g_atensor_cbilinear_cbilinear:
      apply (simp add: scaleC_add_left)
     apply (simp add: ring_class.ring_distribs(1))
   using ring_class.ring_distribs(2) apply auto[1]
-  by (simp add: cinner_right_distrib semiring_normalization_rules(34))
+  by (simp add: cinner_add_right semiring_normalization_rules(34))
 
 lemma g_atensor_clinear_existence:
   \<open>\<exists> H::'a::complex_inner \<Rightarrow> 'b::complex_inner \<Rightarrow> 'a \<otimes>\<^sub>a 'b \<Rightarrow> complex. \<forall> x. \<forall> y.
@@ -2324,7 +2324,7 @@ proof-
     unfolding F_def
   proof -
     have "g_atensor_clinear (b1 + b2) y (p \<otimes>\<^sub>a q) = \<langle>y, q\<rangle> * (\<langle>b2, p\<rangle> + \<langle>b1, p\<rangle>)"
-      by (metis add.commute cinner_left_distrib g_atensor_clinear_cbilinear' mult.commute)      
+      by (metis add.commute cinner_add_left g_atensor_clinear_cbilinear' mult.commute)
     hence " (g_atensor_clinear (b1 + b2) y (p \<otimes>\<^sub>a q)) -   (g_atensor_clinear b1 y (p \<otimes>\<^sub>a q)) =  (g_atensor_clinear b2 y (p \<otimes>\<^sub>a q))"
       by (metis add_diff_cancel g_atensor_clinear_cbilinear' left_diff_distrib' mult.commute)
     thus " (g_atensor_clinear (b1 + b2) y (p \<otimes>\<^sub>a q)) -  (g_atensor_clinear b1 y (p \<otimes>\<^sub>a q)) -  (g_atensor_clinear b2 y (p \<otimes>\<^sub>a q)) = 0"
@@ -2431,13 +2431,9 @@ proof-
   define F where 
     \<open>F z = (g_atensor_clinear x (b1 + b2) z) -
        (g_atensor_clinear x b1 z) -
-       (g_atensor_clinear x b2 z)\<close>
-  for z
-  have \<open>F (p \<otimes>\<^sub>a q) = 0\<close>
-    for p q
-    using g_atensor_clinear_cbilinear'
-    unfolding F_def
-    by (metis (no_types, lifting) cinner_left_distrib diff_diff_add diff_self ring_class.ring_distribs(1))
+       (g_atensor_clinear x b2 z)\<close> for z
+  have \<open>F (p \<otimes>\<^sub>a q) = 0\<close> for p q
+    by (metis (no_types, lifting) F_def cancel_comm_monoid_add_class.diff_cancel cinner_add_left diff_diff_add g_atensor_clinear_cbilinear' ordered_field_class.sign_simps(36))
   hence \<open>z \<in> range (case_prod (\<otimes>\<^sub>a)) \<Longrightarrow> F z = 0\<close>
     for z
     by auto
@@ -3896,7 +3892,7 @@ lemma algebraic_tensor_product_bounded_left:
 proof-
   define K where \<open>K = onorm f\<close>
   have f_clinear: \<open>clinear (f \<otimes>\<^sub>A (id::'c \<Rightarrow> _))\<close>
-    using assms atensorOp_clinear cbounded_linear.clinear complex_vector.module_hom_id by blast
+    using assms atensorOp_clinear cbounded_linear_def complex_vector.module_hom_id by blast
   moreover have  "\<forall>z. norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) z) \<le> norm z * K"
   proof-
     have id_clinear: \<open>clinear (id::'c \<Rightarrow> _)\<close>
@@ -3959,8 +3955,7 @@ proof-
         by blast
       also have \<open>\<dots> = (\<Sum>b\<in>B. (f (\<phi> b)) \<otimes>\<^sub>a b)\<close>
       proof-
-        have \<open>(f \<otimes>\<^sub>A id) ((\<phi> b) \<otimes>\<^sub>a b) = (f (\<phi> b)) \<otimes>\<^sub>a b\<close>
-          for b
+        have \<open>(f \<otimes>\<^sub>A id) ((\<phi> b) \<otimes>\<^sub>a b) = (f (\<phi> b)) \<otimes>\<^sub>a b\<close> for b
           by (simp add: assms atensorOp_separation cbounded_linear.clinear complex_vector.module_hom_id)
         thus ?thesis by simp
       qed
@@ -3969,7 +3964,7 @@ proof-
       hence \<open>(norm ((f \<otimes>\<^sub>A id) z))^2 = (norm (\<Sum>b\<in>B. (f (\<phi> b)) \<otimes>\<^sub>a b))^2\<close>
         by simp
       also have \<open>\<dots>  = \<langle>(\<Sum>b\<in>B. (f (\<phi> b)) \<otimes>\<^sub>a b), (\<Sum>b'\<in>B. (f (\<phi> b')) \<otimes>\<^sub>a b')\<rangle>\<close>
-        using power2_norm_eq_cinner' by auto
+        by (simp add: cdot_square_norm)
       also have \<open>\<dots>  = (\<Sum>b'\<in>B. \<langle>(\<Sum>b\<in>B. (f (\<phi> b)) \<otimes>\<^sub>a b), (f (\<phi> b')) \<otimes>\<^sub>a b'\<rangle>)\<close>
         using cinner_sum_right by auto
       also have \<open>\<dots>  = (\<Sum>b'\<in>B. (\<Sum>b\<in>B. \<langle>(f (\<phi> b)) \<otimes>\<^sub>a b, (f (\<phi> b')) \<otimes>\<^sub>a b'\<rangle>))\<close>
@@ -3996,10 +3991,8 @@ proof-
             have \<open>norm b' = 1\<close>
               using \<open>b' \<in> B\<close> \<open>\<forall>b\<in>B. norm b = 1\<close>
               by blast
-            hence \<open>(norm b')^2 = 1\<close>
-              by simp
             thus ?thesis
-              by (metis of_real_1 power2_norm_eq_cinner') 
+              by (meson \<open>norm b' = 1\<close> cnorm_eq_1)
           qed
           moreover have \<open>(\<Sum>b\<in>B-{b'}. \<langle>f (\<phi> b), f (\<phi> b')\<rangle>*\<langle>b, b'\<rangle>) = 0\<close>
           proof-
@@ -4023,14 +4016,14 @@ proof-
         thus ?thesis by simp
       qed
       also have \<open>\<dots>  = (\<Sum>b\<in>B. (norm (f (\<phi> b)))^2 )\<close>
-        by (metis (mono_tags, lifting) of_real_sum power2_norm_eq_cinner' sum.cong)
+        by (metis (mono_tags, lifting) cdot_square_norm of_real_sum sum.cong)
       also have \<open>\<dots>  \<le> (\<Sum>b\<in>B. (norm (\<phi> b))^2 * K^2 )\<close>
       proof-
         have \<open>(norm (f (\<phi> b)))^2 \<le> (norm (\<phi> b))^2 * K^2\<close>
           for b
           by (metis \<open>\<And>z. norm (f z) \<le> norm z * K\<close> norm_ge_zero power_mono semiring_normalization_rules(30))          
         thus ?thesis
-          by (metis (mono_tags, lifting) \<open>(\<Sum>b'\<in>B. \<Sum>b\<in>B. \<langle>f (\<phi> b) \<otimes>\<^sub>a b, f (\<phi> b') \<otimes>\<^sub>a b'\<rangle>) = (\<Sum>b'\<in>B. \<Sum>b\<in>B. \<langle>f (\<phi> b), f (\<phi> b')\<rangle> * \<langle>b, b'\<rangle>)\<close> \<open>(\<Sum>b'\<in>B. \<Sum>b\<in>B. \<langle>f (\<phi> b), f (\<phi> b')\<rangle> * \<langle>b, b'\<rangle>) = (\<Sum>b\<in>B. \<langle>f (\<phi> b), f (\<phi> b)\<rangle>)\<close> \<open>(\<Sum>b'\<in>B. \<langle>\<Sum>b\<in>B. f (\<phi> b) \<otimes>\<^sub>a b, f (\<phi> b') \<otimes>\<^sub>a b'\<rangle>) = (\<Sum>b'\<in>B. \<Sum>b\<in>B. \<langle>f (\<phi> b) \<otimes>\<^sub>a b, f (\<phi> b') \<otimes>\<^sub>a b'\<rangle>)\<close> \<open>(\<Sum>b\<in>B. \<langle>f (\<phi> b), f (\<phi> b)\<rangle>) = complex_of_real (\<Sum>b\<in>B. (norm (f (\<phi> b)))\<^sup>2)\<close> \<open>\<langle>\<Sum>b\<in>B. f (\<phi> b) \<otimes>\<^sub>a b, \<Sum>b'\<in>B. f (\<phi> b') \<otimes>\<^sub>a b'\<rangle> = (\<Sum>b'\<in>B. \<langle>\<Sum>b\<in>B. f (\<phi> b) \<otimes>\<^sub>a b, f (\<phi> b') \<otimes>\<^sub>a b'\<rangle>)\<close> \<open>complex_of_real ((norm (\<Sum>b\<in>B. f (\<phi> b) \<otimes>\<^sub>a b))\<^sup>2) = \<langle>\<Sum>b\<in>B. f (\<phi> b) \<otimes>\<^sub>a b, \<Sum>b'\<in>B. f (\<phi> b') \<otimes>\<^sub>a b'\<rangle>\<close> complex_of_real_mono power2_norm_eq_cinner sum_norm_le) 
+          by (smt (verit, best) Re_complex_of_real \<open>(\<Sum>b\<in>B. cinner (f (\<phi> b)) (f (\<phi> b))) = complex_of_real (\<Sum>b\<in>B. (norm (f (\<phi> b)))\<^sup>2)\<close> cinner_ge_zero complex_of_real_cmod complex_of_real_mono norm_of_real power2_norm_eq_cinner' sum_norm_le)
       qed
       also have \<open>\<dots>  = (\<Sum>b\<in>B. (norm (\<phi> b))^2) * K^2\<close>
         by (simp add: sum_distrib_right)
@@ -4042,7 +4035,7 @@ proof-
             using \<open>z = (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b)\<close> 
             by simp
           also have \<open>\<dots> = \<langle>(\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b), (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b)\<rangle>\<close>
-            using power2_norm_eq_cinner' by auto
+            by (simp add: cdot_square_norm)
           also have \<open>\<dots> = (\<Sum>b\<in>B. \<langle>(\<phi> b) \<otimes>\<^sub>a b, (\<Sum>b'\<in>B. (\<phi> b') \<otimes>\<^sub>a b')\<rangle>)\<close>
             using cinner_sum_left by auto
           also have \<open>\<dots> = (\<Sum>b\<in>B. (\<Sum>b'\<in>B. \<langle>(\<phi> b) \<otimes>\<^sub>a b,  (\<phi> b') \<otimes>\<^sub>a b'\<rangle>))\<close>
@@ -4065,7 +4058,7 @@ proof-
                 hence \<open>(norm b)^2 = 1\<close>
                   by simp
                 thus ?thesis
-                  by (metis of_real_1 power2_norm_eq_cinner') 
+                  by (simp add: cdot_square_norm)
               qed
               moreover have \<open>(\<Sum>b'\<in>B-{b}. \<langle>\<phi> b, \<phi> b'\<rangle>*\<langle>b, b'\<rangle>) = 0\<close>
               proof-
@@ -4089,9 +4082,8 @@ proof-
           qed
           also have \<open>\<dots> = (\<Sum>b\<in>B. (norm (\<phi> b))^2 )\<close>
           proof-
-            have \<open>\<langle>\<phi> b, \<phi> b\<rangle> = (norm (\<phi> b))^2\<close>
-              for b
-              by (metis power2_norm_eq_cinner')
+            have \<open>\<langle>\<phi> b, \<phi> b\<rangle> = (norm (\<phi> b))^2\<close> for b
+              by (simp add: cdot_square_norm)
             hence \<open>(\<Sum>b\<in>B. \<langle>\<phi> b, \<phi> b\<rangle>) = (\<Sum>b\<in>B. complex_of_real ((norm (\<phi> b))\<^sup>2))\<close>
               by simp
             also have \<open>\<dots> = complex_of_real (\<Sum>b\<in>B. ((norm (\<phi> b))\<^sup>2))\<close>
@@ -4123,38 +4115,12 @@ proof-
   qed
   moreover have \<open>onorm (f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) \<le> onorm f\<close>
   proof-
-    have "\<forall>z. norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) z) / norm z \<le>  K"
-    proof - (* sledgehammer *)
-      { fix aa :: "'a \<otimes>\<^sub>a 'c"
-        have ff1: "\<forall>r. r \<le> K \<or> \<not> r \<le> 0"
-          by (metis (full_types) K_def assms cbounded_linear.bounded_linear dual_order.trans onorm_pos_le)
-        have ff2: "\<forall>r. (0::real) / r = 0"
-          by (metis mult_zero_left times_divide_eq_right)
-        have ff3: "\<forall>a. norm (a::'a \<otimes>\<^sub>a 'c) = 0 \<or> norm ((f \<otimes>\<^sub>A id) a) / norm a \<le> K"
-          by (metis calculation(2) linordered_field_class.divide_right_mono nonzero_mult_div_cancel_left norm_ge_zero)
-        have "norm aa = 0 \<longrightarrow> norm ((f \<otimes>\<^sub>A id) aa) \<le> 0"
-          by (metis calculation(2) mult_zero_left)
-        hence "norm ((f \<otimes>\<^sub>A id) aa) / norm aa \<le> K"
-          using ff3 ff2 ff1 by (metis (no_types) linordered_field_class.divide_right_mono norm_ge_zero) }
-      thus ?thesis
-        by meson
-    qed
+    have "\<forall>z. norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) z) / norm z \<le>  K"      
+      by (smt (verit, ccfv_SIG) K_def assms calculation(2) cbounded_linear.bounded_linear divide_le_eq norm_ge_zero onorm_pos_le ordered_field_class.sign_simps(5))
     moreover have \<open>{norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) z) / norm z| z. True} \<noteq> {}\<close>
       by auto        
     ultimately have "Sup {norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) z) / norm z| z. True} \<le> K"
-    proof - (* sledgehammer *)
-      obtain rr :: "real set \<Rightarrow> real \<Rightarrow> real" where
-        f1: "\<And>R r. (Sup R \<le> r \<or> rr R r \<in> R \<or> R = {}) \<and> (\<not> rr R r \<le> r \<or> Sup R \<le> r \<or> R = {})"
-        using cSup_least by moura
-      moreover
-      { assume "\<not> rr {r. \<exists>a. r = norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) a) / norm a} K \<le> K"
-        hence "rr {r. \<exists>a. r = norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) a) / norm a} K \<notin> {r. \<exists>a. r = norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) a) / norm a} \<and> {r. \<exists>a. r = norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) a) / norm a} \<noteq> {}"
-          using \<open>\<forall>z. norm ((f \<otimes>\<^sub>A id) z) / norm z \<le> K\<close> by force
-        hence ?thesis
-          using f1 by meson }
-      ultimately show ?thesis
-        by auto
-    qed
+        by (smt (verit, best) cSup_least mem_Collect_eq) 
     moreover have \<open>Sup {norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) z) / norm z| z. True} =  (SUP x. norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) x) / norm x)\<close>
       by (simp add: full_SetCompr_eq)        
     ultimately have "(SUP x. norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) x) / norm x) \<le> K"
@@ -4227,7 +4193,7 @@ proof-
         using \<open>swap_atensor z = (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a))\<close>
         by simp
       also have \<open>\<dots> = \<langle> (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)), (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)) \<rangle>\<close>
-        using power2_norm_eq_cinner' by auto
+        by (simp add: cdot_square_norm)
       also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. \<langle> r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a),  (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a))\<rangle> )\<close>
         by (metis (mono_tags, lifting) case_prod_conv cinner_sum_left cond_case_prod_eta)
       also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (\<Sum>(a', b')\<in>S. \<langle>r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a), r (a', b') *\<^sub>C (b' \<otimes>\<^sub>a a')\<rangle>))\<close>
@@ -4331,7 +4297,7 @@ proof-
         using \<open>z = (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b))\<close>
         by simp
       also have \<open>\<dots> = \<langle> (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b)), (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b)) \<rangle>\<close>
-        using power2_norm_eq_cinner' by auto
+        by (simp add: cdot_square_norm)
       also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. \<langle> r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b),  (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b))\<rangle> )\<close>
         by (metis (mono_tags, lifting) case_prod_conv cinner_sum_left cond_case_prod_eta)
       also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (\<Sum>(a', b')\<in>S. \<langle>r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b), r (a', b') *\<^sub>C (a' \<otimes>\<^sub>a b')\<rangle>))\<close>
@@ -4415,15 +4381,11 @@ proof-
       finally show ?thesis by simp
     qed
     ultimately show ?thesis
-      by (smt Complex_Inner_Product.norm_eq_square)
-        (* > 1 s *)
+      by (smt (verit) cnorm_le_square)
   qed
 
   have \<open>cbounded_linear (swap_atensor::(('a \<otimes>\<^sub>a 'b) \<Rightarrow> _))\<close>
-    apply standard
-    apply (simp add: clinear_additive_D swap_atensorI1)
-    apply (simp add: complex_vector.linear_scale swap_atensorI1)
-    by (metis \<open>\<And>z. norm (swap_atensor z) \<le> norm z\<close> mult.comm_neutral)
+    by (metis cbounded_linear_axioms.intro cbounded_linear_def f2 mult.commute mult.left_neutral swap_atensorI1)
   moreover have \<open>onorm (swap_atensor::(('a \<otimes>\<^sub>a 'b) \<Rightarrow> _)) \<le> 1\<close>
     using f2
     by (simp add: onorm_bound)
@@ -4494,7 +4456,6 @@ proof-
     using Complex_Vector_Spaces.comp_cbounded_linear[where A = "swap_atensor" and B = "f \<otimes>\<^sub>A id"]
     by blast
   moreover have \<open>swap_atensor \<circ> (f \<otimes>\<^sub>A (id::'a\<Rightarrow>'a)) \<circ> swap_atensor = (id::'a\<Rightarrow>'a) \<otimes>\<^sub>A f\<close>
-    using swap_atensor_conjugation
     by (simp add: swap_atensor_conjugation assms id_cbounded_linear)
   thus ?thesis
     using \<open>cbounded_linear swap_atensor\<close> calculation comp_cbounded_linear 
@@ -4537,7 +4498,7 @@ proof-
           have \<open>clinear f\<close>
             by (simp add: assms(1) cbounded_linear.clinear)
           moreover have \<open>clinear (id::'c \<Rightarrow> 'c)\<close>
-            by (simp add: complex_vector.module_hom_id)
+            using complex_vector.module_hom_id by blast
           ultimately have \<open>(f \<otimes>\<^sub>A (id::'c \<Rightarrow> 'c)) (x \<otimes>\<^sub>a y) = (f x) \<otimes>\<^sub>a ((id::'c \<Rightarrow> 'c) y)\<close>
             by (simp add: atensorOp_separation)                       
           thus ?thesis by auto
@@ -4566,9 +4527,9 @@ proof-
     have \<open>clinear (\<lambda> z. (((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g) \<circ> (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))) z)\<close>
     proof-
       have \<open>clinear ((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g)\<close>
-        by (simp add: assms(2) atensorOp_clinear cbounded_linear.clinear complex_vector.module_hom_id)
+        using assms(2) atensorOp_clinear cbounded_linear.clinear complex_vector.module_hom_id by blast
       moreover have \<open>clinear (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))\<close>
-        using assms(1) atensorOp_clinear cbounded_linear_def complex_vector.module_hom_id by blast
+        by (simp add: assms(1) atensorOp_clinear cbounded_linear.clinear complex_vector.module_hom_id)
       ultimately show ?thesis
         using Complex_Vector_Spaces.linear_compose by blast
     qed
@@ -4616,8 +4577,7 @@ qed
 
 lemma onorm_swap_atensor_leq:
   \<open>onorm (swap_atensor::('a::complex_inner \<otimes>\<^sub>a 'b::complex_inner \<Rightarrow> 'b \<otimes>\<^sub>a 'a)) \<le> 1\<close>
-  using swap_atensor_cbounded_linear'
-  by blast
+  by (simp add: swap_atensor_cbounded_linear')
 
 lemma onorm_swap_atensor:
   assumes \<open>(UNIV::'a set)\<noteq>0\<close> and \<open>(UNIV::'b set)\<noteq>0\<close>
@@ -4646,8 +4606,7 @@ proof-
         have \<open>cbounded_linear (swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a))\<close>
           by (simp add: swap_atensor_cbounded_linear)
         hence \<open>\<exists>K. \<forall>z. norm ((swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a)) z) \<le> norm z * K\<close>
-          unfolding cbounded_linear_def
-          using cbounded_linear_axioms_def by blast
+          by (simp add: cbounded_linear.bounded)
         then obtain K where \<open>\<And> z. norm ((swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a)) z) \<le> norm z * K\<close>
           by blast
         have \<open>norm ((swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a)) z) \<le> norm z * (abs K)\<close>
@@ -4760,7 +4719,7 @@ proof-
         proof-
           have \<open>cbounded_linear (f \<otimes>\<^sub>A (id::'a\<Rightarrow>'a))\<close>
             using \<open>cbounded_linear f\<close>
-            by (simp add: \<open>cbounded_linear id\<close> algebraic_tensor_product_bounded)
+            by (simp add: algebraic_tensor_product_bounded_left_cbounded_linear)
           moreover have \<open>cbounded_linear (swap_atensor::('a \<otimes>\<^sub>a 'b \<Rightarrow> 'b \<otimes>\<^sub>a 'a))\<close>
             by (simp add: swap_atensor_cbounded_linear)
           ultimately show ?thesis by (smt \<open>cbounded_linear (f \<otimes>\<^sub>A id \<circ> swap_atensor)\<close>)
@@ -4797,11 +4756,9 @@ lemma algebraic_tensor_product_bounded_norm':
   shows \<open>onorm (f \<otimes>\<^sub>A g) \<le> onorm f * onorm g\<close>
 proof-
   have \<open>cbounded_linear ((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g)\<close>
-    using  \<open>cbounded_linear f\<close>
     by (simp add: algebraic_tensor_product_bounded assms(2) id_cbounded_linear)
   have \<open>cbounded_linear (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))\<close>
-    using \<open>cbounded_linear g\<close>
-    by (simp add: algebraic_tensor_product_bounded assms(1) id_cbounded_linear)
+    by (simp add: algebraic_tensor_product_bounded_left_cbounded_linear assms(1))
   have \<open>(((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g) \<circ> (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))) z = (f \<otimes>\<^sub>A g) z\<close>
     for z
     by (simp add: assms(1) assms(2) tensor_from_id_comp)
@@ -4852,8 +4809,6 @@ proof-
     moreover have \<open>bdd_above { (norm (f x))/(norm x) | x. True }\<close>
     proof-
       have \<open>\<exists> K. \<forall> x. norm (f x) \<le> norm x * K\<close>
-        using \<open>cbounded_linear f\<close>
-        unfolding cbounded_linear_def
         by (simp add: assms(1) cbounded_linear.bounded)
       hence \<open>\<exists> K. \<forall> x. norm (f x) \<le> norm x * K \<and> K \<ge> 0\<close>
         by (metis assms(1) bounded_linear.nonneg_bounded cbounded_linear.bounded_linear)
@@ -4900,8 +4855,7 @@ proof-
     proof-
       have \<open>\<exists> K. \<forall> x. norm (g x) \<le> norm x * K\<close>
         using \<open>cbounded_linear g\<close>
-        unfolding cbounded_linear_def
-        by (simp add: assms(2) bounded_linear.bounded cbounded_linear.bounded_linear)
+        by (simp add: bounded_linear.bounded cbounded_linear.bounded_linear)
       hence \<open>\<exists> K. \<forall> x. norm (g x) \<le> norm x * K \<and> K \<ge> 0\<close>
       proof -
         have "\<exists>r. \<forall>c. 0 \<le> r \<and> norm (g c) \<le> norm c * r"
@@ -4955,25 +4909,9 @@ proof-
         have \<open>cbounded_linear (f \<otimes>\<^sub>A g)\<close>
           by (simp add: algebraic_tensor_product_bounded assms(1) assms(2))
         hence \<open>\<exists>K. \<forall>x. norm ((f \<otimes>\<^sub>A g) x) \<le> norm x * K\<close>
-          unfolding cbounded_linear_def
-          using cbounded_linear_axioms_def by blast
+          by (metis cbounded_linear.bounded_linear mult.commute onorm)
         hence \<open>\<exists>K. \<forall>x. norm ((f \<otimes>\<^sub>A g) x) \<le> norm x * K \<and> K \<ge> 0\<close>
-        proof - (* sledgehammer *)
-          { fix aa :: "real \<Rightarrow> 'a \<otimes>\<^sub>a 'c"
-            have "\<exists>r. \<forall>a. norm ((f \<otimes>\<^sub>A g) a) \<le> norm a * r"
-              by (metis \<open>\<exists>K. \<forall>x. norm ((f \<otimes>\<^sub>A g) x) \<le> norm x * K\<close>)
-            then obtain rr :: real where
-              ff1: "\<And>a. norm ((f \<otimes>\<^sub>A g) a) \<le> rr * norm a"
-              by (metis semiring_normalization_rules(7))
-            moreover
-            { assume "rr < 0 \<and> 0 \<le> norm (aa 0)"
-              hence "\<exists>r\<ge>0. norm ((f \<otimes>\<^sub>A g) (aa r)) \<le> r * norm (aa r)"
-                using ff1 by (metis (no_types) mult_zero_left order.trans real_scaleR_def scaleR_le_0_iff) }
-            ultimately have "\<exists>r. norm ((f \<otimes>\<^sub>A g) (aa r)) \<le> norm (aa r) * r \<and> 0 \<le> r"
-              by (metis (no_types) leI norm_ge_zero semiring_normalization_rules(7)) }
-          thus ?thesis
-            by (metis (full_types))
-        qed
+          by (metis (no_types, hide_lams) linear mult.commute mult_nonneg_nonpos2 mult_zero_left norm_ge_zero order.trans)
         then obtain K where \<open>\<And> x. norm ((f \<otimes>\<^sub>A g) x) \<le> norm x * K\<close> and \<open>K \<ge> 0\<close>
           by blast
         have \<open>(norm ((f \<otimes>\<^sub>A g) t))/(norm t) \<le> K\<close>

@@ -1437,13 +1437,11 @@ proof-
       by blast
     hence \<open>M \<ge> 0\<close>
       using dual_order.trans norm_imp_pos_and_ge by blast        
-    have \<open>norm \<langle>f1 n - f2 n, f3 n\<rangle> \<le> norm (f1 n - f2 n) * norm (f3 n)\<close>
-      for n
-      by (simp add: complex_inner_class.norm_cauchy_schwarz)
-    hence \<open>norm \<langle>f1 n - f2 n, f3 n\<rangle> \<le> norm (f1 n - f2 n) * M\<close>
-      for n
+    have \<open>norm \<langle>f1 n - f2 n, f3 n\<rangle> \<le> norm (f1 n - f2 n) * norm (f3 n)\<close> for n
+      by (simp add: complex_inner_class.Cauchy_Schwarz_ineq2)
+    hence \<open>norm \<langle>f1 n - f2 n, f3 n\<rangle> \<le> norm (f1 n - f2 n) * M\<close> for n
       using \<open>\<forall> n. norm (f3 n) \<le> M\<close>
-      by (metis complex_inner_class.norm_cauchy_schwarz dual_order.trans mult.commute mult_right_mono norm_ge_zero)
+      by (meson dual_order.trans mult_left_mono norm_ge_zero)
     moreover have \<open>(\<lambda> n. norm (f1 n - f2 n) * M) \<longlonglongrightarrow> 0\<close>
     proof-
       have \<open>(\<lambda> n. f1 n - f2 n) \<longlonglongrightarrow> 0\<close>
@@ -1490,13 +1488,11 @@ proof-
       by blast
     hence \<open>M \<ge> 0\<close>
       using dual_order.trans norm_imp_pos_and_ge by blast        
-    have \<open>norm \<langle>f1 n - f2 n, f3 n\<rangle> \<le> norm (f1 n - f2 n) * norm (f3 n)\<close>
-      for n
-      by (simp add: complex_inner_class.norm_cauchy_schwarz)
-    hence \<open>norm \<langle>f2 n, f3 n - f4 n\<rangle> \<le> M * norm (f3 n - f4 n)\<close>
-      for n
+    have \<open>norm \<langle>f1 n - f2 n, f3 n\<rangle> \<le> norm (f1 n - f2 n) * norm (f3 n)\<close> for n
+      by (simp add: complex_inner_class.Cauchy_Schwarz_ineq2)
+    hence \<open>norm \<langle>f2 n, f3 n - f4 n\<rangle> \<le> M * norm (f3 n - f4 n)\<close> for n
       using \<open>\<forall> n. norm (f2 n) \<le> M\<close>
-      by (metis complex_inner_class.norm_cauchy_schwarz dual_order.trans mult.commute mult_right_mono norm_ge_zero)
+      by (meson complex_inner_class.Cauchy_Schwarz_ineq2 dual_order.trans mult_right_mono norm_ge_zero)
     moreover have \<open>(\<lambda> n. M * norm (f3 n - f4 n)) \<longlonglongrightarrow> 0\<close>
     proof-
       have \<open>(\<lambda> n. f3 n - f4 n) \<longlonglongrightarrow> 0\<close>
@@ -1541,9 +1537,9 @@ qed
 
 instance
 proof
+  fix x y z :: "'a completion"
+  fix r :: complex
   show "\<langle>x::'a completion, y\<rangle> = cnj \<langle>y, x\<rangle>"
-    for x :: "'a completion"
-      and y :: "'a completion"
     apply transfer
     unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto
@@ -1573,10 +1569,7 @@ proof
     ultimately show \<open>lim (\<lambda>n. \<langle>x n, y n\<rangle>) = cnj (lim (\<lambda>n. \<langle>y n, x n\<rangle>))\<close>
       by simp
   qed
-  show "\<langle>(x::'a completion) + y, z\<rangle> = \<langle>x, z\<rangle> + \<langle>y, z\<rangle>"
-    for x :: "'a completion"
-      and y :: "'a completion"
-      and z :: "'a completion"
+  show "\<langle>x + y, z\<rangle> = \<langle>x, z\<rangle> + \<langle>y, z\<rangle>"
     apply transfer
     unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto
@@ -1585,7 +1578,7 @@ proof
     assume \<open>Cauchy y\<close> and \<open>Cauchy z\<close> and \<open>Cauchy x\<close> 
     have \<open>\<langle>x n + y n, z n\<rangle> = \<langle>x n, z n\<rangle> + \<langle>y n, z n\<rangle>\<close>
       for n
-      by (simp add: cinner_left_distrib)
+      by (simp add: cinner_add_left)
     have \<open>convergent (\<lambda>n. \<langle>x n, z n\<rangle>)\<close>
       using \<open>Cauchy x\<close> \<open>Cauchy z\<close>
       by (simp add: Cauchy_cinner_convergent)
@@ -1600,10 +1593,7 @@ proof
     ultimately show \<open>lim (\<lambda>n. \<langle>x n + y n, z n\<rangle>) = lim (\<lambda>n. \<langle>x n, z n\<rangle>) + lim (\<lambda>n. \<langle>y n, z n\<rangle>)\<close>
       by auto
   qed
-  show "\<langle>r *\<^sub>C (x::'a completion), y\<rangle> = cnj r * \<langle>x, y\<rangle>"
-    for r :: complex
-      and x :: "'a completion"
-      and y :: "'a completion"
+  show "\<langle>r *\<^sub>C x, y\<rangle> = cnj r * \<langle>x, y\<rangle>"
     apply transfer
     unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto
@@ -1617,8 +1607,7 @@ proof
       by simp
   qed
 
-  show "0 \<le> \<langle>x::'a completion, x\<rangle>"
-    for x :: "'a completion"
+  show "0 \<le> \<langle>x, x\<rangle>"
 (*     apply transfer
     unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto *)
@@ -1656,8 +1645,7 @@ proof
       by (simp add: \<open>0 \<le> lim (\<lambda>n. Re \<langle>x n, x n\<rangle>)\<close>)
   qed
 
-  show "(\<langle>x::'a completion, x\<rangle> = 0) = (x = 0)"
-    for x :: "'a completion"
+  show "(\<langle>x, x\<rangle> = 0) \<longleftrightarrow> (x = 0)"
     apply transfer unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto
     using convergent_Cauchy convergent_const apply auto[1]
@@ -1680,7 +1668,7 @@ proof
       hence \<open>\<forall>\<^sub>F n in sequentially. (norm \<langle> x n,  x n \<rangle>) < e^2\<close>
         by simp
       hence \<open>\<forall>\<^sub>F n in sequentially. sqrt (norm \<langle> x n,  x n \<rangle>) < e\<close>
-        by (smt eventually_elim2 norm_eq_sqrt_cinner power2_norm_eq_cinner power_less_imp_less_base that(3))      
+        using eventually_elim2 real_less_lsqrt that(3) by force
       hence \<open>\<forall>\<^sub>F n in sequentially. norm (x n)  < e\<close>
         by (metis (mono_tags, lifting) eventually_mono norm_eq_sqrt_cinner)      
       thus ?thesis using dist_norm
@@ -1691,10 +1679,9 @@ proof
         and "Cauchy (\<lambda>n. 0::'a)"
         and "x \<longlonglongrightarrow> (0::'a)"
       for x :: "nat \<Rightarrow> 'a"
-      using tendsto_cinner0 LIMSEQ_imp_Cauchy that(3) by blast 
+      using tendsto_cinner limI that(3) by fastforce
   qed
-  show "norm (x::'a completion) = sqrt (norm \<langle>x, x\<rangle>)"
-    for x :: "'a completion"
+  show "norm x = sqrt (norm \<langle>x, x\<rangle>)"
     apply transfer unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto
   proof-
@@ -1850,8 +1837,10 @@ lift_definition completion_map :: \<open>('a::complex_normed_vector, 'b::complex
  \<Rightarrow> ('a completion, 'b completion) cblinfun\<close>
   is completion_map'
 proof
-  fix F :: "('a, 'b) cblinfun"
-  show "completion_map' F (b1 + b2) = completion_map' F b1 + completion_map' F b2" for b1 b2
+  fix F :: "'a \<Rightarrow>\<^sub>C\<^sub>L 'b"
+  fix b b1 b2 :: "'a completion"
+  fix r :: complex
+  show "completion_map' F (b1 + b2) = completion_map' F b1 + completion_map' F b2"
   proof transfer
     fix F::\<open>'a\<Rightarrow>'b\<close> and b1 b2::\<open>'a completion\<close>
     assume \<open>cbounded_linear F\<close>
@@ -1880,7 +1869,7 @@ proof
         (\<lambda>n. F (rep_completion b1 n) + F (rep_completion b2 n))\<close>
       by simp
   qed
-  show "completion_map' F (r *\<^sub>C b) = r *\<^sub>C completion_map' F b" for r b
+  show "completion_map' F (r *\<^sub>C b) = r *\<^sub>C completion_map' F b"
   proof transfer
     fix F::\<open>'a\<Rightarrow>'b\<close> and b::\<open>'a completion\<close> and r::complex
     assume \<open>cbounded_linear F\<close>
@@ -2033,7 +2022,7 @@ proof
 qed
 
 lemma inclusion_completion_isometry:
-\<open>dist (inclusion_completion x) (inclusion_completion y) = dist x y\<close>
+  \<open>dist (inclusion_completion x) (inclusion_completion y) = dist x y\<close>
   using dist_norm[where x = "x" and y = "y"]  
   apply transfer
   by simp 

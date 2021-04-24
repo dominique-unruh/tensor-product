@@ -22,7 +22,7 @@ qed
 
 lemma [simp]: "norm \<psi>=1 \<Longrightarrow> isometry (addState \<psi>)"
   unfolding isometry_def 
-  by (simp add: cinner_norm_sq)
+  by (simp add: cnorm_eq_1)
 
 lemma ket_product: "ket (a,b) = ket a \<otimes> ket b"
   sorry

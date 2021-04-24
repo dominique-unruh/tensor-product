@@ -23,7 +23,7 @@ section \<open>Hilbert tensor product\<close>
 text\<open>Hilbert tensor product as defined in @{cite Helemskii} chapter 2, section 8\<close>
 typedef (overloaded) ('a::chilbert_space, 'b::chilbert_space) htensor
   = \<open>(UNIV::(('a \<otimes>\<^sub>a 'b) completion) set)\<close>
-  by auto
+  ..
 
 setup_lifting type_definition_htensor
 
@@ -150,7 +150,7 @@ proof
     for x :: "'a \<otimes>\<^sub>h 'b"
       and y :: "'a \<otimes>\<^sub>h 'b"
       and z :: "'a \<otimes>\<^sub>h 'b"
-    by (simp add: Tensor_Product.cinner_htensor.rep_eq Tensor_Product.plus_htensor.rep_eq cinner_left_distrib)
+    by (simp add: Tensor_Product.cinner_htensor.rep_eq Tensor_Product.plus_htensor.rep_eq cinner_add_left)
 
   show "\<langle>r *\<^sub>C (x::'a \<otimes>\<^sub>h 'b), y\<rangle> = cnj r * \<langle>x, y\<rangle>"
     for r :: complex
@@ -306,10 +306,11 @@ text \<open>Theorem 1, page 189 in @{cite Helemskii}\<close>
 
 *)
 
+(* TODO: define using lift_definition (?) *)
 definition htensor_map::
   \<open>(('a::chilbert_space \<otimes>\<^sub>a 'b::chilbert_space) completion 
-\<Rightarrow> ('c::chilbert_space \<otimes>\<^sub>a 'd::chilbert_space) completion) 
-\<Rightarrow> (('a \<otimes>\<^sub>h 'b) \<Rightarrow> ('c \<otimes>\<^sub>h 'd))\<close> where
+      \<Rightarrow> ('c::chilbert_space \<otimes>\<^sub>a 'd::chilbert_space) completion) 
+    \<Rightarrow> (('a \<otimes>\<^sub>h 'b) \<Rightarrow> ('c \<otimes>\<^sub>h 'd))\<close> where
   \<open>htensor_map f z = Abs_htensor (f (Rep_htensor z))\<close>
 
 lift_definition htensor_bounded::
@@ -318,28 +319,17 @@ lift_definition htensor_bounded::
 \<Rightarrow> (('a \<otimes>\<^sub>h 'b), ('c \<otimes>\<^sub>h 'd)) cblinfun\<close> is htensor_map
 proof
   fix f :: "('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion"
+  fix r :: complex and b b1 b2 :: \<open>'a \<otimes>\<^sub>h 'b\<close>
   assume "cbounded_linear f"
-  show "htensor_map f (b1 + b2) = htensor_map f b1 + htensor_map f b2" for b1 b2
-    using \<open>cbounded_linear f\<close>
-    by (smt cbounded_linear.clinear complex_vector.linear_add htensor_map_def plus_htensor.abs_eq plus_htensor.rep_eq)
-  show \<open>htensor_map f (c *\<^sub>C b) = c *\<^sub>C htensor_map f b\<close> for c b
-    using \<open>cbounded_linear f\<close>
-    by (simp add: clinear_cmul cbounded_linear_def htensor_map_def 
-                  complex_vector.linear_scale scaleC_htensor.abs_eq scaleC_htensor.rep_eq)
+  show \<open>htensor_map f (r *\<^sub>C b) = r *\<^sub>C htensor_map f b\<close>
+    unfolding htensor_map_def apply (transfer fixing: f)
+    using \<open>cbounded_linear f\<close> by (simp add: cbounded_linear.clinear complex_vector.linear_scale)
+  show \<open>htensor_map f (b1 + b2) = htensor_map f b1 + htensor_map f b2\<close>
+    unfolding htensor_map_def apply (transfer fixing: f)
+    using \<open>cbounded_linear f\<close> cbounded_linear_def clinear_additive_D by blast
   show "\<exists>K. \<forall>x. norm (htensor_map f (x::'a \<otimes>\<^sub>h 'b)::'c \<otimes>\<^sub>h 'd) \<le> norm x * K"
     if "cbounded_linear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
-    for f :: "('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion"
-  proof-
-    have \<open>\<exists> K. \<forall> x. norm (f x) \<le> norm x * K\<close>
-      using that unfolding cbounded_linear_def
-      using cbounded_linear_axioms_def by blast
-    then obtain K where \<open>\<And> x. norm (f x) \<le> norm x * K\<close>
-      by blast
-    have \<open>norm (htensor_map f x) \<le> norm x * K\<close>
-      for x::\<open>'a \<otimes>\<^sub>h 'b\<close>
-      by (metis \<open>\<And>x. norm (f x) \<le> norm x * K\<close> htensor_map_def norm_htensor.abs_eq norm_htensor.rep_eq)      
-    thus ?thesis by blast
-  qed
+    by (metis (no_types, hide_lams) cbounded_linear.bounded htensor_map_def norm_htensor.abs_eq norm_htensor.rep_eq that)
 qed
 
 
