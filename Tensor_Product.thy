@@ -320,16 +320,16 @@ lift_definition htensor_bounded::
 proof
   fix f :: "('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion"
   fix r :: complex and b b1 b2 :: \<open>'a \<otimes>\<^sub>h 'b\<close>
-  assume "cbounded_linear f"
+  assume "bounded_clinear f"
   show \<open>htensor_map f (r *\<^sub>C b) = r *\<^sub>C htensor_map f b\<close>
     unfolding htensor_map_def apply (transfer fixing: f)
-    using \<open>cbounded_linear f\<close> by (simp add: cbounded_linear.clinear complex_vector.linear_scale)
+    using \<open>bounded_clinear f\<close> by (simp add: bounded_clinear.clinear complex_vector.linear_scale)
   show \<open>htensor_map f (b1 + b2) = htensor_map f b1 + htensor_map f b2\<close>
     unfolding htensor_map_def apply (transfer fixing: f)
-    using \<open>cbounded_linear f\<close> cbounded_linear_def clinear_additive_D by blast
+    using \<open>bounded_clinear f\<close> bounded_clinear_def complex_vector.linear_add by blast
   show "\<exists>K. \<forall>x. norm (htensor_map f (x::'a \<otimes>\<^sub>h 'b)::'c \<otimes>\<^sub>h 'd) \<le> norm x * K"
-    if "cbounded_linear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
-    by (metis (no_types, hide_lams) cbounded_linear.bounded htensor_map_def norm_htensor.abs_eq norm_htensor.rep_eq that)
+    if "bounded_clinear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
+    by (metis (no_types, hide_lams) bounded_clinear.bounded htensor_map_def norm_htensor.abs_eq norm_htensor.rep_eq that)
 qed
 
 
@@ -475,7 +475,7 @@ lemma tensor_times[simp]: "(U1 \<otimes> U2) o\<^sub>C\<^sub>L (V1 \<otimes> V2)
 
 lift_definition addState :: "'a ell2 \<Rightarrow> ('b ell2,('b*'a) ell2) cblinfun" is
   \<open>\<lambda>\<psi> \<phi>. tensorVec \<phi> \<psi>\<close>
-  apply (rule_tac K="norm ell2" in cbounded_linear_intro)
+  apply (rule_tac K="norm ell2" in bounded_clinear_intro)
   by (auto simp: tensor_norm_ell2 tensor_plus_ell2)
 
 
