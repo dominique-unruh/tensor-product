@@ -418,7 +418,7 @@ lift_definition "tensorVec" :: "'a ell2 \<Rightarrow> 'c ell2 \<Rightarrow> ('a*
   "\<lambda>\<psi> \<phi> (x,y). \<psi> x * \<phi> y"
   sorry
 
-definition tensorSpace :: "'a ell2 clinear_space \<Rightarrow> 'b ell2 clinear_space \<Rightarrow> ('a*'b) ell2 clinear_space" where
+definition tensorSpace :: "'a ell2 ccsubspace \<Rightarrow> 'b ell2 ccsubspace \<Rightarrow> ('a*'b) ell2 ccsubspace" where
   "tensorSpace A B = Span {tensorVec \<psi> \<phi>| \<psi> \<phi>. \<psi> \<in> space_as_set A \<and> \<phi> \<in> space_as_set B}"
 
 consts tensor :: "'a \<Rightarrow> 'b \<Rightarrow> 'c" (infixr "\<otimes>" 71)
