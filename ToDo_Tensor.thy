@@ -47,7 +47,7 @@ lemma assoc_op_adj_apply_tensor[simp]:
   shows "assoc_op* *\<^sub>V ((\<psi>\<otimes>\<phi>)\<otimes>\<tau>) = \<psi>\<otimes>(\<phi>\<otimes>\<tau>)"
   sorry
 
-lemma span_tensor: "Span G \<otimes> Span H = Span {g\<otimes>h|g h. g\<in>G \<and> h\<in>H}"
+lemma span_tensor: "ccspan G \<otimes> ccspan H = ccspan {g\<otimes>h|g h. g\<in>G \<and> h\<in>H}"
   sorry
 
 lemma span_tensors:

@@ -4457,7 +4457,7 @@ proof-
     using Complex_Vector_Spaces.comp_bounded_clinear[where A = "swap_atensor" and B = "f \<otimes>\<^sub>A id"]
     by blast
   moreover have \<open>swap_atensor \<circ> (f \<otimes>\<^sub>A (id::'a\<Rightarrow>'a)) \<circ> swap_atensor = (id::'a\<Rightarrow>'a) \<otimes>\<^sub>A f\<close>
-    by (simp add: swap_atensor_conjugation assms id_bounded_clinear)
+    by (simp add: swap_atensor_conjugation assms bounded_clinear_id)
   thus ?thesis
     using \<open>bounded_clinear swap_atensor\<close> calculation comp_bounded_clinear 
     by fastforce 
@@ -4680,7 +4680,7 @@ lemma algebraic_tensor_product_bounded_right_onorm:
   shows \<open>onorm ((id::('a::complex_inner \<Rightarrow> _)) \<otimes>\<^sub>A f) \<le> onorm f\<close>
 proof-
   have \<open>bounded_clinear (id::('a::complex_inner \<Rightarrow> _))\<close>
-    by (simp add: id_bounded_clinear)
+    by (simp add: bounded_clinear_id)
   hence \<open>swap_atensor \<circ> (f \<otimes>\<^sub>A (id::'a\<Rightarrow>'a)) \<circ> swap_atensor = (id::'a\<Rightarrow>'a) \<otimes>\<^sub>A f\<close>    
     using \<open>bounded_clinear f\<close>
     by (simp add: swap_atensor_conjugation)
@@ -4757,7 +4757,7 @@ lemma algebraic_tensor_product_bounded_norm':
   shows \<open>onorm (f \<otimes>\<^sub>A g) \<le> onorm f * onorm g\<close>
 proof-
   have \<open>bounded_clinear ((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g)\<close>
-    by (simp add: algebraic_tensor_product_bounded assms(2) id_bounded_clinear)
+    by (simp add: algebraic_tensor_product_bounded assms(2) bounded_clinear_id)
   have \<open>bounded_clinear (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))\<close>
     by (simp add: algebraic_tensor_product_bounded_left_bounded_clinear assms(1))
   have \<open>(((id::'b\<Rightarrow>'b) \<otimes>\<^sub>A g) \<circ> (f \<otimes>\<^sub>A (id::'c \<Rightarrow>'c))) z = (f \<otimes>\<^sub>A g) z\<close>

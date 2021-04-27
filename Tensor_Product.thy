@@ -419,7 +419,7 @@ lift_definition "tensorVec" :: "'a ell2 \<Rightarrow> 'c ell2 \<Rightarrow> ('a*
   sorry
 
 definition tensorSpace :: "'a ell2 ccsubspace \<Rightarrow> 'b ell2 ccsubspace \<Rightarrow> ('a*'b) ell2 ccsubspace" where
-  "tensorSpace A B = Span {tensorVec \<psi> \<phi>| \<psi> \<phi>. \<psi> \<in> space_as_set A \<and> \<phi> \<in> space_as_set B}"
+  "tensorSpace A B = ccspan {tensorVec \<psi> \<phi>| \<psi> \<phi>. \<psi> \<in> space_as_set A \<and> \<phi> \<in> space_as_set B}"
 
 consts tensor :: "'a \<Rightarrow> 'b \<Rightarrow> 'c" (infixr "\<otimes>" 71)
 adhoc_overloading tensor tensorOp tensorSpace tensorVec

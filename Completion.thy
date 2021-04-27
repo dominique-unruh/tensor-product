@@ -1861,7 +1861,7 @@ proof-
   assume \<open>bounded_clinear f\<close> and \<open>Cauchy x\<close> and \<open>Cauchy y\<close> and \<open>(\<lambda>n. x n - y n) \<longlonglongrightarrow> 0\<close>
   have \<open>isCont f 0\<close>
     using \<open>bounded_clinear f\<close>
-    by (simp add: bounded_linear_continuous)    
+    by (simp add: clinear_continuous_at)    
   moreover have \<open>f 0 = 0\<close>
     using \<open>bounded_clinear f\<close> complex_vector.linear_0
     unfolding bounded_clinear_def
