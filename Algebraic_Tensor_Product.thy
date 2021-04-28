@@ -557,8 +557,8 @@ lemma atensor_reduction_right':
   shows \<open>\<exists>\<psi>. \<exists>s\<in>V. x = (\<Sum>u\<in>V-{s}. (\<psi> u) \<otimes>\<^sub>a u)\<close>
 proof-
   have \<open>\<exists> f. \<exists> s\<in>V. s = (\<Sum>v\<in>V-{s}. f v *\<^sub>C v)\<close>
-    using \<open>finite V\<close> \<open>complex_vector.dependent V\<close> complex_dependent_isolation
-    by blast
+    using \<open>finite V\<close> \<open>complex_vector.dependent V\<close> (* complex_dependent_isolation *)
+    (* by blast *) sorry
   then obtain s and f where \<open>s \<in> V\<close> \<open>s = (\<Sum>v\<in>V-{s}. f v *\<^sub>C v)\<close>
     by blast
   define \<psi> where \<open>\<psi> v = (f v *\<^sub>C (\<phi> s)) + (\<phi> v)\<close> for v
@@ -1652,7 +1652,7 @@ lemma tensor_Kronecker_delta':
 proof-
   have \<open>\<exists> h::_\<Rightarrow>_\<Rightarrow>complex. cbilinear h \<and> (h u v = 1) \<and>
     (\<forall>x\<in>A. \<forall>y\<in>B. (x,y) \<noteq> (u,v) \<longrightarrow> h x y = 0)\<close>
-    using assms(1) assms(2) assms(3) assms(4) bilinear_Kronecker_delta by blast
+    (* using assms(1) assms(2) assms(3) assms(4) bilinear_Kronecker_delta by blast *) sorry
   then obtain h::\<open>_\<Rightarrow>_\<Rightarrow>complex\<close> where \<open>cbilinear h\<close> and \<open>h u v = 1\<close> and
     \<open>\<forall>x\<in>A. \<forall>y\<in>B. (x,y) \<noteq> (u,v) \<longrightarrow> h x y = 0\<close>
     by blast
@@ -1687,7 +1687,7 @@ lemma tensor_Kronecker_delta:
 proof-
   have \<open>\<exists> h::_\<Rightarrow>_\<Rightarrow>complex. cbilinear h \<and> (h u v = 1) \<and>
     (\<forall>x\<in>A. \<forall>y\<in>B. (x,y) \<noteq> (u,v) \<longrightarrow> h x y = 0)\<close>
-    using assms(1) assms(2) assms(3) assms(4) bilinear_Kronecker_delta by blast
+    (* using assms(1) assms(2) assms(3) assms(4) bilinear_Kronecker_delta by blast *) sorry
   then obtain h::\<open>_\<Rightarrow>_\<Rightarrow>complex\<close> where \<open>cbilinear h\<close> and \<open>h u v = 1\<close> and
     \<open>\<forall>x\<in>A. \<forall>y\<in>B. (x,y) \<noteq> (u,v) \<longrightarrow> h x y = 0\<close>
     by blast
@@ -3507,7 +3507,7 @@ proof-
   have \<open>z \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
     by (simp add: atensor_onto)
   hence \<open>\<exists> W. finite W \<and> W \<subseteq> (range (case_prod (\<otimes>\<^sub>a))) \<and> z \<in> complex_vector.span W\<close>
-    using Complex_Vector_Spaces.span_finite by blast
+    using Complex_Vector_Spaces.vector_finitely_spanned by blast
   then obtain W where \<open>finite W\<close> and \<open>W \<subseteq> (range (case_prod (\<otimes>\<^sub>a)))\<close> and 
     \<open>z \<in> complex_vector.span W\<close> by blast
   from \<open>W \<subseteq> (range (case_prod (\<otimes>\<^sub>a)))\<close>
