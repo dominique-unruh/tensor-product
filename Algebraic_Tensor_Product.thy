@@ -3495,7 +3495,7 @@ proof-
   have \<open>\<langle> a\<otimes>\<^sub>ab, c\<otimes>\<^sub>ad \<rangle> = 0\<close>
     by (meson assms atensor_norm_ortho_left atensor_norm_ortho_right)
   thus ?thesis
-    by (simp add: PythagoreanId) 
+    by (simp add: pythagorean_theorem) 
 qed
 
 
