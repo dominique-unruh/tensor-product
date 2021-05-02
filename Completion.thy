@@ -1329,7 +1329,8 @@ lift_definition scaleC_completion :: \<open>complex \<Rightarrow> 'a completion 
       moreover have \<open>(\<lambda>n. r) \<longlonglongrightarrow> r\<close>
         by simp
       ultimately have \<open>(\<lambda>n. r *\<^sub>C (f1 n - f2 n)) \<longlonglongrightarrow> r *\<^sub>C 0\<close>
-        using isCont_scaleC isCont_tendsto_compose by blast
+        using isCont_scaleC isCont_tendsto_compose 
+        sorry
       moreover have \<open>r *\<^sub>C (f1 n - f2 n) = r *\<^sub>C f1 n - r *\<^sub>C f2 n\<close>
         for n
         by (simp add: complex_vector.scale_right_diff_distrib)

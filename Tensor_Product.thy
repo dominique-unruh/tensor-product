@@ -430,7 +430,7 @@ lemma idOp_tensor_idOp[simp]: "idOp\<otimes>idOp = idOp"
 definition "comm_op" :: "(('a*'b) ell2, ('b*'a) ell2) cblinfun" where
   "comm_op = classical_operator (\<lambda>(a,b). Some (b,a))"
 
-lemma adj_comm_op[simp]: "adjoint comm_op = comm_op"
+lemma adj_comm_op[simp]: "adj comm_op = comm_op"
   sorry
 
 lemma
@@ -479,7 +479,7 @@ lift_definition addState :: "'a ell2 \<Rightarrow> ('b ell2,('b*'a) ell2) cblinf
   by (auto simp: tensor_norm_ell2 tensor_plus_ell2)
 
 
-(* TODO: this is simply the adjoint of addState (1::unit ell2), and addState y is best defined as x \<rightarrow> x \<otimes> y (lifted).
+(* TODO: this is simply the adj of addState (1::unit ell2), and addState y is best defined as x \<rightarrow> x \<otimes> y (lifted).
    Do we even use remove_qvar_unit_op then? *)
 consts remove_qvar_unit_op :: "(('a*unit) ell2,'a ell2) cblinfun"
 
@@ -491,7 +491,7 @@ lemma addState_times_scalar[simp]: "addState (a *\<^sub>C \<psi>) = a *\<^sub>C 
   for a::complex and \<psi>::"'a ell2"
   sorry
 
-lemma tensor_adjoint[simp]: "adjoint (U\<otimes>V) = (adjoint U) \<otimes> (adjoint V)"
+lemma tensor_adjoint[simp]: "adj (U\<otimes>V) = (adj U) \<otimes> (adj V)"
   for U :: "('a,'b) l2bounded" and V :: "('c,'d) l2bounded"
   sorry
 
