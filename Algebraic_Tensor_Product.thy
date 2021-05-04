@@ -24,7 +24,7 @@ definition atensor_kernel_generator::\<open>( (('a::complex_vector) \<times> ('b
 \<union> { inclusion_free ((c *\<^sub>C x), y) -  c *\<^sub>C inclusion_free (x, y) |  x y c. True}\<close>
 
 definition atensor_kernel::\<open>( (('a::complex_vector) \<times> ('b::complex_vector)) free ) set\<close> where
-  \<open>atensor_kernel = complex_vector.span atensor_kernel_generator\<close>
+  \<open>atensor_kernel = cspan atensor_kernel_generator\<close>
 
 lemma subspace_atensor_kernel:
   \<open>complex_vector.subspace atensor_kernel\<close>
@@ -354,7 +354,7 @@ proof(transfer, unfold atensor_rel_def atensor_kernel_def)
     unfolding atensor_kernel_generator_def
     by simp
   thus \<open>inclusion_free (y + z, x) - (inclusion_free (y, x) + inclusion_free (z, x))
-       \<in> complex_vector.span atensor_kernel_generator\<close>
+       \<in> cspan atensor_kernel_generator\<close>
     by (simp add: complex_vector.span_base atensor_kernel_generator_def)
 qed
 
@@ -385,7 +385,7 @@ proof(transfer, unfold atensor_rel_def atensor_kernel_def)
     unfolding atensor_kernel_generator_def
     by simp
   thus \<open>inclusion_free (x, c *\<^sub>C y) - c *\<^sub>C inclusion_free (x, y)
-       \<in> complex_vector.span atensor_kernel_generator\<close>
+       \<in> cspan atensor_kernel_generator\<close>
     by (simp add: complex_vector.span_base atensor_kernel_generator_def)
 qed
 
@@ -530,14 +530,14 @@ qed
 
 
 lemma atensor_onto:
-  \<open>complex_vector.span ( range (case_prod (\<otimes>\<^sub>a)) )
+  \<open>cspan ( range (case_prod (\<otimes>\<^sub>a)) )
  = ( UNIV::(('a::complex_vector \<otimes>\<^sub>a 'b::complex_vector) set) )\<close>
 proof
-  show "complex_vector.span (range (case_prod (\<otimes>\<^sub>a))) \<subseteq> UNIV"
+  show "cspan (range (case_prod (\<otimes>\<^sub>a))) \<subseteq> UNIV"
     by simp    
-  show "(UNIV::('a \<otimes>\<^sub>a 'b) set) \<subseteq> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))"
+  show "(UNIV::('a \<otimes>\<^sub>a 'b) set) \<subseteq> cspan (range (case_prod (\<otimes>\<^sub>a)))"
   proof
-    show "x \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))"
+    show "x \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))"
       for x :: "'a \<otimes>\<^sub>a 'b"
     proof-
       have \<open>\<exists> R g. finite R \<and> (\<forall> z\<in>R. g z \<noteq> 0) \<and> x = (\<Sum>z\<in>R.  (g z) *\<^sub>C (case_prod (\<otimes>\<^sub>a)) z)\<close>
@@ -717,8 +717,8 @@ qed
 
 lemma span_tensor_span:
   fixes A::\<open>'a::complex_vector set\<close> and  B::\<open>'b::complex_vector set\<close>
-  assumes \<open>u \<in> complex_vector.span A\<close> and \<open>v \<in> complex_vector.span B\<close>
-  shows \<open>u \<otimes>\<^sub>a v \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
+  assumes \<open>u \<in> cspan A\<close> and \<open>v \<in> cspan B\<close>
+  shows \<open>u \<otimes>\<^sub>a v \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
 proof-
   have \<open>\<exists> t r. finite t \<and> t \<subseteq> A \<and> (\<Sum>a\<in>t. r a *\<^sub>C a) = u\<close>
   proof -
@@ -732,7 +732,7 @@ proof-
   then obtain t r where \<open>finite t\<close> and \<open>t \<subseteq> A\<close> and \<open>(\<Sum>a\<in>t. r a *\<^sub>C a) = u\<close>
     by blast
   have \<open>\<exists> t' r'. finite t' \<and> t' \<subseteq> B \<and> (\<Sum>a\<in>t'. r' a *\<^sub>C a) = v\<close>
-    using  \<open>v \<in> complex_vector.span B\<close> complex_vector.span_explicit
+    using  \<open>v \<in> cspan B\<close> complex_vector.span_explicit
   proof -
     have "\<exists>C f. v = (\<Sum>b\<in>C. f b *\<^sub>C b) \<and> finite C \<and> C \<subseteq> B"
       using assms(2) complex_vector.span_explicit by blast
@@ -747,7 +747,7 @@ proof-
     using atensor_product_cartesian_product \<open>finite t\<close> \<open>finite t'\<close> by blast
   finally have \<open>u \<otimes>\<^sub>a v = (\<Sum>(a,b)\<in>t\<times>t'. (r a * r' b) *\<^sub>C (a \<otimes>\<^sub>a b))\<close>
     by blast
-  moreover have \<open>(a,b) \<in> t \<times> t' \<Longrightarrow> a \<otimes>\<^sub>a b  \<in> complex_vector.span ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) )\<close>
+  moreover have \<open>(a,b) \<in> t \<times> t' \<Longrightarrow> a \<otimes>\<^sub>a b  \<in> cspan ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) )\<close>
     for a b
   proof-
     assume \<open>(a,b) \<in> t \<times> t'\<close>
@@ -759,44 +759,44 @@ proof-
       by auto
     ultimately have \<open>(case_prod (\<otimes>\<^sub>a)) (a,b) \<in> (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close>
       by blast
-    thus \<open>a \<otimes>\<^sub>a b \<in> complex_vector.span ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) )\<close>
+    thus \<open>a \<otimes>\<^sub>a b \<in> cspan ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) )\<close>
       by (simp add:  complex_vector.span_base) 
   qed
   ultimately show ?thesis
   proof - (* sledgehammer *)
     obtain aa :: "('a \<otimes>\<^sub>a 'b) set \<Rightarrow> ('a \<Rightarrow> 'a \<otimes>\<^sub>a 'b) \<Rightarrow> 'a set \<Rightarrow> 'a" where
-      "\<forall>x0 x1 x2. (\<exists>v3. v3 \<in> x2 \<and> x1 v3 \<notin> complex_vector.span x0) = (aa x0 x1 x2 \<in> x2 \<and> x1 (aa x0 x1 x2) \<notin> complex_vector.span x0)"
+      "\<forall>x0 x1 x2. (\<exists>v3. v3 \<in> x2 \<and> x1 v3 \<notin> cspan x0) = (aa x0 x1 x2 \<in> x2 \<and> x1 (aa x0 x1 x2) \<notin> cspan x0)"
       by moura
-    hence f1: "\<forall>A f Aa. aa Aa f A \<in> A \<and> f (aa Aa f A) \<notin> complex_vector.span Aa \<or> sum f A \<in> complex_vector.span Aa"
+    hence f1: "\<forall>A f Aa. aa Aa f A \<in> A \<and> f (aa Aa f A) \<notin> cspan Aa \<or> sum f A \<in> cspan Aa"
       by (metis (no_types) complex_vector.span_sum)
     have f2: "(\<Sum>a\<in>t. r a *\<^sub>C a \<otimes>\<^sub>a v) = u \<otimes>\<^sub>a v"
       by (metis (no_types) \<open>(\<Sum>a\<in>t. r a *\<^sub>C a) = u\<close> atensor_distr_left_sum)
     obtain bb :: "('a \<otimes>\<^sub>a 'b) set \<Rightarrow> ('b \<Rightarrow> 'a \<otimes>\<^sub>a 'b) \<Rightarrow> 'b set \<Rightarrow> 'b" where
-      "\<forall>x0 x1 x2. (\<exists>v3. v3 \<in> x2 \<and> x1 v3 \<notin> complex_vector.span x0) = (bb x0 x1 x2 \<in> x2 \<and> x1 (bb x0 x1 x2) \<notin> complex_vector.span x0)"
+      "\<forall>x0 x1 x2. (\<exists>v3. v3 \<in> x2 \<and> x1 v3 \<notin> cspan x0) = (bb x0 x1 x2 \<in> x2 \<and> x1 (bb x0 x1 x2) \<notin> cspan x0)"
       by moura
-    hence f3: "\<forall>B f A. bb A f B \<in> B \<and> f (bb A f B) \<notin> complex_vector.span A \<or> sum f B \<in> complex_vector.span A"
+    hence f3: "\<forall>B f A. bb A f B \<in> B \<and> f (bb A f B) \<notin> cspan A \<or> sum f B \<in> cspan A"
       by (meson complex_vector.span_sum)
     moreover
     { assume "bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t' \<in> t'"
       moreover
       { assume "(aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t, bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') \<in> t \<times> t'"
-        hence "r' (bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') *\<^sub>C (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
-          using \<open>\<And>b a. (a, b) \<in> t \<times> t' \<Longrightarrow> a \<otimes>\<^sub>a b \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close> complex_vector.span_scale by blast
-        hence "aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' (bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') *\<^sub>C bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t' \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+        hence "r' (bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') *\<^sub>C (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+          using \<open>\<And>b a. (a, b) \<in> t \<times> t' \<Longrightarrow> a \<otimes>\<^sub>a b \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close> complex_vector.span_scale by blast
+        hence "aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' (bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') *\<^sub>C bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t' \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
           by (simp add: atensor_mult_right)
-        hence "r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' (bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') *\<^sub>C bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+        hence "r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' (bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') *\<^sub>C bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
           using complex_vector.span_scale by blast
-        hence "bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t' \<notin> t' \<or> r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' (bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') *\<^sub>C bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t' \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+        hence "bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t' \<notin> t' \<or> r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' (bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t') *\<^sub>C bb ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>b. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) t' \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
           by (simp add: atensor_mult_left)
-        hence "(\<Sum>b\<in>t'. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+        hence "(\<Sum>b\<in>t'. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
           using f3 by meson }
-      ultimately have "(\<Sum>b\<in>t'. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) \<or> (\<Sum>a\<in>t. r a *\<^sub>C a \<otimes>\<^sub>a v) \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+      ultimately have "(\<Sum>b\<in>t'. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) \<or> (\<Sum>a\<in>t. r a *\<^sub>C a \<otimes>\<^sub>a v) \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
         using f1 by (meson SigmaI) }
     moreover
-    { assume "(\<Sum>b\<in>t'. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
-      hence "aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<notin> t \<or> r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a v \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+    { assume "(\<Sum>b\<in>t'. r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a r' b *\<^sub>C b) \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+      hence "aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<notin> t \<or> r (aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t) *\<^sub>C aa ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) (\<lambda>a. r a *\<^sub>C a \<otimes>\<^sub>a v) t \<otimes>\<^sub>a v \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
         by (metis (no_types) \<open>(\<Sum>a\<in>t'. r' a *\<^sub>C a) = v\<close> atensor_distr_right_sum)
-      hence "(\<Sum>a\<in>t. r a *\<^sub>C a \<otimes>\<^sub>a v) \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+      hence "(\<Sum>a\<in>t. r a *\<^sub>C a \<otimes>\<^sub>a v) \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
         using f1 by meson }
     ultimately show ?thesis
       using f2 by auto
@@ -805,28 +805,28 @@ qed
 
 lemma basis_atensor_complex_generator:
   fixes A::\<open>'a::complex_vector set\<close> and  B::\<open>'b::complex_vector set\<close>
-  assumes \<open>complex_vector.span A = UNIV\<close> and  \<open>complex_vector.span B = UNIV\<close>
-  shows \<open>complex_vector.span ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) ) = UNIV\<close>
+  assumes \<open>cspan A = UNIV\<close> and  \<open>cspan B = UNIV\<close>
+  shows \<open>cspan ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) ) = UNIV\<close>
 proof-
-  have \<open>x \<in> complex_vector.span ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) )\<close>
+  have \<open>x \<in> cspan ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) )\<close>
     for x
   proof-
-    have \<open>x \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)) )\<close>
+    have \<open>x \<in> cspan (range (case_prod (\<otimes>\<^sub>a)) )\<close>
       by (simp add: atensor_onto)
     hence \<open>\<exists> t r. finite t \<and> t \<subseteq> (range (case_prod (\<otimes>\<^sub>a))) \<and>
          x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
     proof -
       have "\<exists>f. x = (\<Sum>a | f a \<noteq> 0. f a *\<^sub>C a) \<and> {a. f a \<noteq> 0} \<subseteq> range (case_prod (\<otimes>\<^sub>a)) \<and> finite {a. f a \<noteq> 0}"
-        using \<open>x \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close> complex_vector.span_alt by blast
+        using \<open>x \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close> complex_vector.span_alt by blast
       thus ?thesis
         by (metis (no_types))
     qed
     then obtain t r where \<open>finite t\<close> and \<open>t \<subseteq> (range (case_prod (\<otimes>\<^sub>a)) )\<close> and
       \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
       by blast
-    have \<open>t \<subseteq> complex_vector.span  ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) )\<close>
+    have \<open>t \<subseteq> cspan  ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) )\<close>
     proof
-      show "x \<in> complex_vector.span ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+      show "x \<in> cspan ( (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
         if "x \<in> t"
         for x :: "'a \<otimes>\<^sub>a 'b"
       proof-
@@ -835,11 +835,11 @@ proof-
           using that case_prod_unfold
           by fastforce 
         then obtain u v where \<open>x = u \<otimes>\<^sub>a v\<close> by blast
-        have \<open>u \<in> complex_vector.span A\<close>
+        have \<open>u \<in> cspan A\<close>
           by (simp add: assms(1))
-        moreover have \<open>v \<in> complex_vector.span B\<close>
+        moreover have \<open>v \<in> cspan B\<close>
           by (simp add: assms(2))
-        ultimately have \<open>u \<otimes>\<^sub>a v \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
+        ultimately have \<open>u \<otimes>\<^sub>a v \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
           using span_tensor_span by blast
         thus ?thesis
           using \<open>x = u \<otimes>\<^sub>a v\<close>
@@ -1262,12 +1262,12 @@ proof-
   have \<open>K z = H z\<close>
     for z
   proof-
-    have \<open>complex_vector.span (range (case_prod (\<otimes>\<^sub>a))) = UNIV\<close>
+    have \<open>cspan (range (case_prod (\<otimes>\<^sub>a))) = UNIV\<close>
       by (simp add: atensor_onto)
     hence \<open>\<exists> t r. finite t \<and> t \<subseteq> (range (case_prod (\<otimes>\<^sub>a))) \<and> z = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
     proof -
       have "\<forall>a. \<exists>A f. a = (\<Sum>a\<in>A. f a *\<^sub>C a) \<and> finite A \<and> A \<subseteq> ((range (case_prod (\<otimes>\<^sub>a)))::('v \<otimes>\<^sub>a 'w) set)"
-        using \<open>complex_vector.span (range (case_prod (\<otimes>\<^sub>a))) = UNIV\<close> complex_vector.span_explicit
+        using \<open>cspan (range (case_prod (\<otimes>\<^sub>a))) = UNIV\<close> complex_vector.span_explicit
         by blast
       thus ?thesis
         by meson
@@ -2127,7 +2127,7 @@ proof(rule classical)
       qed
       have \<open>(\<phi> b) \<otimes>\<^sub>a b \<noteq> u \<otimes>\<^sub>a v\<close>
         using \<open>b \<noteq> v\<close> \<open>complex_vector.independent {b, v}\<close> \<open>u \<noteq> 0\<close> tensor_eq_independent2 by blast
-      have \<open>\<phi> b \<in> complex_vector.span A\<close>
+      have \<open>\<phi> b \<in> cspan A\<close>
         unfolding A_def
         by (simp add: \<open>u \<noteq> 0\<close>)
       hence \<open>\<exists> f. \<exists> A'. \<phi> b = (\<Sum> a \<in> A'. f a *\<^sub>C a) \<and> finite A' \<and> A' \<subseteq> A\<close>
@@ -2172,13 +2172,13 @@ qed
 
 lemma span_cartesian_product':
   fixes A U::\<open>'a::complex_vector set\<close> and B V::\<open>'b::complex_vector set\<close>
-  assumes \<open>complex_vector.span A = complex_vector.span U\<close>
-    \<open>complex_vector.span B = complex_vector.span V\<close>
-  shows \<open>complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))
-       \<subseteq> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close>
+  assumes \<open>cspan A = cspan U\<close>
+    \<open>cspan B = cspan V\<close>
+  shows \<open>cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))
+       \<subseteq> cspan ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close>
 proof
-  show "x \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))"
-    if "x \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
+  show "x \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))"
+    if "x \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))"
     for x :: "'a \<otimes>\<^sub>a 'b"
   proof-
     have \<open>\<exists> r t. finite t \<and> x = (\<Sum>a\<in>t. r a *\<^sub>C a) \<and> t \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close>
@@ -2194,27 +2194,27 @@ proof
     have \<open>x = (\<Sum>a\<in>s. (r ((case_prod (\<otimes>\<^sub>a)) a)) *\<^sub>C ((case_prod (\<otimes>\<^sub>a)) a))\<close>
       using \<open>inj_on (case_prod (\<otimes>\<^sub>a)) s\<close> \<open>t = (case_prod (\<otimes>\<^sub>a)) ` s\<close> \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close> 
       by (simp add: sum.reindex_cong)
-    moreover have \<open>a \<in> s \<Longrightarrow> (case_prod (\<otimes>\<^sub>a)) a \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close>
+    moreover have \<open>a \<in> s \<Longrightarrow> (case_prod (\<otimes>\<^sub>a)) a \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close>
       for a
     proof-
       assume \<open>a \<in> s\<close>
       hence \<open>a \<in> A \<times> B\<close>
         using \<open>s \<subseteq> A \<times> B\<close>
         by auto
-      have \<open>fst a \<in> complex_vector.span U\<close>
+      have \<open>fst a \<in> cspan U\<close>
       proof-
         have \<open>fst a \<in> A\<close>
           using \<open>a \<in> A \<times> B\<close> by auto
-        hence \<open>fst a \<in> complex_vector.span A\<close>
+        hence \<open>fst a \<in> cspan A\<close>
           by (simp add: complex_vector.span_base)
         thus ?thesis
           by (simp add: assms(1)) 
       qed
-      moreover have \<open>snd a \<in> complex_vector.span V\<close>
+      moreover have \<open>snd a \<in> cspan V\<close>
       proof-
         have \<open>snd a \<in> B\<close>
           using \<open>a \<in> A \<times> B\<close> by auto
-        hence \<open>snd a \<in> complex_vector.span B\<close>
+        hence \<open>snd a \<in> cspan B\<close>
           by (simp add: complex_vector.span_base)
         thus ?thesis
           by (simp add: assms(2)) 
@@ -2223,16 +2223,16 @@ proof
         by (metis case_prod_unfold span_tensor_span) 
     qed
     finally show ?thesis
-      by (simp add: \<open>\<And>a. a \<in> s \<Longrightarrow> (case_prod (\<otimes>\<^sub>a)) a \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close> \<open>x = (\<Sum>a\<in>s. r ((case_prod (\<otimes>\<^sub>a)) a) *\<^sub>C (case_prod (\<otimes>\<^sub>a)) a)\<close> complex_vector.span_scale complex_vector.span_sum) 
+      by (simp add: \<open>\<And>a. a \<in> s \<Longrightarrow> (case_prod (\<otimes>\<^sub>a)) a \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close> \<open>x = (\<Sum>a\<in>s. r ((case_prod (\<otimes>\<^sub>a)) a) *\<^sub>C (case_prod (\<otimes>\<^sub>a)) a)\<close> complex_vector.span_scale complex_vector.span_sum) 
   qed
 qed
 
 lemma span_cartesian_product:
   fixes A U::\<open>'a::complex_vector set\<close> and B V::\<open>'b::complex_vector set\<close>
-  assumes \<open>complex_vector.span A = complex_vector.span U\<close>
-    \<open>complex_vector.span B = complex_vector.span V\<close>
-  shows \<open>complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))
-       = complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close>
+  assumes \<open>cspan A = cspan U\<close>
+    \<open>cspan B = cspan V\<close>
+  shows \<open>cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))
+       = cspan ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close>
   apply auto
   using  assms(1) assms(2) span_cartesian_product' apply blast
   using assms(1) assms(2) span_cartesian_product'[where A = "U" and B = "V" and U = "A" and B = "B"]
@@ -2365,7 +2365,7 @@ proof-
         by (metis complex_vector.scale_right_diff_distrib)
     qed
   qed
-  moreover have \<open>u \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+  moreover have \<open>u \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
     by (simp add: atensor_onto) 
   ultimately have \<open>F u = 0\<close>
     using complex_vector.linear_eq_0_on_span by auto
@@ -2415,7 +2415,7 @@ proof-
         by (metis complex_vector.scale_right_diff_distrib mult_scaleC_right) 
     qed
   qed
-  moreover have \<open>u \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+  moreover have \<open>u \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
     by (simp add: atensor_onto) 
   ultimately have \<open>F u = 0\<close>
     using complex_vector.linear_eq_0_on_span by auto
@@ -2469,7 +2469,7 @@ proof-
         by (metis complex_vector.scale_right_diff_distrib)
     qed
   qed
-  moreover have \<open>u \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+  moreover have \<open>u \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
     by (simp add: atensor_onto) 
   ultimately have \<open>F u = 0\<close>
     using complex_vector.linear_eq_0_on_span by auto
@@ -2525,7 +2525,7 @@ proof-
         by (metis complex_vector.scale_right_diff_distrib mult_scaleC_right) 
     qed
   qed
-  moreover have \<open>u \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+  moreover have \<open>u \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
     by (simp add: atensor_onto) 
   ultimately have \<open>F u = 0\<close>
     using complex_vector.linear_eq_0_on_span by auto
@@ -2673,7 +2673,7 @@ proof-
         by (metis complex_vector.scale_right_diff_distrib)        
     qed
   qed
-  moreover have \<open>y \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+  moreover have \<open>y \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
     by (simp add: atensor_onto) 
   ultimately have \<open>F y = 0\<close>
     using complex_vector.linear_eq_0_on_span by auto
@@ -2791,7 +2791,7 @@ proof-
         by (metis complex_vector.scale_right_diff_distrib mult_scaleC_right)
     qed
   qed
-  moreover have \<open>y \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+  moreover have \<open>y \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
     by (simp add: atensor_onto) 
   ultimately have \<open>F y = 0\<close>
     using complex_vector.linear_eq_0_on_span by auto
@@ -2919,7 +2919,7 @@ proof
     for x :: "'a \<otimes>\<^sub>a 'b"
       and y :: "'a \<otimes>\<^sub>a 'b"
   proof-
-    have \<open>x \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+    have \<open>x \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
       by (simp add: atensor_onto)
     hence \<open>\<exists> t r. x = (\<Sum>a\<in>t. r a *\<^sub>C a) \<and> finite t \<and> t \<subseteq> range (case_prod (\<otimes>\<^sub>a))\<close>
       using complex_vector.span_explicit
@@ -2927,7 +2927,7 @@ proof
     then obtain t::\<open>('a \<otimes>\<^sub>a 'b) set\<close> and r::\<open>'a \<otimes>\<^sub>a 'b \<Rightarrow> complex\<close>
       where \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close> and \<open>finite t\<close> and \<open>t \<subseteq> range (case_prod (\<otimes>\<^sub>a))\<close>
       by blast
-    have \<open>y \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+    have \<open>y \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
       by (simp add: atensor_onto)
     hence \<open>\<exists> t' r'. y = (\<Sum>a\<in>t'. r' a *\<^sub>C a) \<and> finite t' \<and> t' \<subseteq> range (case_prod (\<otimes>\<^sub>a))\<close>
       using complex_vector.span_explicit
@@ -3119,18 +3119,18 @@ proof
          (\<forall>a\<in>t. \<langle>a, a\<rangle> > 0) \<and> x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
     for x::\<open>'a \<otimes>\<^sub>a 'b\<close>
   proof-
-    have \<open>\<exists> U. complex_vector.independent U \<and> complex_vector.span U = (UNIV::'a set)\<close>
+    have \<open>\<exists> U. complex_vector.independent U \<and> cspan U = (UNIV::'a set)\<close>
       using complex_vector.independent_empty complex_vector.independent_extend_basis complex_vector.span_extend_basis
       by (metis cdependent_raw_def)      
-    then obtain U where \<open>complex_vector.independent U\<close> and \<open>complex_vector.span U = (UNIV::'a set)\<close>
+    then obtain U where \<open>complex_vector.independent U\<close> and \<open>cspan U = (UNIV::'a set)\<close>
       by blast
-    have \<open>\<exists> V. complex_vector.independent V \<and> complex_vector.span V = (UNIV::'b set)\<close>
+    have \<open>\<exists> V. complex_vector.independent V \<and> cspan V = (UNIV::'b set)\<close>
       using complex_vector.independent_empty complex_vector.independent_extend_basis complex_vector.span_extend_basis
       by (metis cdependent_raw_def)      
-    then obtain V where \<open>complex_vector.independent V\<close> and \<open>complex_vector.span V = (UNIV::'b set)\<close>
+    then obtain V where \<open>complex_vector.independent V\<close> and \<open>cspan V = (UNIV::'b set)\<close>
       by blast
-    have \<open>x \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close>
-      by (metis UNIV_I \<open>complex_vector.span U = UNIV\<close> \<open>complex_vector.span V = UNIV\<close> basis_atensor_complex_generator)
+    have \<open>x \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (U \<times> V))\<close>
+      by (metis UNIV_I \<open>cspan U = UNIV\<close> \<open>cspan V = UNIV\<close> basis_atensor_complex_generator)
     hence \<open>\<exists> T R. finite T \<and> T \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (U \<times> V) \<and> 
          x = (\<Sum>a\<in>T. R a *\<^sub>C a)\<close>
       using complex_vector.span_explicit[where b = "(case_prod (\<otimes>\<^sub>a)) ` (U \<times> V)"]
@@ -3138,7 +3138,7 @@ proof
     then obtain T R where \<open>finite T\<close> and \<open>T \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (U \<times> V)\<close> and 
       \<open>x = (\<Sum>a\<in>T. R a *\<^sub>C a)\<close>
       by blast
-    have \<open>x \<in> complex_vector.span T\<close>
+    have \<open>x \<in> cspan T\<close>
       by (simp add: \<open>x = (\<Sum>a\<in>T. R a *\<^sub>C a)\<close> complex_vector.span_base complex_vector.span_scale complex_vector.span_sum)  
     have \<open>\<exists> U' V'. finite U' \<and> finite V' \<and> T \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V')\<close>
     proof-
@@ -3168,32 +3168,25 @@ proof
     then obtain U' V' where \<open>finite U'\<close> and \<open>finite V'\<close>
       and \<open>T \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V')\<close>
       by blast
-    have \<open>x \<in> complex_vector.span  ((case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V'))\<close>
-      using \<open>T \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V')\<close> \<open>x \<in> complex_vector.span T\<close> complex_vector.span_mono 
+    have \<open>x \<in> cspan  ((case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V'))\<close>
+      using \<open>T \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V')\<close> \<open>x \<in> cspan T\<close> complex_vector.span_mono 
       by auto
-    have \<open>\<exists> A. (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0)
-           \<and> complex_vector.span A = complex_vector.span U'
-           \<and> 0 \<notin> A \<and> finite A\<close>
-      by (simp add: Gram_Schmidt \<open>finite U'\<close>)
-    then obtain A where \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
-      and \<open>complex_vector.span A = complex_vector.span U'\<close>
-      and \<open>0\<notin>A\<close> and \<open>finite A\<close>
+    have \<open>\<exists> A. is_ortho_set A \<and> cspan A = cspan U' \<and> finite A\<close>
+      by (simp add: orthogonal_basis_of_cspan \<open>finite U'\<close>)
+    then obtain A where \<open>is_ortho_set A\<close>
+      and \<open>cspan A = cspan U'\<close> and \<open>finite A\<close>
       by auto
-    have \<open>\<exists> B. (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0)
-           \<and> complex_vector.span B = complex_vector.span V'
-           \<and> 0 \<notin> B \<and> finite B\<close>
-      by (simp add: Gram_Schmidt \<open>finite V'\<close>)
-    then obtain B where \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
-      and \<open>complex_vector.span B = complex_vector.span V'\<close>
-      and \<open>0\<notin>B\<close> and \<open>finite B\<close>
+    have \<open>\<exists> B. is_ortho_set B \<and> cspan B = cspan V' \<and> finite B\<close>
+      by (simp add: orthogonal_basis_of_cspan \<open>finite V'\<close>)
+    then obtain B where \<open>is_ortho_set B\<close> and \<open>cspan B = cspan V'\<close> and \<open>finite B\<close>
       by auto
-    from \<open>complex_vector.span A = complex_vector.span U'\<close>
-      \<open>complex_vector.span B = complex_vector.span V'\<close>
-    have \<open>complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))
-       = complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V'))\<close>
+    from \<open>cspan A = cspan U'\<close>
+      \<open>cspan B = cspan V'\<close>
+    have \<open>cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))
+       = cspan ((case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V'))\<close>
       using span_cartesian_product by blast
-    have \<open>x \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
-      by (simp add: \<open>complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) = complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V'))\<close> \<open>x \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V'))\<close>)
+    have \<open>x \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
+      by (simp add: \<open>cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)) = cspan ((case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V'))\<close> \<open>x \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V'))\<close>)
     hence \<open>\<exists> t r. finite t \<and> t \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) \<and> 
          x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
       using complex_vector.span_explicit[where b = "(case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)"]
@@ -3225,7 +3218,7 @@ proof
         unfolding g_atensor_cbilinear_def
         by blast
       also have \<open>\<dots> > 0\<close>
-        by (metis \<open>0 \<notin> A\<close> \<open>0 \<notin> B\<close> \<open>x \<in> A\<close> \<open>y \<in> B\<close> cinner_gt_zero_iff ordered_semiring_strict_class.mult_pos_pos)
+        by (metis \<open>is_ortho_set A\<close> \<open>is_ortho_set B\<close> \<open>x \<in> A\<close> \<open>y \<in> B\<close> cinner_gt_zero_iff is_ortho_set_def ordered_semiring_strict_class.mult_pos_pos)
       finally show \<open>\<langle>a, a\<rangle> > 0\<close>
         by blast
     qed
@@ -3238,7 +3231,7 @@ proof
         by auto
       hence \<open>\<exists>x\<in>A. \<exists>y\<in>B. a = x\<otimes>\<^sub>ay\<close>
         by (simp add: image_iff)
-      then obtain x y where \<open>x\<in>A\<close> and \<open>y\<in>B\<close> and \<open>a = x\<otimes>\<^sub>ay\<close>
+      then obtain x y where x: \<open>x\<in>A\<close> and y: \<open>y\<in>B\<close> and xy: \<open>a = x\<otimes>\<^sub>ay\<close>
         by blast
       have \<open>a' \<in> (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close>
         using \<open>a'\<in>t\<close> \<open>t \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close>
@@ -3253,7 +3246,7 @@ proof
       also have \<open>\<dots> = F_atensor_cbilinear a x' y'\<close>
         by (simp add: F_atensor_clinear_cbilinear \<open>a' = x' \<otimes>\<^sub>a y'\<close>)
       also have \<open>\<dots> = g_atensor_clinear x' y' a\<close>
-        by (smt F_atensor_cbilinear_def \<open>\<And>thesis. (\<And>x y. \<lbrakk>x \<in> A; y \<in> B; a = x \<otimes>\<^sub>a y\<rbrakk> \<Longrightarrow> thesis) \<Longrightarrow> thesis\<close> \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> \<open>x' \<in> A\<close> \<open>y' \<in> B\<close> cinner_commute' complex_cnj_mult g_atensor_clinear_cbilinear')
+        by (metis F_atensor_cbilinear_def \<open>\<exists>x\<in>A. \<exists>y\<in>B. a = x \<otimes>\<^sub>a y\<close> \<open>a \<noteq> a'\<close> \<open>a' = x' \<otimes>\<^sub>a y'\<close> \<open>is_ortho_set A\<close> \<open>is_ortho_set B\<close> \<open>x' \<in> A\<close> \<open>y' \<in> B\<close> complex_cnj_zero g_atensor_clinear_cbilinear' is_ortho_set_def mult_not_zero)
       also have \<open>\<dots> = g_atensor_cbilinear x' y' x y\<close>
         by (simp add: \<open>a = x \<otimes>\<^sub>a y\<close> g_atensor_clinear_cbilinear)
       also have \<open>\<dots> =  \<langle>x', x\<rangle> * \<langle>y', y\<rangle>\<close>
@@ -3261,8 +3254,7 @@ proof
         by blast
       also have \<open>\<dots> = 0\<close>
         using  \<open>a \<noteq> a'\<close>
-        using \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> \<open>a = x \<otimes>\<^sub>a y\<close> \<open>a' = x' \<otimes>\<^sub>a y'\<close> \<open>x \<in> A\<close> \<open>x' \<in> A\<close> \<open>y \<in> B\<close> \<open>y' \<in> B\<close> 
-        by force
+        by (metis \<open>a' = x' \<otimes>\<^sub>a y'\<close> \<open>is_ortho_set A\<close> \<open>is_ortho_set B\<close> \<open>x' \<in> A\<close> \<open>y' \<in> B\<close> is_ortho_set_def mult_not_zero x xy y)
       finally show \<open>\<langle>a, a'\<rangle> = 0\<close>
         by blast
     qed
@@ -3502,14 +3494,14 @@ qed
 lemma span_finite_tensor:
   \<open>\<exists> A B. finite A  \<and> finite B \<and> (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0)
 \<and> (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0) \<and> 
-z \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
+z \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
 proof-
-  have \<open>z \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+  have \<open>z \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
     by (simp add: atensor_onto)
-  hence \<open>\<exists> W. finite W \<and> W \<subseteq> (range (case_prod (\<otimes>\<^sub>a))) \<and> z \<in> complex_vector.span W\<close>
+  hence \<open>\<exists> W. finite W \<and> W \<subseteq> (range (case_prod (\<otimes>\<^sub>a))) \<and> z \<in> cspan W\<close>
     using Complex_Vector_Spaces.vector_finitely_spanned by blast
   then obtain W where \<open>finite W\<close> and \<open>W \<subseteq> (range (case_prod (\<otimes>\<^sub>a)))\<close> and 
-    \<open>z \<in> complex_vector.span W\<close> by blast
+    \<open>z \<in> cspan W\<close> by blast
   from \<open>W \<subseteq> (range (case_prod (\<otimes>\<^sub>a)))\<close>
   have \<open>\<exists> M. W = (case_prod (\<otimes>\<^sub>a)) ` M \<and> finite M\<close>
     by (meson \<open>finite W\<close> finite_subset_image)
@@ -3517,34 +3509,26 @@ proof-
     by blast
   have \<open>finite (fst ` M)\<close>
     by (simp add: \<open>finite M\<close>)
-  hence \<open>\<exists> A. (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0)
-           \<and> complex_vector.span A = complex_vector.span (fst ` M)
-           \<and> 0 \<notin> A \<and> finite A\<close>
-    by (simp add: Gram_Schmidt)
-  then obtain A where \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> and
-    \<open>complex_vector.span A = complex_vector.span (fst ` M)\<close> and 
-    \<open>0 \<notin> A\<close> and \<open>finite A\<close>
+  hence \<open>\<exists> A. is_ortho_set A \<and> cspan A = cspan (fst ` M) \<and> finite A\<close>
+    by (simp add: orthogonal_basis_of_cspan)
+  then obtain A where \<open>is_ortho_set A\<close> and \<open>cspan A = cspan (fst ` M)\<close> and \<open>finite A\<close>
     by auto
   have \<open>finite (snd ` M)\<close>
     by (simp add: \<open>finite M\<close>)
-  hence \<open>\<exists> B. (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0)
-           \<and> complex_vector.span B = complex_vector.span (snd ` M)
-           \<and> 0 \<notin> B \<and> finite B\<close>
-    by (simp add: Gram_Schmidt)
-  then obtain B where \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> and
-    \<open>complex_vector.span B = complex_vector.span (snd ` M)\<close> and 
-    \<open>0 \<notin> B\<close> and \<open>finite B\<close>
+  hence \<open>\<exists> B. is_ortho_set B \<and> cspan B = cspan (snd ` M) \<and> finite B\<close>
+    by (simp add: orthogonal_basis_of_cspan)
+  then obtain B where \<open>is_ortho_set B\<close> and \<open>cspan B = cspan (snd ` M)\<close> and \<open>finite B\<close>
     by auto
   define S where \<open>S = (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close>
-  have \<open>z \<in> complex_vector.span S\<close>
+  have \<open>z \<in> cspan S\<close>
   proof-
-    from \<open>z \<in> complex_vector.span W\<close>
+    from \<open>z \<in> cspan W\<close>
     have \<open>\<exists> L l. finite L \<and> L \<subseteq> W \<and> z = (\<Sum>a\<in>L. l a *\<^sub>C a)\<close>
       using complex_vector.span_explicit
       by (smt mem_Collect_eq)
     then obtain L l where \<open>finite L\<close> and \<open>L \<subseteq> W\<close> and \<open>z = (\<Sum>a\<in>L. l a *\<^sub>C a)\<close>
       by blast
-    have \<open>a \<in> W \<Longrightarrow> a \<in> complex_vector.span S\<close>
+    have \<open>a \<in> W \<Longrightarrow> a \<in> cspan S\<close>
       for a
     proof-
       assume \<open>a \<in> W\<close>
@@ -3553,25 +3537,25 @@ proof-
         by blast
       then obtain m where \<open>m \<in> M\<close> and \<open>a = (case_prod (\<otimes>\<^sub>a)) m\<close>
         by blast
-      have \<open>fst m \<in> complex_vector.span A\<close>
-        using \<open>complex_vector.span A = complex_vector.span (fst ` M)\<close> \<open>m \<in> M\<close> complex_vector.span_superset
+      have \<open>fst m \<in> cspan A\<close>
+        using \<open>cspan A = cspan (fst ` M)\<close> \<open>m \<in> M\<close> complex_vector.span_superset
         by fastforce
-      moreover have \<open>snd m \<in> complex_vector.span B\<close>
-        using \<open>complex_vector.span B = complex_vector.span (snd ` M)\<close> \<open>m \<in> M\<close> complex_vector.span_superset 
+      moreover have \<open>snd m \<in> cspan B\<close>
+        using \<open>cspan B = cspan (snd ` M)\<close> \<open>m \<in> M\<close> complex_vector.span_superset 
         by fastforce
-      ultimately have \<open>(fst m)\<otimes>\<^sub>a(snd m) \<in> complex_vector.span S\<close>
+      ultimately have \<open>(fst m)\<otimes>\<^sub>a(snd m) \<in> cspan S\<close>
         unfolding S_def
         using span_tensor_span by fastforce
       thus ?thesis
         by (simp add: \<open>a = (case m of (x, xa) \<Rightarrow> x \<otimes>\<^sub>a xa)\<close> prod.case_eq_if) 
     qed
     thus ?thesis
-      by (metis (no_types, hide_lams) \<open>z \<in> complex_vector.span W\<close> complex_vector.span_mono complex_vector.span_span subset_iff) 
+      by (metis (no_types, hide_lams) \<open>z \<in> cspan W\<close> complex_vector.span_mono complex_vector.span_span subset_iff) 
   qed   
   show ?thesis
-    using \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
-      \<open>finite A\<close> and \<open>finite B\<close> and \<open>S = (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close>
-    using \<open>z \<in> complex_vector.span S\<close> by blast    
+    using \<open>is_ortho_set A\<close> \<open>is_ortho_set B\<close> \<open>finite A\<close> \<open>finite B\<close> \<open>S = (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close>
+          \<open>z \<in> cspan S\<close>
+    by (metis is_ortho_set_def)
 qed
 
 lemma ortho_tensor_prod:
@@ -3613,16 +3597,13 @@ lemma tensor_prod_expansion:
 \<and> (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0) \<and> S \<subseteq> A \<times> B \<and>
 z = (\<Sum>(a,b)\<in>S. (r (a, b)) *\<^sub>C (a \<otimes>\<^sub>a b))\<close>
 proof-
-  have \<open>\<exists> A B. finite A  \<and> finite B \<and> (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0)
-\<and> (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0) \<and> 
-z \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
-    using span_finite_tensor by blast
-  then obtain A B where \<open>finite A\<close> and \<open>finite B\<close> and 
+  obtain A B where \<open>finite A\<close> and \<open>finite B\<close> and 
     \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> and
     \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> and
-    \<open>z \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
-    by auto
-  from \<open>z \<in> complex_vector.span ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
+    \<open>z \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
+    apply atomize_elim
+    using span_finite_tensor by blast
+  from \<open>z \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
   have \<open>\<exists> T t. finite T \<and> T \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B) \<and> z = (\<Sum>u\<in>T. t u *\<^sub>C u)\<close>
     using complex_vector.span_explicit
     by (smt mem_Collect_eq) 
@@ -3655,25 +3636,20 @@ proof-
     by blast
   then obtain V \<psi> where \<open>finite V\<close> and \<open>z = (\<Sum>b\<in>V. (\<psi> b) \<otimes>\<^sub>a b)\<close>
     by blast
-  have \<open>\<exists> B. (\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0)
-           \<and> complex_vector.span B = complex_vector.span V
-           \<and> 0 \<notin> B \<and> finite B\<close>
-    by (simp add: Gram_Schmidt \<open>finite V\<close>)
-  then obtain B where \<open>\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0\<close> and 
-    \<open>complex_vector.span B = complex_vector.span V\<close> and 
-    \<open>0 \<notin> B\<close> and \<open>finite B\<close>
-    by auto
-  have \<open>V \<subseteq> complex_vector.span B\<close>
-    using \<open>complex_vector.span B = complex_vector.span V\<close>
+  obtain B where \<open>is_ortho_set B\<close> and \<open>cspan B = cspan V\<close> and \<open>finite B\<close>
+    apply atomize_elim
+    by (simp add: orthogonal_basis_of_cspan \<open>finite V\<close>)
+  have \<open>V \<subseteq> cspan B\<close>
+    using \<open>cspan B = cspan V\<close>
     by (simp add: complex_vector.span_superset)
-  have f1: \<open>b \<in>  complex_vector.span B \<Longrightarrow> \<exists> t r. finite t \<and> t \<subseteq> B \<and> b = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
+  have f1: \<open>b \<in>  cspan B \<Longrightarrow> \<exists> t r. finite t \<and> t \<subseteq> B \<and> b = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
     for b
     using complex_vector.span_explicit
     by (smt complex_vector.span_base mem_Collect_eq) 
-  have \<open>b \<in>  complex_vector.span B \<Longrightarrow> \<exists> r. b = (\<Sum>a\<in>B. r a *\<^sub>C a)\<close>
+  have \<open>b \<in>  cspan B \<Longrightarrow> \<exists> r. b = (\<Sum>a\<in>B. r a *\<^sub>C a)\<close>
     for b
   proof-
-    assume \<open>b \<in>  complex_vector.span B\<close>
+    assume \<open>b \<in>  cspan B\<close>
     hence \<open>\<exists> t r'. finite t \<and> t \<subseteq> B \<and> b = (\<Sum>a\<in>t. r' a *\<^sub>C a)\<close>
       using f1 by blast
     then obtain t r' where \<open>finite t\<close> and \<open>t \<subseteq> B\<close> and \<open>b = (\<Sum>a\<in>t. r' a *\<^sub>C a)\<close>
@@ -3712,7 +3688,7 @@ proof-
   qed
   hence \<open>b \<in> V \<Longrightarrow> \<exists>r. b = (\<Sum>a\<in>B. r a *\<^sub>C a)\<close>
     for b
-    using \<open>V \<subseteq> complex_vector.span B\<close>
+    using \<open>V \<subseteq> cspan B\<close>
     by blast
   hence \<open>\<forall> b. \<exists>r. b \<in> V \<longrightarrow> b = (\<Sum>a\<in>B. r a *\<^sub>C a)\<close>
     by blast
@@ -3744,8 +3720,8 @@ proof-
     finally show ?thesis by blast
   qed
   thus ?thesis
-    using \<open>\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0\<close> \<open>0 \<notin> B\<close> \<open>finite B\<close>
-    by blast
+    using \<open>is_ortho_set B\<close> \<open>finite B\<close>
+    using is_ortho_set_def by blast
 qed
 
 lemma tensor_prod_expansion_right:
@@ -4161,7 +4137,7 @@ proof-
   have f2: \<open>norm (swap_atensor (z::'a \<otimes>\<^sub>a 'b)) \<le> norm z\<close>
     for z
   proof-
-    have \<open>z \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+    have \<open>z \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
       by (simp add: atensor_onto)
     have \<open>\<exists> A B S r. finite A  \<and> finite B \<and> (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0)
   \<and> (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0) \<and> S \<subseteq> A \<times> B \<and>
@@ -4434,7 +4410,7 @@ proof-
   ultimately have \<open>z \<in> range (case_prod (\<otimes>\<^sub>a)) \<Longrightarrow> F z = 0\<close>
     for z
     by auto
-  moreover have \<open>complex_vector.span (range (case_prod (\<otimes>\<^sub>a))) = (UNIV::('a\<otimes>\<^sub>a'b) set)\<close>
+  moreover have \<open>cspan (range (case_prod (\<otimes>\<^sub>a))) = (UNIV::('a\<otimes>\<^sub>a'b) set)\<close>
     using atensor_onto by blast
   ultimately have \<open>(swap_atensor \<circ> (f \<otimes>\<^sub>A g) \<circ> swap_atensor) z  = (g \<otimes>\<^sub>A f) z\<close>
     for z
@@ -4540,15 +4516,15 @@ proof-
       by (simp add: complex_vector.linear_compose_sub)
     thus ?thesis unfolding F_def by blast
   qed
-  ultimately have f1: \<open>z \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a))) \<Longrightarrow> F z = 0\<close>
+  ultimately have f1: \<open>z \<in> cspan (range (case_prod (\<otimes>\<^sub>a))) \<Longrightarrow> F z = 0\<close>
     for z
     using complex_vector.linear_eq_0_on_span by auto
   hence \<open>F z = 0\<close>
     for z
   proof-
-    have \<open>complex_vector.span (range (case_prod (\<otimes>\<^sub>a))) = (UNIV::('a \<otimes>\<^sub>a 'c) set)\<close>
+    have \<open>cspan (range (case_prod (\<otimes>\<^sub>a))) = (UNIV::('a \<otimes>\<^sub>a 'c) set)\<close>
       by (simp add: atensor_onto)
-    hence \<open>z \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+    hence \<open>z \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
       by simp
     thus ?thesis using f1 by blast
   qed
@@ -5052,7 +5028,7 @@ proof-
   have \<open>z = 0\<close>
     for z::\<open>'a\<otimes>\<^sub>a'b\<close>
   proof-
-    have \<open>z \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+    have \<open>z \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
       by (simp add: atensor_onto)
     hence \<open>\<exists> t r. finite t \<and> t \<subseteq> range (case_prod (\<otimes>\<^sub>a)) \<and> z = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
       using complex_vector.span_explicit[where b = "range (case_prod (\<otimes>\<^sub>a))"]
@@ -5092,7 +5068,7 @@ proof-
   have \<open>z = 0\<close>
     for z::\<open>'a\<otimes>\<^sub>a'b\<close>
   proof-
-    have \<open>z \<in> complex_vector.span (range (case_prod (\<otimes>\<^sub>a)))\<close>
+    have \<open>z \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
       by (simp add: atensor_onto)
     hence \<open>\<exists> t r. finite t \<and> t \<subseteq> range (case_prod (\<otimes>\<^sub>a)) \<and> z = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
       using complex_vector.span_explicit[where b = "range (case_prod (\<otimes>\<^sub>a))"]
