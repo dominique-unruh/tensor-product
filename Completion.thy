@@ -428,7 +428,8 @@ lift_definition scaleR_completion :: \<open>real \<Rightarrow> 'a completion \<R
   proof-
     have \<open>Cauchy f1\<close>
       using that by blast
-    thus ?thesis using Cauchy_scaleR by blast
+    thus ?thesis
+      using bounded_linear.Cauchy bounded_linear_scaleR_right by blast
   qed
   show "Cauchy (\<lambda>n. r *\<^sub>R (f2 n::'a)) \<and> Vanishes (\<lambda>n. r *\<^sub>R f1 n - r *\<^sub>R f2 n)"
     if "Cauchy f1 \<and> Cauchy f2 \<and> Vanishes (\<lambda>n. (f1 n::'a) - f2 n)"
@@ -440,7 +441,8 @@ lift_definition scaleR_completion :: \<open>real \<Rightarrow> 'a completion \<R
     proof-
       have \<open>Cauchy f2\<close>
         using that by blast
-      thus ?thesis using Cauchy_scaleR by blast
+      thus ?thesis
+        using bounded_linear.Cauchy bounded_linear_scaleR_right by blast
     qed
     moreover have \<open>Vanishes (\<lambda>n. r *\<^sub>R f1 n - r *\<^sub>R f2 n)\<close>
     proof-
@@ -699,7 +701,7 @@ proof
       and b :: real
       and x :: "'a completion"
     apply transfer apply auto unfolding completion_rel_def apply auto
-    by (simp add: Cauchy_scaleR)
+    using bounded_linear.Cauchy bounded_linear_scaleR_right by blast
 
   show "1 *\<^sub>R (x::'a completion) = x"
     for x :: "'a completion"
@@ -708,7 +710,7 @@ proof
   show "sgn (x::'a completion) = inverse (norm x) *\<^sub>R x"
     for x :: "'a completion"
     apply transfer unfolding completion_rel_def apply auto
-    by (simp add: Cauchy_scaleR)
+    using bounded_linear.Cauchy bounded_linear_scaleR_right by blast
 
   show "uniformity = (INF e\<in>{0<..}. principal {(x, y). dist (x::'a completion) y < e})"
     by (simp add: Completion.uniformity_completion_def)    
@@ -935,8 +937,9 @@ proof
            + norm (rep_completion (X i) (m + T i + T j) - rep_completion (X j) (m + T i + T j))
            + inverse (of_nat (Suc j)) )\<close>
         for i j
-        using lim_ge
-        by simp
+        sorry
+(*         using lim_ge
+        by simp *)
       moreover have \<open>lim ( \<lambda> m.
              inverse (of_nat (Suc i))
            + norm (rep_completion (X i) (m + T i + T j) - rep_completion (X j) (m + T i + T j))
@@ -1007,8 +1010,9 @@ proof
         proof-
           have \<open>lim ( \<lambda> m. norm (rep_completion (X i) m - rep_completion (X j) m) )
               = lim (\<lambda> n. ( \<lambda> m. norm (rep_completion (X i) m - rep_completion (X j) m) ) (n + (T i + T j)) )\<close>
-            using lim_initial_segment \<open>convergent ( \<lambda> m. norm (rep_completion (X i) m - rep_completion (X j) m) )\<close>
-            by auto
+            using \<open>convergent ( \<lambda> m. norm (rep_completion (X i) m - rep_completion (X j) m) )\<close>
+            sorry
+            (* by auto *)
           moreover have \<open>n + (T i + T j) = n + T i + T j\<close>
             for n
             by auto
@@ -1145,10 +1149,10 @@ proof
               hence \<open>\<forall> n \<ge> (max (T i) W).  norm (rep_completion (X i) n - l n) \<le> e/2\<close>
                 by simp                
               moreover have \<open>convergent (\<lambda> n. norm (rep_completion (X i) n - l n))\<close>
-     sorry
+                sorry
                 (* by (simp add: Cauchy_convergent Cauchy_convergent_norm Cauchy_minus \<open>Cauchy l\<close> \<open>\<And>i. Cauchy (rep_completion (X i))\<close>) *)
               ultimately show \<open>lim (\<lambda>n. norm (rep_completion (X i) n - l n)) \<le> e/2\<close>
-                using Lim_bounded_lim by blast
+                sorry
             qed
             thus ?thesis
               by (meson add_leE)  
@@ -1232,8 +1236,8 @@ proof
                   using \<open>\<forall> n\<ge>M. norm ((\<lambda> n. (rep_completion (abs_completion l)) n - l n ) n) < e/2\<close>
                   by auto
                 ultimately have \<open>lim (\<lambda>n. norm ( (rep_completion (abs_completion l) n - l n) )) \<le> e/2\<close>
-                  using Lim_bounded_lim
-                  by blast
+                  apply auto 
+                  using \<open>(\<lambda>n. rep_completion (abs_completion l) n - l n) \<longlonglongrightarrow> 0\<close> dual_order.trans limI tendsto_norm_zero by fastforce
                 moreover have \<open>lim (\<lambda>n. norm ( (rep_completion (abs_completion l) n - l n) ))
                     = lim (\<lambda>n. norm ( l n - (rep_completion (abs_completion l) n) ))\<close>
                 proof-
@@ -1306,7 +1310,8 @@ lift_definition scaleC_completion :: \<open>complex \<Rightarrow> 'a completion 
   proof-
     have \<open>Cauchy f1\<close>
       using that by blast
-    thus ?thesis using Cauchy_scaleC by blast
+    thus ?thesis 
+      using bounded_clinear.Cauchy[OF bounded_clinear_scaleC_right] by blast
   qed
   show "Cauchy (\<lambda>n. r *\<^sub>C (f2 n::'a)) \<and> Vanishes (\<lambda>n. r *\<^sub>C f1 n - r *\<^sub>C f2 n)"
     if "Cauchy f1 \<and> Cauchy f2 \<and> Vanishes (\<lambda>n. (f1 n::'a) - f2 n)"
@@ -1318,7 +1323,8 @@ lift_definition scaleC_completion :: \<open>complex \<Rightarrow> 'a completion 
     proof-
       have \<open>Cauchy f2\<close>
         using that by blast
-      thus ?thesis using Cauchy_scaleC by blast
+      thus ?thesis 
+        using bounded_clinear.Cauchy[OF bounded_clinear_scaleC_right] by blast
     qed
     moreover have \<open>Vanishes (\<lambda>n. r *\<^sub>C f1 n - r *\<^sub>C f2 n)\<close>
     proof-
@@ -1420,7 +1426,7 @@ proof
       and b :: complex
       and x :: "'a completion"
     apply transfer apply auto unfolding completion_rel_def apply auto
-    by (simp add: Cauchy_scaleC)
+    using bounded_clinear.Cauchy[OF bounded_clinear_scaleC_right] by blast
 
   show "1 *\<^sub>C (x::'a completion) = x"
     for x :: "'a completion"
@@ -1677,15 +1683,15 @@ qed
     moreover have \<open>convergent (\<lambda>n. Re \<langle>x n, x n\<rangle>)\<close>
       by (simp add: Cauchy_Re \<open>convergent (\<lambda>n. \<langle>x n, x n\<rangle>)\<close> convergent_Cauchy real_Cauchy_convergent)
     ultimately have \<open>0 \<le> lim (\<lambda>n. Re \<langle>x n, x n\<rangle>)\<close>
-      using lim_Lim_bounded2[where N = "0" and x = "(\<lambda>n. Re (\<langle>x n, x n\<rangle>))" and C = "0"]
-      by simp
+      using Lim_bounded2[where N = "0" and f = "(\<lambda>n. Re (\<langle>x n, x n\<rangle>))" and C = "0"]
+      using convergent_LIMSEQ_iff by blast
     have \<open>lim (\<lambda>n. \<langle>x n, x n\<rangle>) = complex_of_real (lim (\<lambda>n. Re \<langle>x n, x n\<rangle>))\<close>
     proof-
       have \<open>(\<lambda>n. \<langle>x n, x n\<rangle>) = (\<lambda>n. complex_of_real (Re \<langle>x n, x n\<rangle>))\<close>
         using \<open>\<And>n. \<langle>x n, x n\<rangle> = complex_of_real (Re \<langle>x n, x n\<rangle>)\<close> by auto        
       moreover have \<open>(lim (\<lambda>n. complex_of_real (Re \<langle>x n, x n\<rangle>))) = complex_of_real (lim (\<lambda>n. Re \<langle>x n, x n\<rangle>))\<close>
-        using lim_complex_of_real[where x = "(\<lambda> n. Re \<langle>x n, x n\<rangle>)"]
-        by (simp add: \<open>convergent (\<lambda>n. Re \<langle>x n, x n\<rangle>)\<close>)
+        using tendsto_of_real[where g = "(\<lambda> n. Re \<langle>x n, x n\<rangle>)"]
+        sorry
       ultimately show ?thesis by simp
     qed
     then show \<open>0 \<le> lim (\<lambda>n. \<langle>x n, x n\<rangle>)\<close>
@@ -1735,11 +1741,12 @@ qed
     fix x :: \<open>nat \<Rightarrow> 'a\<close>
     assume \<open>Cauchy x\<close>
     have \<open>lim (\<lambda>n. sqrt ( norm \<langle>x n, x n\<rangle> )) = sqrt ( lim (\<lambda>n.  norm \<langle>x n, x n\<rangle> ) )\<close>
-      using lim_sqrt[where x = \<open>(\<lambda>n.  norm \<langle>x n, x n\<rangle> )\<close>]
-    by (metis Cauchy_cinner_Cauchy Cauchy_convergent_iff \<open>Cauchy x\<close> convergent_norm)
+      using tendsto_real_sqrt[where f = \<open>(\<lambda>n.  norm \<langle>x n, x n\<rangle> )\<close>]
+      sorry
     moreover have \<open>lim (\<lambda>n.  norm \<langle>x n, x n\<rangle> ) = norm (lim (\<lambda>n. \<langle>x n, x n\<rangle> ))\<close>
-      using lim_norm[where x = "(\<lambda>n. \<langle>x n, x n\<rangle> )"]
-      using Cauchy_cinner_Cauchy \<open>Cauchy x\<close> complex_Cauchy_convergent by blast
+      using tendsto_norm[where f = "(\<lambda>n. \<langle>x n, x n\<rangle> )"]
+      using Cauchy_cinner_Cauchy \<open>Cauchy x\<close> complex_Cauchy_convergent 
+      sorry
     ultimately have \<open>lim (\<lambda>n. sqrt ( norm \<langle>x n, x n\<rangle> )) = sqrt (norm (lim (\<lambda>n. \<langle>x n, x n\<rangle>)))\<close>
       by simp
     moreover have \<open>norm (x n) =  sqrt ( norm \<langle>x n, x n\<rangle> )\<close>
@@ -1835,7 +1842,7 @@ proof-
   have \<open>Cauchy (rep_completion x)\<close>
     by (simp add: Cauchy_rep_completion)    
   thus ?thesis
-    by (simp add: bounded_clinear_Cauchy assms)
+    by (simp add: bounded_clinear.Cauchy assms)
 qed
 
 (* TODO: This could be more generally defined as mapping a continuous function
@@ -1855,8 +1862,8 @@ lemma compeltion_map_well_defined:
   assumes \<open>completion_rel x y\<close> and \<open>bounded_clinear f\<close>
   shows \<open>completion_rel (\<lambda> n. f (x n)) (\<lambda> n. f (y n))\<close>
   using assms unfolding completion_rel_def apply auto 
-    apply (simp add: bounded_clinear_Cauchy)
-   apply (simp add: bounded_clinear_Cauchy)
+    apply (simp add: bounded_clinear.Cauchy)
+   apply (simp add: bounded_clinear.Cauchy)
   unfolding Vanishes_def
 proof-
   assume \<open>bounded_clinear f\<close> and \<open>Cauchy x\<close> and \<open>Cauchy y\<close> and \<open>(\<lambda>n. x n - y n) \<longlonglongrightarrow> 0\<close>
@@ -1925,7 +1932,7 @@ proof
       using Quotient_completion Quotient_rep_reflp by fastforce
     hence \<open>completion_rel (\<lambda>n. r *\<^sub>C (rep_completion b) n) (\<lambda>n. r *\<^sub>C (rep_completion b) n)\<close>
       unfolding completion_rel_def apply auto
-      by (simp add: Cauchy_scaleC)
+      using bounded_clinear.Cauchy[OF bounded_clinear_scaleC_right] by blast
     hence \<open>completion_rel (\<lambda>n.  (rep_completion (r *\<^sub>C b) n))
         (\<lambda>n. r *\<^sub>C (rep_completion b n))\<close>
       unfolding scaleC_completion_def apply auto
@@ -2001,8 +2008,9 @@ proof
         by (simp add: convergent_of_real)         *)
       hence  \<open>lim (\<lambda>n.  K *\<^sub>C (norm (rep_completion x n))) =
                  K *\<^sub>C lim (\<lambda>y.  (norm (rep_completion x y)))\<close>
-        by (simp add: \<open>convergent (\<lambda>n. norm (rep_completion x n))\<close> lim_complex_of_real)
-      moreover have \<open>lim (\<lambda>n.  K *\<^sub>C (norm (rep_completion x n))) = lim (\<lambda>n. (norm (rep_completion x n)) * K)\<close>
+        (* by (simp add: \<open>convergent (\<lambda>n. norm (rep_completion x n))\<close> lim_complex_of_real) *)
+        sorry
+        moreover have \<open>lim (\<lambda>n.  K *\<^sub>C (norm (rep_completion x n))) = lim (\<lambda>n. (norm (rep_completion x n)) * K)\<close>
       proof-     
         have \<open>K *\<^sub>C (norm (rep_completion x n)) = (norm (rep_completion x n)) * K\<close>
           for n
@@ -2023,8 +2031,8 @@ proof
             by (simp add: \<open>convergent (\<lambda>n. norm (rep_completion x n))\<close>)
 
           hence \<open>convergent (\<lambda> n. K *\<^sub>C (norm (rep_completion x n)))\<close>
-            using Cauchy_convergent Cauchy_scaleC convergent_Cauchy convergent_of_real 
-            by blast
+            using Cauchy_convergent convergent_Cauchy convergent_of_real 
+            sorry
           moreover have \<open>convergent (\<lambda> n. (norm (rep_completion x n)) * K )\<close>
             using \<open>convergent (\<lambda> n. (norm (rep_completion x n)))\<close>
           proof -
