@@ -11,11 +11,11 @@ lemma addState_adj_times_addState[simp]:
   shows "addState \<psi>* o\<^sub>C\<^sub>L addState \<phi> = \<langle>\<psi>, \<phi>\<rangle> *\<^sub>C (idOp::('b ell2,'b ell2) cblinfun)"
 proof -
   have "\<langle>\<gamma>, (addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta>\<rangle> = \<langle>\<gamma>, (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C idOp) *\<^sub>V \<delta>\<rangle>" for \<gamma> \<delta> :: "'b ell2"
-    apply (simp add: times_applyOp adjoint_I')
+    apply (simp add: times_applyOp cinner_adj_right)
     apply (transfer fixing: \<psi> \<phi> \<delta> \<gamma>)
     by (rule cinner_tensor)
   hence "(addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta> = (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C idOp) *\<^sub>V \<delta>" for \<delta> :: "'b ell2"
-    by (metis (no_types, lifting) adjoint_D adjoint_I adjoint_twice)
+    by (metis (no_types, lifting) adjoint_eqI cinner_adj_right cinner_adj_left double_adj)
   thus ?thesis
     by (rule cblinfun_ext)
 qed
