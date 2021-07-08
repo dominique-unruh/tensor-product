@@ -8,16 +8,16 @@ lemma cinner_tensor: "\<langle>\<gamma> \<otimes> \<psi>, \<delta> \<otimes> \<p
 lemma addState_adj_times_addState[simp]: 
   includes cblinfun_notation no_blinfun_notation
   fixes \<psi> \<phi> :: "'a ell2"
-  shows "addState \<psi>* o\<^sub>C\<^sub>L addState \<phi> = \<langle>\<psi>, \<phi>\<rangle> *\<^sub>C (idOp::('b ell2,'b ell2) cblinfun)"
+  shows "addState \<psi>* o\<^sub>C\<^sub>L addState \<phi> = \<langle>\<psi>, \<phi>\<rangle> *\<^sub>C (id_cblinfun::('b ell2,'b ell2) cblinfun)"
 proof -
-  have "\<langle>\<gamma>, (addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta>\<rangle> = \<langle>\<gamma>, (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C idOp) *\<^sub>V \<delta>\<rangle>" for \<gamma> \<delta> :: "'b ell2"
-    apply (simp add: times_applyOp cinner_adj_right)
+  have "\<langle>\<gamma>, (addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta>\<rangle> = \<langle>\<gamma>, (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C id_cblinfun) *\<^sub>V \<delta>\<rangle>" for \<gamma> \<delta> :: "'b ell2"
+    apply (simp add: cblinfun_compose_image cinner_adj_right)
     apply (transfer fixing: \<psi> \<phi> \<delta> \<gamma>)
-    by (rule cinner_tensor)
-  hence "(addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta> = (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C idOp) *\<^sub>V \<delta>" for \<delta> :: "'b ell2"
+    by (simp add: cinner_tensor)
+  hence "(addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta> = (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C id_cblinfun) *\<^sub>V \<delta>" for \<delta> :: "'b ell2"
     by (metis (no_types, lifting) adjoint_eqI cinner_adj_left double_adj)
   thus ?thesis
-    by (rule cblinfun_ext)
+    by (rule cblinfun_eqI)
 qed
 
 lemma [simp]: "norm \<psi>=1 \<Longrightarrow> isometry (addState \<psi>)"
@@ -34,7 +34,7 @@ lemma tensorOp_applyOp_distr:
 
 lemma assoc_op_apply_tensor[simp]:
   includes cblinfun_notation no_blinfun_notation
-  shows "assoc_op *\<^sub>V (\<psi>\<otimes>(\<phi>\<otimes>\<tau>)) = (\<psi>\<otimes>\<phi>)\<otimes>\<tau>"
+  shows "assoc_op *\<^sub>V (\<psi> \<otimes> (\<phi> \<otimes> \<tau>)) = (\<psi> \<otimes> \<phi>) \<otimes> \<tau>"
   sorry
 
 lemma comm_op_apply_tensor[simp]: 

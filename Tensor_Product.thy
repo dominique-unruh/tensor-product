@@ -424,7 +424,7 @@ definition tensorSpace :: "'a ell2 ccsubspace \<Rightarrow> 'b ell2 ccsubspace \
 consts tensor :: "'a \<Rightarrow> 'b \<Rightarrow> 'c" (infixr "\<otimes>" 71)
 adhoc_overloading tensor tensorOp tensorSpace tensorVec
 
-lemma idOp_tensor_idOp[simp]: "idOp\<otimes>idOp = idOp"
+lemma id_cblinfun_tensor_id_cblinfun[simp]: "id_cblinfun\<otimes>id_cblinfun = id_cblinfun"
   sorry
 
 definition "comm_op" :: "(('a*'b) ell2, ('b*'a) ell2) cblinfun" where
@@ -438,9 +438,9 @@ lemma
   for A::"('a ell2,'b ell2) cblinfun" and B::"('c ell2,'d ell2) cblinfun"
   sorry
 
-lemma comm_op_times_comm_op[simp]: "comm_op  o\<^sub>C\<^sub>L comm_op = idOp"
+lemma comm_op_times_comm_op[simp]: "comm_op  o\<^sub>C\<^sub>L comm_op = id_cblinfun"
 proof -
-  have "comm_op  o\<^sub>C\<^sub>L (idOp \<otimes> idOp)  o\<^sub>C\<^sub>L comm_op = idOp \<otimes> idOp" by (simp del: idOp_tensor_idOp)
+  have "comm_op  o\<^sub>C\<^sub>L (id_cblinfun \<otimes> id_cblinfun)  o\<^sub>C\<^sub>L comm_op = id_cblinfun \<otimes> id_cblinfun" by (simp del: id_cblinfun_tensor_id_cblinfun)
   thus ?thesis by simp
 qed
 
@@ -485,7 +485,7 @@ consts remove_qvar_unit_op :: "(('a*unit) ell2,'a ell2) cblinfun"
 
 
 (* definition addState :: "'a ell2 \<Rightarrow> ('b,'b*'a) l2bounded" where
-  "addState \<psi> = idOp \<otimes> (ell2_to_bounded \<psi>) \<cdot> remove_qvar_unit_op*" *)
+  "addState \<psi> = id_cblinfun \<otimes> (ell2_to_bounded \<psi>) \<cdot> remove_qvar_unit_op*" *)
 
 lemma addState_times_scalar[simp]: "addState (a *\<^sub>C \<psi>) = a *\<^sub>C addState \<psi>"
   for a::complex and \<psi>::"'a ell2"
