@@ -2,7 +2,7 @@ theory ToDo_Tensor
   imports Tensor_Product 
 begin
 
-lemma cinner_tensor: "\<langle>\<gamma> \<otimes> \<psi>, \<delta> \<otimes> \<phi>\<rangle> = \<langle>\<psi>, \<phi>\<rangle> * \<langle>\<gamma>, \<delta>\<rangle>"
+lemma cinner_tensor: "\<langle>\<gamma> \<otimes> \<psi>, \<delta> \<otimes> \<phi>\<rangle> = \<langle>\<psi>, \<phi>\<rangle> * \<langle>\<gamma>, \<delta>\<rangle>" for \<gamma> \<psi> \<delta> \<phi> :: \<open>_ ell2\<close>
   sorry
 
 lemma addState_adj_times_addState[simp]: 
