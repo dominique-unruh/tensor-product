@@ -7,8 +7,7 @@ Authors:
 
 theory Completion
   imports 
-    "Bounded_Operators.Complex_Inner_Product" "Bounded_Operators.Bounded_Operators"
-
+    Bounded_Operators.Complex_Bounded_Linear_Function
 begin
 
 (* TODO: I don't think this definition is necessary. Vanishes X is no shorter/clearer than X \<longlonglongrightarrow> 0 *)

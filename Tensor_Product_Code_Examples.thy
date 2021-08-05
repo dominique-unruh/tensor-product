@@ -1,5 +1,7 @@
 theory Tensor_Product_Code_Examples
-  imports Tensor_Product_Code Bounded_Operators.Bounded_Operators_Code_Examples
+  imports
+    "Bounded_Operators-Extra.Extra_Pretty_Code_Examples"
+    Tensor_Product_Code
 begin
 
 value "tensorOp (id_cblinfun :: (bool ell2,_) cblinfun) (id_cblinfun :: (bool ell2,_) cblinfun)"

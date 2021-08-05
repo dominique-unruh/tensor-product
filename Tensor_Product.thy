@@ -9,7 +9,6 @@ Authors:
 
 theory Tensor_Product
   imports
-    "Bounded_Operators.Bounded_Operators"
     "Bounded_Operators.Complex_L2"
     "HOL-Library.Adhoc_Overloading" 
     Completion
@@ -424,7 +423,7 @@ definition tensorSpace :: "'a ell2 ccsubspace \<Rightarrow> 'b ell2 ccsubspace \
 consts tensor :: "'a \<Rightarrow> 'b \<Rightarrow> 'c" (infixr "\<otimes>" 71)
 adhoc_overloading tensor tensorOp tensorSpace tensorVec
 
-lemma id_cblinfun_tensor_id_cblinfun[simp]: "id_cblinfun\<otimes>id_cblinfun = id_cblinfun"
+lemma id_tensor_id[simp]: "id_cblinfun \<otimes> id_cblinfun = id_cblinfun"
   sorry
 
 definition "comm_op" :: "(('a*'b) ell2, ('b*'a) ell2) cblinfun" where
@@ -440,7 +439,8 @@ lemma
 
 lemma comm_op_times_comm_op[simp]: "comm_op  o\<^sub>C\<^sub>L comm_op = id_cblinfun"
 proof -
-  have "comm_op  o\<^sub>C\<^sub>L (id_cblinfun \<otimes> id_cblinfun)  o\<^sub>C\<^sub>L comm_op = id_cblinfun \<otimes> id_cblinfun" by (simp del: id_cblinfun_tensor_id_cblinfun)
+  have "comm_op  o\<^sub>C\<^sub>L (id_cblinfun \<otimes> id_cblinfun)  o\<^sub>C\<^sub>L comm_op = id_cblinfun \<otimes> id_cblinfun" 
+    by (simp del: id_tensor_id)
   thus ?thesis by simp
 qed
 
