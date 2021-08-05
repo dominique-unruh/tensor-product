@@ -41,11 +41,11 @@ lemma tensorVec_code[code]: "vec_of_ell2 (\<psi> \<otimes> \<phi>) = vec_tensor 
 
 (* See comment at definition of remove_qvar_unit_op before proving *)
 lemma mat_of_cblinfun_remove_qvar_unit_op[code]:
-  "mat_of_cblinfun (remove_qvar_unit_op::(_,'a::enum) l2bounded) = mat_of_cblinfun (idOp::(_,'a) l2bounded)" 
+  "mat_of_cblinfun (remove_qvar_unit_op::(_,'a::enum) l2bounded) = mat_of_cblinfun (id_cblinfun::(_,'a) l2bounded)" 
   sorry
 
 (* TODO: more direct code equation (w/o remove_qvar_unit_op) *)
-lemma addState_remove_qvar_unit_op[code]: "addState \<psi> = idOp \<otimes> (vector_to_cblinfun \<psi>) o\<^sub>C\<^sub>L remove_qvar_unit_op*"
+lemma addState_remove_qvar_unit_op[code]: "addState \<psi> = id_cblinfun \<otimes> (vector_to_cblinfun \<psi>) o\<^sub>C\<^sub>L remove_qvar_unit_op*"
   sorry
 
 lemma tensorSpace_SPAN[code]: "tensorSpace (SPAN A) (SPAN B) = SPAN [vec_tensor a b. a<-A, b<-B]"
