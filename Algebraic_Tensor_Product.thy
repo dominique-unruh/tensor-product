@@ -3170,15 +3170,10 @@ proof
     have \<open>x \<in> cspan  ((case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V'))\<close>
       using \<open>T \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (U' \<times> V')\<close> \<open>x \<in> cspan T\<close> complex_vector.span_mono 
       by auto
-    have \<open>\<exists> A. is_ortho_set A \<and> cspan A = cspan U' \<and> finite A\<close>
-      by (simp add: orthogonal_basis_of_cspan \<open>finite U'\<close>)
-    then obtain A where \<open>is_ortho_set A\<close>
-      and \<open>cspan A = cspan U'\<close> and \<open>finite A\<close>
-      by auto
-    have \<open>\<exists> B. is_ortho_set B \<and> cspan B = cspan V' \<and> finite B\<close>
-      by (simp add: orthogonal_basis_of_cspan \<open>finite V'\<close>)
-    then obtain B where \<open>is_ortho_set B\<close> and \<open>cspan B = cspan V'\<close> and \<open>finite B\<close>
-      by auto
+    obtain A where \<open>is_ortho_set A\<close> and \<open>cspan A = cspan U'\<close> and \<open>finite A\<close>
+      using orthonormal_basis_of_cspan \<open>finite U'\<close> by blast
+    obtain B where \<open>is_ortho_set B\<close> and \<open>cspan B = cspan V'\<close> and \<open>finite B\<close>
+      using orthonormal_basis_of_cspan \<open>finite V'\<close> by blast
     from \<open>cspan A = cspan U'\<close>
       \<open>cspan B = cspan V'\<close>
     have \<open>cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))
@@ -3508,16 +3503,12 @@ proof-
     by blast
   have \<open>finite (fst ` M)\<close>
     by (simp add: \<open>finite M\<close>)
-  hence \<open>\<exists> A. is_ortho_set A \<and> cspan A = cspan (fst ` M) \<and> finite A\<close>
-    by (simp add: orthogonal_basis_of_cspan)
   then obtain A where \<open>is_ortho_set A\<close> and \<open>cspan A = cspan (fst ` M)\<close> and \<open>finite A\<close>
-    by auto
+    using orthonormal_basis_of_cspan by blast
   have \<open>finite (snd ` M)\<close>
     by (simp add: \<open>finite M\<close>)
-  hence \<open>\<exists> B. is_ortho_set B \<and> cspan B = cspan (snd ` M) \<and> finite B\<close>
-    by (simp add: orthogonal_basis_of_cspan)
   then obtain B where \<open>is_ortho_set B\<close> and \<open>cspan B = cspan (snd ` M)\<close> and \<open>finite B\<close>
-    by auto
+    using orthonormal_basis_of_cspan by blast
   define S where \<open>S = (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close>
   have \<open>z \<in> cspan S\<close>
   proof-
@@ -3636,8 +3627,7 @@ proof-
   then obtain V \<psi> where \<open>finite V\<close> and \<open>z = (\<Sum>b\<in>V. (\<psi> b) \<otimes>\<^sub>a b)\<close>
     by blast
   obtain B where \<open>is_ortho_set B\<close> and \<open>cspan B = cspan V\<close> and \<open>finite B\<close>
-    apply atomize_elim
-    by (simp add: orthogonal_basis_of_cspan \<open>finite V\<close>)
+    using orthonormal_basis_of_cspan \<open>finite V\<close> by blast
   have \<open>V \<subseteq> cspan B\<close>
     using \<open>cspan B = cspan V\<close>
     by (simp add: complex_vector.span_superset)
