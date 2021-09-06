@@ -9,7 +9,7 @@ Authors:
 
 theory Algebraic_Tensor_Product
   imports
-    Bounded_Operators.Complex_Bounded_Linear_Function
+    Complex_Bounded_Operators.Complex_Bounded_Linear_Function
     "HOL-Library.Adhoc_Overloading"
     Free_Vector_Spaces
 begin
