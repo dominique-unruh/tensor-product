@@ -9,7 +9,7 @@ Authors:
 
 theory Free_Vector_Spaces
   imports
-    "Bounded_Operators.Complex_Inner_Product"
+    "Complex_Bounded_Operators.Complex_Inner_Product"
     "HOL-Library.Adhoc_Overloading"
     Preliminaries_Tensor_Product
 begin

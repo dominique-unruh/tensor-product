@@ -7,7 +7,7 @@ Authors:
 
 theory Completion
   imports 
-    Bounded_Operators.Complex_Bounded_Linear_Function
+    Complex_Bounded_Operators.Complex_Bounded_Linear_Function
 begin
 
 (* TODO: I don't think this definition is necessary. Vanishes X is no shorter/clearer than X \<longlonglongrightarrow> 0 *)

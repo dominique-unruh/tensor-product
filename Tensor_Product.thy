@@ -9,7 +9,7 @@ Authors:
 
 theory Tensor_Product
   imports
-    "Bounded_Operators.Complex_L2"
+    "Complex_Bounded_Operators.Complex_L2"
     "HOL-Library.Adhoc_Overloading" 
     Completion
     Algebraic_Tensor_Product
