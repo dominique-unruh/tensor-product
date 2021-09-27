@@ -14,4 +14,4 @@ else
     FILES=()
 fi
 
-"$ISABELLE_DIR"/bin/isabelle jedit -l Bounded_Operators -d "$DIR" "$@" "${FILES[@]}" &
+"$ISABELLE_DIR"/bin/isabelle jedit -l Complex_Bounded_Operators -d "$DIR" "$@" "${FILES[@]}" &

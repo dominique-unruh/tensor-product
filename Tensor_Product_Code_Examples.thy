@@ -1,6 +1,6 @@
 theory Tensor_Product_Code_Examples
   imports
-    "Complex_Bounded_Operators-Extra.Extra_Pretty_Code_Examples"
+    "Complex_Bounded_Operators.Extra_Pretty_Code_Examples"
     Tensor_Product_Code
 begin
 
