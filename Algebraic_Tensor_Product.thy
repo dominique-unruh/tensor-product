@@ -1350,7 +1350,7 @@ proof-
   hence \<open>\<exists>!H. clinear H \<and> (\<forall>x::'a. \<forall> y::'b. ((case_prod (\<otimes>\<^sub>a)) \<circ> prod.swap) (x, y) = H (x \<otimes>\<^sub>a y))\<close>
     unfolding h_def by auto
   hence \<open>\<exists>!H. clinear H \<and> (\<forall>x::'a. \<forall> y::'b. (case_prod (\<otimes>\<^sub>a)) (y, x) = H (x \<otimes>\<^sub>a y))\<close>
-    unfolding swap_def by auto
+    by auto
   hence \<open>\<exists>!H. clinear H \<and> (\<forall>x::'a. \<forall> y::'b. y \<otimes>\<^sub>a x = H (x \<otimes>\<^sub>a y))\<close>
     by simp
   thus ?thesis by auto
@@ -2037,7 +2037,7 @@ proof-
     have \<open>\<exists> c::complex. c *\<^sub>C v\<^sub>1 = v\<^sub>2\<close>
       sorry
 (*
-      by (metis (no_types, hide_lams) cdependent_raw_def assms(1) assms(3) complex_vector.dependent_single complex_vector.independent_insert complex_vector.scale_zero_left complex_vector.span_breakdown_eq empty_iff eq_iff_diff_eq_0 insert_commute tensor_eq_independent1 tensor_inj_fst)
+      by (metis (no_types, opaque_lifting) cdependent_raw_def assms(1) assms(3) complex_vector.dependent_single complex_vector.independent_insert complex_vector.scale_zero_left complex_vector.span_breakdown_eq empty_iff eq_iff_diff_eq_0 insert_commute tensor_eq_independent1 tensor_inj_fst)
 *)
     then obtain c where \<open>c *\<^sub>C v\<^sub>1 = v\<^sub>2\<close>
       by blast
@@ -3540,7 +3540,7 @@ proof-
         by (simp add: \<open>a = (case m of (x, xa) \<Rightarrow> x \<otimes>\<^sub>a xa)\<close> prod.case_eq_if) 
     qed
     thus ?thesis
-      by (metis (no_types, hide_lams) \<open>z \<in> cspan W\<close> complex_vector.span_mono complex_vector.span_span subset_iff) 
+      by (metis (no_types, opaque_lifting) \<open>z \<in> cspan W\<close> complex_vector.span_mono complex_vector.span_span subset_iff) 
   qed   
   show ?thesis
     using \<open>is_ortho_set A\<close> \<open>is_ortho_set B\<close> \<open>finite A\<close> \<open>finite B\<close> \<open>S = (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close>
@@ -4877,7 +4877,7 @@ proof-
         hence \<open>\<exists>K. \<forall>x. norm ((f \<otimes>\<^sub>A g) x) \<le> norm x * K\<close>
           by (metis bounded_clinear.bounded_linear mult.commute onorm)
         hence \<open>\<exists>K. \<forall>x. norm ((f \<otimes>\<^sub>A g) x) \<le> norm x * K \<and> K \<ge> 0\<close>
-          by (metis (no_types, hide_lams) linear mult.commute mult_nonneg_nonpos2 mult_zero_left norm_ge_zero order.trans)
+          by (metis (no_types, opaque_lifting) linear mult.commute mult_nonneg_nonpos2 mult_zero_left norm_ge_zero order.trans)
         then obtain K where \<open>\<And> x. norm ((f \<otimes>\<^sub>A g) x) \<le> norm x * K\<close> and \<open>K \<ge> 0\<close>
           by blast
         have \<open>(norm ((f \<otimes>\<^sub>A g) t))/(norm t) \<le> K\<close>

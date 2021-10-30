@@ -328,7 +328,7 @@ proof
     using \<open>bounded_clinear f\<close> bounded_clinear_def complex_vector.linear_add by blast
   show "\<exists>K. \<forall>x. norm (htensor_map f (x::'a \<otimes>\<^sub>h 'b)::'c \<otimes>\<^sub>h 'd) \<le> norm x * K"
     if "bounded_clinear (f::('a \<otimes>\<^sub>a 'b) completion \<Rightarrow> ('c \<otimes>\<^sub>a 'd) completion)"
-    by (metis (no_types, hide_lams) bounded_clinear.bounded htensor_map_def norm_htensor.abs_eq norm_htensor.rep_eq that)
+    by (metis (no_types, opaque_lifting) bounded_clinear.bounded htensor_map_def norm_htensor.abs_eq norm_htensor.rep_eq that)
 qed
 
 

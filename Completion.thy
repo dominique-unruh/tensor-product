@@ -1044,7 +1044,7 @@ proof
         by smt
       hence \<open>e > 0 \<Longrightarrow> \<exists> M. \<forall> i \<ge> M. \<forall> j \<ge> M. norm (l i - l j) < e + e + e\<close>
         for e
-        by (metis (no_types, hide_lams) add.assoc le_add_same_cancel2 le_iff_add zero_le)
+        by (metis (no_types, opaque_lifting) add.assoc le_add_same_cancel2 le_iff_add zero_le)
       hence \<open>e > 0 \<Longrightarrow> \<exists> M. \<forall> i \<ge> M. \<forall> j \<ge> M. norm (l i - l j) < 3*e\<close>
         for e
         by simp
