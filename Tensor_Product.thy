@@ -13,7 +13,7 @@ theory Tensor_Product
     "HOL-Library.Adhoc_Overloading" 
     Completion
     Algebraic_Tensor_Product
-
+    Registers.Finite_Tensor_Product
 begin
 unbundle cblinfun_notation
 
@@ -409,19 +409,26 @@ section \<open>Tensor product ell2\<close>
 
 unbundle blinfun_notation
 
-consts "tensorOp" :: "('a ell2,'b ell2) cblinfun \<Rightarrow> ('c ell2,'d ell2) cblinfun \<Rightarrow> (('a*'c) ell2,('b*'d) ell2) cblinfun"
+(* Widening type to allow infinite tensor products *)
+setup \<open>Sign.add_const_constraint (\<^const_name>\<open>tensor_op\<close>, SOME \<^typ>\<open>'a ell2 \<Rightarrow>\<^sub>C\<^sub>L 'b ell2 \<Rightarrow> 'c ell2 \<Rightarrow>\<^sub>C\<^sub>L 'd ell2 \<Rightarrow> ('a \<times> 'c) ell2 \<Rightarrow>\<^sub>C\<^sub>L ('b \<times> 'd) ell2\<close>)\<close>
+abbreviation (input) "tensorOp == tensor_op"
+
+(* consts "tensorOp" :: "('a ell2,'b ell2) cblinfun \<Rightarrow> ('c ell2,'d ell2) cblinfun \<Rightarrow> (('a*'c) ell2,('b*'d) ell2) cblinfun" *)
 
 type_synonym ('a, 'b) l2bounded = "('a ell2,'b ell2) cblinfun"
 
-lift_definition "tensorVec" :: "'a ell2 \<Rightarrow> 'c ell2 \<Rightarrow> ('a*'c) ell2" is
-  "\<lambda>\<psi> \<phi> (x,y). \<psi> x * \<phi> y"
-  sorry
+setup \<open>Sign.add_const_constraint (\<^const_name>\<open>tensor_ell2\<close>, SOME \<^typ>\<open>'a ell2 \<Rightarrow> 'b ell2 \<Rightarrow> ('a \<times> 'b) ell2\<close>)\<close>
+abbreviation (input) "tensorVec == tensor_ell2"
 
-definition tensorSpace :: "'a ell2 ccsubspace \<Rightarrow> 'b ell2 ccsubspace \<Rightarrow> ('a*'b) ell2 ccsubspace" where
+(* lift_definition "tensorVec" :: "'a ell2 \<Rightarrow> 'c ell2 \<Rightarrow> ('a*'c) ell2" is
+  "\<lambda>\<psi> \<phi> (x,y). \<psi> x * \<phi> y"
+  sorry *)
+
+definition tensorSpace :: "'a ell2 ccsubspace \<Rightarrow> 'b ell2 ccsubspace \<Rightarrow> ('a*'b) ell2 ccsubspace" (infixr "\<otimes>\<^sub>S" 70) where
   "tensorSpace A B = ccspan {tensorVec \<psi> \<phi>| \<psi> \<phi>. \<psi> \<in> space_as_set A \<and> \<phi> \<in> space_as_set B}"
 
 consts tensor :: "'a \<Rightarrow> 'b \<Rightarrow> 'c" (infixr "\<otimes>" 71)
-adhoc_overloading tensor tensorOp tensorSpace tensorVec
+adhoc_overloading tensor "\<lambda>x. tensorOp x" "\<lambda>x. tensorSpace x" "\<lambda>x. tensorVec x"
 
 lemma id_tensor_id[simp]: "id_cblinfun \<otimes> id_cblinfun = id_cblinfun"
   sorry
