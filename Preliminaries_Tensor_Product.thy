@@ -118,27 +118,9 @@ proof-
   finally show ?thesis by blast
 qed
 
-(* TODO move somewhere appropriate *)
 lemma (in vector_space) span_finite_basis_exists:
   assumes "finite A"
   shows "\<exists>B. finite B \<and> independent B \<and> span B = span A \<and> card B = dim A"
-proof -
-  obtain B where BT1: "B \<subseteq> span A" 
-    and BT2: "span A \<subseteq> span B"
-    and indep: "independent B"  
-    and card: "card B = dim (span A)"
-    using basis_exists[where V="span A"]
-    by metis
-  have "finite B"
-    using assms indep BT1 by (rule independent_span_bound[THEN conjunct1])
-  moreover from BT1 BT2 have BT: "span B = span A"
-    using span_mono span_span by blast
-  moreover from card have "card B = dim (span A)"
-    by auto
-  moreover note indep
-  ultimately show ?thesis
-    by auto
-qed
-
+  by (metis assms basis_exists independent_span_bound span_eq span_mono span_span)
 
 end
