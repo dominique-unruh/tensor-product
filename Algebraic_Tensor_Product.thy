@@ -2245,7 +2245,7 @@ abbreviation entagled :: \<open>('a::complex_vector \<otimes>\<^sub>a 'b::comple
 
 text \<open>See proof of Proposition 1 on page 186 in @{cite Helemskii}\<close>
 definition g_atensor_cbilinear:: \<open>'a::complex_inner \<Rightarrow> 'b::complex_inner \<Rightarrow> 'a \<Rightarrow> 'b \<Rightarrow> complex\<close>
-  where \<open>g_atensor_cbilinear x y x\<^sub>1 y\<^sub>1 = \<langle>x, x\<^sub>1\<rangle>*\<langle>y, y\<^sub>1\<rangle>\<close>
+  where \<open>g_atensor_cbilinear x y x\<^sub>1 y\<^sub>1 = (x \<bullet>\<^sub>C x\<^sub>1) * (y \<bullet>\<^sub>C y\<^sub>1)\<close>
 
 lemma g_atensor_cbilinear_cbilinear:
   \<open>cbilinear (g_atensor_cbilinear x y)\<close>
@@ -2304,7 +2304,7 @@ lemma g_atensor_clinear_cbilinear:
   by (smt g_atensor_cbilinear_def g_atensor_clinear_def someI_ex)
 
 lemma g_atensor_clinear_cbilinear':
-  \<open>\<langle>x, x\<^sub>1\<rangle> * \<langle>y, y\<^sub>1\<rangle> = g_atensor_clinear x y (x\<^sub>1 \<otimes>\<^sub>a y\<^sub>1)\<close>
+  \<open>(x \<bullet>\<^sub>C x\<^sub>1) * (y \<bullet>\<^sub>C y\<^sub>1) = g_atensor_clinear x y (x\<^sub>1 \<otimes>\<^sub>a y\<^sub>1)\<close>
   unfolding g_atensor_cbilinear_def
   by (metis g_atensor_cbilinear_def g_atensor_clinear_cbilinear)
 
@@ -2323,7 +2323,7 @@ proof-
     using g_atensor_clinear_cbilinear'
     unfolding F_def
   proof -
-    have "g_atensor_clinear (b1 + b2) y (p \<otimes>\<^sub>a q) = \<langle>y, q\<rangle> * (\<langle>b2, p\<rangle> + \<langle>b1, p\<rangle>)"
+    have "g_atensor_clinear (b1 + b2) y (p \<otimes>\<^sub>a q) = (y \<bullet>\<^sub>C q) * ((b2 \<bullet>\<^sub>C p) + (b1 \<bullet>\<^sub>C p))"
       by (metis add.commute cinner_add_left g_atensor_clinear_cbilinear' mult.commute)
     hence " (g_atensor_clinear (b1 + b2) y (p \<otimes>\<^sub>a q)) -   (g_atensor_clinear b1 y (p \<otimes>\<^sub>a q)) =  (g_atensor_clinear b2 y (p \<otimes>\<^sub>a q))"
       by (metis add_diff_cancel g_atensor_clinear_cbilinear' left_diff_distrib' mult.commute)
@@ -2489,7 +2489,7 @@ proof-
     using g_atensor_clinear_cbilinear'
     unfolding F_def
   proof -
-    have "g_atensor_clinear x (r *\<^sub>C b) (p \<otimes>\<^sub>a q) = \<langle>x, p\<rangle> * (cnj r * \<langle>b, q\<rangle>)"
+    have "g_atensor_clinear x (r *\<^sub>C b) (p \<otimes>\<^sub>a q) = (x \<bullet>\<^sub>C p) * (cnj r * (b \<bullet>\<^sub>C q))"
       by (metis (full_types) cinner_scaleC_left g_atensor_clinear_cbilinear')
     thus "g_atensor_clinear x (r *\<^sub>C b) (p \<otimes>\<^sub>a q) - cnj r * g_atensor_clinear x b (p \<otimes>\<^sub>a q) = 0"
       using g_atensor_clinear_cbilinear' by auto
@@ -2807,7 +2807,7 @@ definition cinner_atensor :: \<open>'a \<otimes>\<^sub>a 'b \<Rightarrow> 'a \<o
   where  \<open>cinner_atensor = F_atensor_clinear\<close>
 
 definition norm_atensor :: \<open>'a \<otimes>\<^sub>a 'b \<Rightarrow> real\<close> where
-  \<open>norm_atensor z = sqrt (norm \<langle>z, z\<rangle> )\<close> for z
+  \<open>norm_atensor z = sqrt (norm (z \<bullet>\<^sub>C z) )\<close> for z
 
 definition sgn_atensor :: \<open>'a \<otimes>\<^sub>a 'b \<Rightarrow> 'a \<otimes>\<^sub>a 'b\<close> where
   \<open>sgn_atensor x = x /\<^sub>R norm x\<close> for x
@@ -2829,7 +2829,7 @@ proof
     unfolding dist_atensor_def 
     by blast
 
-  show "norm x = sqrt (norm \<langle>x, x\<rangle>)"
+  show "norm x = sqrt (norm (x \<bullet>\<^sub>C x))"
     for x :: "'a \<otimes>\<^sub>a 'b"
     unfolding norm_atensor_def 
     by blast
@@ -2848,14 +2848,14 @@ proof
     unfolding open_atensor_def 
     by blast
 
-  show "\<langle>x + y, z\<rangle> = \<langle>x, z\<rangle> + \<langle>y, z\<rangle>"
+  show "((x + y) \<bullet>\<^sub>C z) = (x \<bullet>\<^sub>C z) + (y \<bullet>\<^sub>C z)"
     for x :: "'a \<otimes>\<^sub>a 'b"
       and y :: "'a \<otimes>\<^sub>a 'b"
       and z :: "'a \<otimes>\<^sub>a 'b"
     unfolding cinner_atensor_def
     by (simp add: F_atensor_clinear_distr)
 
-  show "\<langle>r *\<^sub>C x, y\<rangle> = cnj r * \<langle>x, y\<rangle>"
+  show "((r *\<^sub>C x) \<bullet>\<^sub>C y) = cnj r * (x \<bullet>\<^sub>C y)"
     for r :: complex
       and x :: "'a \<otimes>\<^sub>a 'b"
       and y :: "'a \<otimes>\<^sub>a 'b"
@@ -2864,25 +2864,25 @@ proof
 
   have expansion_id: \<open>finite t \<Longrightarrow> finite t' \<Longrightarrow> 
         x = (\<Sum>a\<in>t. r a *\<^sub>C a) \<Longrightarrow> y = (\<Sum>a'\<in>t'. r' a' *\<^sub>C a') \<Longrightarrow>
-       \<langle>x, y\<rangle> = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C \<langle>a, a'\<rangle>)\<close>
+       (x \<bullet>\<^sub>C y) = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C (a \<bullet>\<^sub>C a'))\<close>
     for x y :: "'a \<otimes>\<^sub>a 'b"
       and t t'::"('a \<otimes>\<^sub>a 'b) set"
       and r r':: "'a \<otimes>\<^sub>a 'b \<Rightarrow> complex"
   proof-
     assume \<open>finite t\<close> and \<open>finite t'\<close> and 
       \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close> and \<open>y = (\<Sum>a'\<in>t'. r' a' *\<^sub>C a')\<close>
-    have \<open>\<langle>x, y\<rangle> = \<langle>(\<Sum>a\<in>t. r a *\<^sub>C a), y\<rangle>\<close>
+    have \<open>(x \<bullet>\<^sub>C y) = ((\<Sum>a\<in>t. r a *\<^sub>C a) \<bullet>\<^sub>C y)\<close>
       using \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close> by blast
-    also have \<open>\<dots> = (\<Sum>a\<in>t. \<langle>r a *\<^sub>C a, y\<rangle>)\<close>
+    also have \<open>\<dots> = (\<Sum>a\<in>t. ((r a *\<^sub>C a) \<bullet>\<^sub>C y))\<close>
       unfolding cinner_atensor_def
       using F_atensor_clinear_distr_gen \<open>finite t\<close> by blast
-    also have \<open>\<dots> = (\<Sum>a\<in>t. (cnj (r a)) *\<^sub>C \<langle>a, y\<rangle>)\<close>
-      by (metis \<open>\<And>y:: 'a\<otimes>\<^sub>a'b. \<And> x r. \<langle>r *\<^sub>C x, y\<rangle> = cnj r * \<langle>x, y\<rangle>\<close> complex_scaleC_def)
-    also have \<open>\<dots> = (\<Sum>a\<in>t. (cnj (r a)) *\<^sub>C \<langle>a, (\<Sum>a'\<in>t'. r' a' *\<^sub>C a')\<rangle>)\<close>
+    also have \<open>\<dots> = (\<Sum>a\<in>t. (cnj (r a)) *\<^sub>C (a \<bullet>\<^sub>C y))\<close>
+      by (metis \<open>\<And>y:: 'a\<otimes>\<^sub>a'b. \<And> x r. ((r *\<^sub>C x) \<bullet>\<^sub>C y) = cnj r * (x \<bullet>\<^sub>C y)\<close> complex_scaleC_def)
+    also have \<open>\<dots> = (\<Sum>a\<in>t. (cnj (r a)) *\<^sub>C (a \<bullet>\<^sub>C (\<Sum>a'\<in>t'. r' a' *\<^sub>C a')))\<close>
       using \<open>y = (\<Sum>a\<in>t'. r' a *\<^sub>C a)\<close> by blast
-    also have \<open>\<dots> = (\<Sum>a\<in>t. (cnj (r a)) *\<^sub>C (\<Sum>a'\<in>t'. \<langle>a, r' a' *\<^sub>C a'\<rangle>) )\<close>
+    also have \<open>\<dots> = (\<Sum>a\<in>t. (cnj (r a)) *\<^sub>C (\<Sum>a'\<in>t'. (a \<bullet>\<^sub>C (r' a' *\<^sub>C a'))) )\<close>
     proof-
-      have \<open>\<langle>a, (\<Sum>a'\<in>t'. r' a' *\<^sub>C a')\<rangle> = (\<Sum>a'\<in>t'. \<langle>a, r' a' *\<^sub>C a'\<rangle>)\<close>
+      have \<open>(a \<bullet>\<^sub>C (\<Sum>a'\<in>t'. r' a' *\<^sub>C a')) = (\<Sum>a'\<in>t'. (a \<bullet>\<^sub>C (r' a' *\<^sub>C a')))\<close>
         for a
       proof-
         have \<open>clinear (F_atensor_clinear a)\<close>
@@ -2892,28 +2892,28 @@ proof
       qed
       thus ?thesis by simp
     qed
-    also have \<open>\<dots> = (\<Sum>a\<in>t. (cnj (r a)) *\<^sub>C (\<Sum>a'\<in>t'. r' a' *\<^sub>C \<langle>a,  a'\<rangle>) )\<close>
+    also have \<open>\<dots> = (\<Sum>a\<in>t. (cnj (r a)) *\<^sub>C (\<Sum>a'\<in>t'. r' a' *\<^sub>C (a \<bullet>\<^sub>C a')) )\<close>
     proof-
-      have \<open>\<langle>a, r' a' *\<^sub>C  a'\<rangle>  = r' a' *\<^sub>C \<langle>a,  a'\<rangle>\<close>
+      have \<open>(a \<bullet>\<^sub>C (r' a' *\<^sub>C  a'))  = r' a' *\<^sub>C (a \<bullet>\<^sub>C a')\<close>
         for a a'
         unfolding cinner_atensor_def
         by (simp add: F_atensor_clinear_clinear complex_vector.linear_scale)
       thus ?thesis by simp 
     qed
-    also have \<open>\<dots> = (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. (cnj (r a)) * r' a' *\<^sub>C \<langle>a,  a'\<rangle>) )\<close>
+    also have \<open>\<dots> = (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. (cnj (r a)) * r' a' *\<^sub>C (a \<bullet>\<^sub>C a')) )\<close>
     proof -
-      have "\<forall>a. cnj (r a) *\<^sub>C (\<Sum>a'\<in>t'. r' a' *\<^sub>C \<langle>a, a'\<rangle>) = (\<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C \<langle>a, a'\<rangle>)"
+      have "\<forall>a. cnj (r a) *\<^sub>C (\<Sum>a'\<in>t'. r' a' *\<^sub>C (a \<bullet>\<^sub>C a')) = (\<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C (a \<bullet>\<^sub>C a'))"
         by (simp add: vector_space_over_itself.scale_sum_right)
       thus ?thesis
         by meson
     qed
-    finally show \<open>\<langle>x, y\<rangle> = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C \<langle>a, a'\<rangle>)\<close>
+    finally show \<open>(x \<bullet>\<^sub>C y) = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C (a \<bullet>\<^sub>C a'))\<close>
       by blast
   qed
 
   have expansion: \<open>\<exists> t t'::('a \<otimes>\<^sub>a 'b) set. \<exists> r r':: 'a \<otimes>\<^sub>a 'b \<Rightarrow> complex. 
         finite t \<and> finite t' \<and> t \<subseteq> range (case_prod (\<otimes>\<^sub>a)) \<and> t' \<subseteq> range (case_prod (\<otimes>\<^sub>a)) \<and>
-       \<langle>x, y\<rangle> = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C \<langle>a, a'\<rangle>) 
+       (x \<bullet>\<^sub>C y) = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C (a \<bullet>\<^sub>C a')) 
      \<and> x = (\<Sum>a\<in>t. r a *\<^sub>C a) \<and> y = (\<Sum>a'\<in>t'. r' a' *\<^sub>C a')\<close>
     for x :: "'a \<otimes>\<^sub>a 'b"
       and y :: "'a \<otimes>\<^sub>a 'b"
@@ -2934,7 +2934,7 @@ proof
     then obtain t'::\<open>('a \<otimes>\<^sub>a 'b) set\<close> and r'::\<open>'a \<otimes>\<^sub>a 'b \<Rightarrow> complex\<close> 
       where \<open>y = (\<Sum>a\<in>t'. r' a *\<^sub>C a)\<close> and \<open>finite t'\<close> and \<open>t' \<subseteq> range (case_prod (\<otimes>\<^sub>a))\<close>
       by blast
-    have \<open>\<langle>x, y\<rangle> = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C \<langle>a, a'\<rangle>)\<close>
+    have \<open>(x \<bullet>\<^sub>C y) = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C (a \<bullet>\<^sub>C a'))\<close>
       using expansion_id[where t = "t" and t' = "t'" and x = "x" and y = "y"
           and r = "r" and r' = "r'"] \<open>finite t\<close> \<open>finite t'\<close>
         \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close> \<open>y = (\<Sum>a'\<in>t'. r' a' *\<^sub>C a')\<close> by blast
@@ -2944,11 +2944,11 @@ proof
       by blast
   qed
 
-  show "\<langle>x, y\<rangle> = cnj \<langle>y, x\<rangle>"
+  show "(x \<bullet>\<^sub>C y) = cnj (y \<bullet>\<^sub>C x)"
     for x :: "'a \<otimes>\<^sub>a 'b"
       and y :: "'a \<otimes>\<^sub>a 'b"
   proof-
-    have swap: \<open>x \<in> range (case_prod (\<otimes>\<^sub>a)) \<Longrightarrow> y \<in> range (case_prod (\<otimes>\<^sub>a)) \<Longrightarrow> \<langle>x, y\<rangle> = cnj \<langle>y, x\<rangle>\<close>
+    have swap: \<open>x \<in> range (case_prod (\<otimes>\<^sub>a)) \<Longrightarrow> y \<in> range (case_prod (\<otimes>\<^sub>a)) \<Longrightarrow> (x \<bullet>\<^sub>C y) = cnj (y \<bullet>\<^sub>C x)\<close>
       for x y
     proof-
       assume \<open>x \<in> range (case_prod (\<otimes>\<^sub>a))\<close> and \<open>y \<in> range (case_prod (\<otimes>\<^sub>a))\<close>
@@ -2958,7 +2958,7 @@ proof
       from \<open>y \<in> range (case_prod (\<otimes>\<^sub>a))\<close>
       obtain y\<^sub>1 y\<^sub>2 where \<open>y = y\<^sub>1 \<otimes>\<^sub>a y\<^sub>2\<close>
         by auto
-      have \<open>\<langle>x, y\<rangle> = F_atensor_clinear x y\<close>
+      have \<open>(x \<bullet>\<^sub>C y) = F_atensor_clinear x y\<close>
         unfolding cinner_atensor_def
         by blast
       also have \<open>\<dots> = F_atensor_cbilinear x y\<^sub>1 y\<^sub>2\<close>
@@ -2986,36 +2986,36 @@ proof
         by (simp add: \<open>y = y\<^sub>1 \<otimes>\<^sub>a y\<^sub>2\<close> g_atensor_clinear_cbilinear)
       also have \<open>\<dots> = cnj (F_atensor_clinear y x)\<close>
         by (metis (full_types) F_atensor_cbilinear_def F_atensor_clinear_cbilinear \<open>x = x\<^sub>1 \<otimes>\<^sub>a x\<^sub>2\<close>)
-      finally show \<open>\<langle>x, y\<rangle> = cnj \<langle>y, x\<rangle>\<close>
+      finally show \<open>(x \<bullet>\<^sub>C y) = cnj (y \<bullet>\<^sub>C x)\<close>
         using cinner_atensor_def 
         by simp 
     qed
     have \<open>\<exists> t t'::('a \<otimes>\<^sub>a 'b) set. \<exists> r r':: 'a \<otimes>\<^sub>a 'b \<Rightarrow> complex. 
         finite t \<and> finite t' \<and> t \<subseteq> range (case_prod (\<otimes>\<^sub>a)) \<and> t' \<subseteq> range (case_prod (\<otimes>\<^sub>a)) \<and>
-       \<langle>x, y\<rangle> = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C \<langle>a, a'\<rangle>) 
+       (x \<bullet>\<^sub>C y) = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C (a \<bullet>\<^sub>C a')) 
      \<and> x = (\<Sum>a\<in>t. r a *\<^sub>C a) \<and> y = (\<Sum>a'\<in>t'. r' a' *\<^sub>C a')\<close>
       using expansion by blast
     then obtain t t' r r' where \<open>finite t\<close> and \<open>finite t'\<close> and \<open>t \<subseteq> range (case_prod (\<otimes>\<^sub>a))\<close>
       and \<open>t' \<subseteq> range (case_prod (\<otimes>\<^sub>a))\<close> and
-      \<open>\<langle>x, y\<rangle> = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C \<langle>a, a'\<rangle>)\<close> and
+      \<open>(x \<bullet>\<^sub>C y) = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C (a \<bullet>\<^sub>C a'))\<close> and
       \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close> and \<open>y = (\<Sum>a'\<in>t'. r' a' *\<^sub>C a')\<close>
       by blast
-    from \<open>\<langle>x, y\<rangle> = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C \<langle>a, a'\<rangle>)\<close>
-    have \<open>\<langle>x, y\<rangle> = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C (cnj \<langle>a', a\<rangle>))\<close>
+    from \<open>(x \<bullet>\<^sub>C y) = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C (a \<bullet>\<^sub>C a'))\<close>
+    have \<open>(x \<bullet>\<^sub>C y) = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj (r a) * r' a' *\<^sub>C (cnj (a' \<bullet>\<^sub>C a)))\<close>
       using swap  \<open>t \<subseteq> range (case_prod (\<otimes>\<^sub>a))\<close>  \<open>t' \<subseteq> range (case_prod (\<otimes>\<^sub>a))\<close>
       by (smt subset_eq sum.cong)
-    also have \<open>\<dots> = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj ( r a * (cnj (r' a')) *\<^sub>C \<langle>a', a\<rangle>))\<close>
+    also have \<open>\<dots> = (\<Sum>a\<in>t. \<Sum>a'\<in>t'. cnj ( r a * (cnj (r' a')) *\<^sub>C (a' \<bullet>\<^sub>C a)))\<close>
     proof-
-      have \<open>cnj (r a) * r' a' *\<^sub>C (cnj \<langle>a', a\<rangle>) = cnj ( r a * (cnj (r' a')) *\<^sub>C \<langle>a', a\<rangle>)\<close>
+      have \<open>cnj (r a) * r' a' *\<^sub>C (cnj (a' \<bullet>\<^sub>C a)) = cnj ( r a * (cnj (r' a')) *\<^sub>C (a' \<bullet>\<^sub>C a))\<close>
         for a a'
         by simp        
       thus ?thesis by simp
     qed
-    also have \<open>\<dots> =  (\<Sum>a\<in>t. cnj (\<Sum>a'\<in>t'. ( r a * (cnj (r' a')) *\<^sub>C \<langle>a', a\<rangle>)))\<close>
+    also have \<open>\<dots> =  (\<Sum>a\<in>t. cnj (\<Sum>a'\<in>t'. ( r a * (cnj (r' a')) *\<^sub>C (a' \<bullet>\<^sub>C a))))\<close>
       by auto
-    also have \<open>\<dots> = cnj (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. ( r a * (cnj (r' a')) *\<^sub>C \<langle>a', a\<rangle>)))\<close>
+    also have \<open>\<dots> = cnj (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. ( r a * (cnj (r' a')) *\<^sub>C (a' \<bullet>\<^sub>C a))))\<close>
       by auto
-    also have \<open>\<dots> = cnj (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. ( (cnj (r' a')) * r a  *\<^sub>C \<langle>a', a\<rangle>)))\<close>
+    also have \<open>\<dots> = cnj (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. ( (cnj (r' a')) * r a  *\<^sub>C (a' \<bullet>\<^sub>C a))))\<close>
     proof-
       have \<open>r a * (cnj (r' a')) = (cnj (r' a')) * r a\<close>
         for a a'
@@ -3023,16 +3023,16 @@ proof
       thus ?thesis
         by (metis (mono_tags, lifting) complex_scaleC_def mult_scaleC_right sum.cong) 
     qed
-    also have \<open>\<dots> = cnj (\<langle>y, x\<rangle>)\<close>
+    also have \<open>\<dots> = cnj ((y \<bullet>\<^sub>C x))\<close>
     proof-
-      have \<open>\<langle>y, x\<rangle> = (\<Sum>a'\<in>t'. (\<Sum>a\<in>t. ( (cnj (r' a')) * r a  *\<^sub>C \<langle>a', a\<rangle>)))\<close>
+      have \<open>(y \<bullet>\<^sub>C x) = (\<Sum>a'\<in>t'. (\<Sum>a\<in>t. ( (cnj (r' a')) * r a  *\<^sub>C (a' \<bullet>\<^sub>C a))))\<close>
         using expansion_id[where t = "t'" and t' = "t" and x = "y" and y = "x"
             and r = "r'" and r' = "r"] \<open>finite t\<close> \<open>finite t'\<close>
           \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close> \<open>y = (\<Sum>a'\<in>t'. r' a' *\<^sub>C a')\<close> 
         by blast
-      also have \<open>\<dots> = (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. ( (cnj (r' a')) * r a  *\<^sub>C \<langle>a', a\<rangle>)))\<close>
+      also have \<open>\<dots> = (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. ( (cnj (r' a')) * r a  *\<^sub>C (a' \<bullet>\<^sub>C a))))\<close>
       proof-
-        define f where \<open>f a' a = ( (cnj (r' a')) * r a  *\<^sub>C \<langle>a', a\<rangle>)\<close> for a a'
+        define f where \<open>f a' a = ( (cnj (r' a')) * r a  *\<^sub>C (a' \<bullet>\<^sub>C a))\<close> for a a'
         have \<open>(\<Sum>a'\<in>t'. (\<Sum>a\<in>t. f a' a)) = (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. f a' a))\<close>
           using \<open>finite t\<close> \<open>finite t'\<close>
           using sum.swap by blast          
@@ -3040,40 +3040,40 @@ proof
           unfolding f_def
           by blast          
       qed
-      finally have \<open>\<langle>y, x\<rangle> = (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. ( (cnj (r' a')) * r a  *\<^sub>C \<langle>a', a\<rangle>)))\<close>
+      finally have \<open>(y \<bullet>\<^sub>C x) = (\<Sum>a\<in>t. (\<Sum>a'\<in>t'. ( (cnj (r' a')) * r a  *\<^sub>C (a' \<bullet>\<^sub>C a))))\<close>
         by blast        
       thus ?thesis by simp
     qed
     finally show ?thesis by blast
   qed
 
-  have \<open>\<langle>x\<^sub>1\<otimes>\<^sub>ax\<^sub>2, y\<^sub>1\<otimes>\<^sub>ay\<^sub>2\<rangle> = cnj \<langle>y\<^sub>1\<otimes>\<^sub>ay\<^sub>2, x\<^sub>1\<otimes>\<^sub>ax\<^sub>2\<rangle>\<close>
+  have \<open>((x\<^sub>1\<otimes>\<^sub>ax\<^sub>2) \<bullet>\<^sub>C (y\<^sub>1\<otimes>\<^sub>ay\<^sub>2)) = cnj ((y\<^sub>1\<otimes>\<^sub>ay\<^sub>2) \<bullet>\<^sub>C (x\<^sub>1\<otimes>\<^sub>ax\<^sub>2))\<close>
     for x\<^sub>1 x\<^sub>2 y\<^sub>1 y\<^sub>2
   proof -
-    have f1: "\<forall>b a c. \<langle>c, (a::'a) \<otimes>\<^sub>a (b::'b)\<rangle> = cnj (g_atensor_clinear a b c)"
+    have f1: "\<forall>b a c. (c \<bullet>\<^sub>C ((a::'a) \<otimes>\<^sub>a (b::'b))) = cnj (g_atensor_clinear a b c)"
       by (metis F_atensor_cbilinear_def F_atensor_clinear_cbilinear cinner_atensor_def)
-    have "cnj (\<langle>y\<^sub>1, x\<^sub>1\<rangle> * \<langle>y\<^sub>2, x\<^sub>2\<rangle>) = \<langle>x\<^sub>1, y\<^sub>1\<rangle> * \<langle>x\<^sub>2, y\<^sub>2\<rangle>"
+    have "cnj ((y\<^sub>1 \<bullet>\<^sub>C x\<^sub>1) * (y\<^sub>2 \<bullet>\<^sub>C x\<^sub>2)) = (x\<^sub>1 \<bullet>\<^sub>C y\<^sub>1) * (x\<^sub>2 \<bullet>\<^sub>C y\<^sub>2)"
       by auto
     thus ?thesis
       using f1 by (simp add: g_atensor_clinear_cbilinear')
   qed
 
   have square: \<open>finite t \<Longrightarrow>  x = (\<Sum>a\<in>t. r a *\<^sub>C a) \<Longrightarrow>
-         \<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0 \<Longrightarrow>
-       \<langle>x, x\<rangle> = (\<Sum>a\<in>t. (norm (r a))^2 * \<langle>a, a\<rangle>)\<close>
+         \<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0 \<Longrightarrow>
+       (x \<bullet>\<^sub>C x) = (\<Sum>a\<in>t. (norm (r a))^2 * (a \<bullet>\<^sub>C a))\<close>
     for x::\<open>'a \<otimes>\<^sub>a 'b\<close>
       and t::\<open>('a \<otimes>\<^sub>a 'b) set\<close>
       and r::\<open>'a \<otimes>\<^sub>a 'b \<Rightarrow> complex\<close>
   proof-
     assume \<open>finite t\<close> and \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close> and
-      \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
+      \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
     define D where \<open>D = {(a, a')| a a'. a \<in> t \<and> a' \<in> t \<and> a = a'}\<close>
-    define f where \<open>f a a' = cnj (r a) * r a' *\<^sub>C \<langle>a, a'\<rangle>\<close> for a a'
+    define f where \<open>f a a' = cnj (r a) * r a' *\<^sub>C (a \<bullet>\<^sub>C a')\<close> for a a'
     from  \<open>finite t\<close> and \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
-    have \<open>\<langle>x, x\<rangle> = (\<Sum>a\<in>t. \<Sum>a'\<in>t. cnj (r a) * r a' *\<^sub>C \<langle>a, a'\<rangle>)\<close>
+    have \<open>(x \<bullet>\<^sub>C x) = (\<Sum>a\<in>t. \<Sum>a'\<in>t. cnj (r a) * r a' *\<^sub>C (a \<bullet>\<^sub>C a'))\<close>
       using expansion_id
       by blast
-    also have \<open>\<dots> = (\<Sum>(a, a')\<in>t\<times>t. cnj (r a) * r a' *\<^sub>C \<langle>a, a'\<rangle>)\<close>
+    also have \<open>\<dots> = (\<Sum>(a, a')\<in>t\<times>t. cnj (r a) * r a' *\<^sub>C (a \<bullet>\<^sub>C a'))\<close>
       using \<open>finite t\<close> sum.Sigma by fastforce
     also have \<open>\<dots> = (\<Sum>(a, a')\<in>t\<times>t. f a a')\<close>
       unfolding f_def by blast
@@ -3088,7 +3088,7 @@ proof
     qed
     also have \<open>\<dots> = (\<Sum>(a, a')\<in>D. f a a')\<close>
     proof-
-      from  \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
+      from  \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
       have \<open>(a, a')\<in>t\<times>t-D \<Longrightarrow> f a a' = 0\<close>
         for a a'
         unfolding f_def D_def
@@ -3107,15 +3107,15 @@ proof
         by (smt Pair_inject imageE imageI old.prod.case sum.eq_general)
           (* > 1 s*)
     qed
-    finally have \<open>\<langle>x, x\<rangle> = (\<Sum>a\<in>t. f a a)\<close>
+    finally have \<open>(x \<bullet>\<^sub>C x) = (\<Sum>a\<in>t. f a a)\<close>
       by blast
     thus ?thesis
       unfolding f_def
       by (smt complex_norm_square complex_scaleC_def mult_scaleC_left semiring_normalization_rules(7) sum.cong)
   qed
   have ortho_basis: \<open>\<exists> t r. finite t \<and> 
-         (\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0) \<and>
-         (\<forall>a\<in>t. \<langle>a, a\<rangle> > 0) \<and> x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
+         (\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0) \<and>
+         (\<forall>a\<in>t. (a \<bullet>\<^sub>C a) > 0) \<and> x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
     for x::\<open>'a \<otimes>\<^sub>a 'b\<close>
   proof-
     have \<open>\<exists> U. complex_vector.independent U \<and> cspan U = (UNIV::'a set)\<close>
@@ -3188,7 +3188,7 @@ proof
     then obtain t r where \<open>finite t\<close> and \<open>t \<subseteq> (case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close> and 
       \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
       by blast
-    have \<open>a\<in>t \<Longrightarrow> \<langle>a, a\<rangle> > 0\<close>
+    have \<open>a\<in>t \<Longrightarrow> (a \<bullet>\<^sub>C a) > 0\<close>
       for a
     proof-
       assume \<open>a\<in>t\<close>
@@ -3199,24 +3199,24 @@ proof
         by (simp add: image_iff)
       then obtain x y where \<open>x\<in>A\<close> and \<open>y\<in>B\<close> and \<open>a = x\<otimes>\<^sub>ay\<close>
         by blast
-      have \<open>\<langle>a, a\<rangle> = F_atensor_clinear a a\<close>
+      have \<open>(a \<bullet>\<^sub>C a) = F_atensor_clinear a a\<close>
         unfolding cinner_atensor_def 
         by blast
       also have \<open>\<dots> = F_atensor_cbilinear a x y\<close>
         by (simp add: F_atensor_clinear_cbilinear \<open>a = x \<otimes>\<^sub>a y\<close>)
       also have \<open>\<dots> = g_atensor_clinear x y a\<close>
-        by (metis Algebraic_Tensor_Product.cinner_atensor_def F_atensor_cbilinear_def \<open>F_atensor_clinear a a = F_atensor_cbilinear a x y\<close> \<open>\<And>y\<^sub>2 y\<^sub>1 x\<^sub>2 x\<^sub>1. \<langle>x\<^sub>1 \<otimes>\<^sub>a x\<^sub>2, y\<^sub>1 \<otimes>\<^sub>a y\<^sub>2\<rangle> = cnj \<langle>y\<^sub>1 \<otimes>\<^sub>a y\<^sub>2, x\<^sub>1 \<otimes>\<^sub>a x\<^sub>2\<rangle>\<close> \<open>a = x \<otimes>\<^sub>a y\<close> complex_cnj_cnj)
+        sorry
       also have \<open>\<dots> = g_atensor_cbilinear x y x y\<close>
         by (simp add: \<open>a = x \<otimes>\<^sub>a y\<close> g_atensor_clinear_cbilinear)
-      also have \<open>\<dots> =  \<langle>x, x\<rangle> * \<langle>y, y\<rangle>\<close>
+      also have \<open>\<dots> =  (x \<bullet>\<^sub>C x) * (y \<bullet>\<^sub>C y)\<close>
         unfolding g_atensor_cbilinear_def
         by blast
       also have \<open>\<dots> > 0\<close>
         by (metis \<open>is_ortho_set A\<close> \<open>is_ortho_set B\<close> \<open>x \<in> A\<close> \<open>y \<in> B\<close> cinner_gt_zero_iff is_ortho_set_def ordered_semiring_strict_class.mult_pos_pos)
-      finally show \<open>\<langle>a, a\<rangle> > 0\<close>
+      finally show \<open>(a \<bullet>\<^sub>C a) > 0\<close>
         by blast
     qed
-  moreover have \<open>a\<in>t \<Longrightarrow> a'\<in>t \<Longrightarrow> a \<noteq> a' \<Longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
+  moreover have \<open>a\<in>t \<Longrightarrow> a'\<in>t \<Longrightarrow> a \<noteq> a' \<Longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
       for a a'
     proof-
       assume \<open>a\<in>t\<close> and \<open>a'\<in>t\<close> and \<open>a \<noteq> a'\<close>
@@ -3234,7 +3234,7 @@ proof
         by (simp add: image_iff)
       then obtain x' y' where \<open>x'\<in>A\<close> and \<open>y'\<in>B\<close> and \<open>a' = x'\<otimes>\<^sub>ay'\<close>
         by blast
-      have \<open>\<langle>a, a'\<rangle> = F_atensor_clinear a a'\<close>
+      have \<open>(a \<bullet>\<^sub>C a') = F_atensor_clinear a a'\<close>
         unfolding cinner_atensor_def 
         by blast
       also have \<open>\<dots> = F_atensor_cbilinear a x' y'\<close>
@@ -3243,13 +3243,13 @@ proof
         by (metis F_atensor_cbilinear_def \<open>\<exists>x\<in>A. \<exists>y\<in>B. a = x \<otimes>\<^sub>a y\<close> \<open>a \<noteq> a'\<close> \<open>a' = x' \<otimes>\<^sub>a y'\<close> \<open>is_ortho_set A\<close> \<open>is_ortho_set B\<close> \<open>x' \<in> A\<close> \<open>y' \<in> B\<close> complex_cnj_zero g_atensor_clinear_cbilinear' is_ortho_set_def mult_not_zero)
       also have \<open>\<dots> = g_atensor_cbilinear x' y' x y\<close>
         by (simp add: \<open>a = x \<otimes>\<^sub>a y\<close> g_atensor_clinear_cbilinear)
-      also have \<open>\<dots> =  \<langle>x', x\<rangle> * \<langle>y', y\<rangle>\<close>
+      also have \<open>\<dots> =  (x' \<bullet>\<^sub>C x) * (y' \<bullet>\<^sub>C y)\<close>
         unfolding g_atensor_cbilinear_def
         by blast
       also have \<open>\<dots> = 0\<close>
         using  \<open>a \<noteq> a'\<close>
         by (metis \<open>a' = x' \<otimes>\<^sub>a y'\<close> \<open>is_ortho_set A\<close> \<open>is_ortho_set B\<close> \<open>x' \<in> A\<close> \<open>y' \<in> B\<close> is_ortho_set_def mult_not_zero x xy y)
-      finally show \<open>\<langle>a, a'\<rangle> = 0\<close>
+      finally show \<open>(a \<bullet>\<^sub>C a') = 0\<close>
         by blast
     qed
     ultimately show ?thesis
@@ -3257,26 +3257,26 @@ proof
       by blast 
   qed
 
-  show "0 \<le> \<langle>x, x\<rangle>"
+  show "0 \<le> (x \<bullet>\<^sub>C x)"
     for x :: "'a \<otimes>\<^sub>a 'b"
   proof-
-    have \<open>\<exists> t r. finite t \<and> (\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0) \<and>
-      (\<forall>a\<in>t. \<langle>a, a\<rangle> > 0) \<and> x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
+    have \<open>\<exists> t r. finite t \<and> (\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0) \<and>
+      (\<forall>a\<in>t. (a \<bullet>\<^sub>C a) > 0) \<and> x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
       using ortho_basis by blast
-    then obtain t r where \<open>finite t\<close> and \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
-      and \<open>\<forall>a\<in>t. \<langle>a, a\<rangle> > 0\<close> and \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
+    then obtain t r where \<open>finite t\<close> and \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
+      and \<open>\<forall>a\<in>t. (a \<bullet>\<^sub>C a) > 0\<close> and \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
       by blast
-    have \<open>\<langle>x, x\<rangle> = (\<Sum>a\<in>t. (norm (r a))^2 * \<langle>a, a\<rangle>)\<close>
+    have \<open>(x \<bullet>\<^sub>C x) = (\<Sum>a\<in>t. (norm (r a))^2 * (a \<bullet>\<^sub>C a))\<close>
       using square
-      using \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> \<open>finite t\<close> \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close> 
+      using \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> \<open>finite t\<close> \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close> 
       by blast 
-    moreover have \<open>a\<in>t \<Longrightarrow> (norm (r a))^2 * \<langle>a, a\<rangle> \<ge> 0\<close>
+    moreover have \<open>a\<in>t \<Longrightarrow> (norm (r a))^2 * (a \<bullet>\<^sub>C a) \<ge> 0\<close>
       for a
     proof-
       assume \<open>a\<in>t\<close>
-      hence \<open>\<langle>a, a\<rangle> > 0\<close>
-        using \<open>\<forall>a\<in>t. 0 < \<langle>a, a\<rangle>\<close> by fastforce
-      hence \<open>\<langle>a, a\<rangle> \<ge> 0\<close>
+      hence \<open>(a \<bullet>\<^sub>C a) > 0\<close>
+        using \<open>\<forall>a\<in>t. 0 < (a \<bullet>\<^sub>C a)\<close> by fastforce
+      hence \<open>(a \<bullet>\<^sub>C a) \<ge> 0\<close>
         by simp
       moreover have \<open>(norm (r a))^2 \<ge> 0\<close>
         by simp        
@@ -3288,46 +3288,46 @@ proof
       by (metis (no_types, lifting) sum_nonneg)
   qed
 
-  show "(\<langle>x, x\<rangle> = 0) = (x = 0)"
+  show "((x \<bullet>\<^sub>C x) = 0) = (x = 0)"
     for x :: "'a \<otimes>\<^sub>a 'b"
   proof
     show "x = 0"
-      if "\<langle>x, x\<rangle> = 0"
+      if "(x \<bullet>\<^sub>C x) = 0"
     proof-
-      have \<open>\<exists> t r. finite t \<and> (\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0) \<and>
-      (\<forall>a\<in>t. \<langle>a, a\<rangle> > 0) \<and> x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
+      have \<open>\<exists> t r. finite t \<and> (\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0) \<and>
+      (\<forall>a\<in>t. (a \<bullet>\<^sub>C a) > 0) \<and> x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
         using ortho_basis by blast
-      then obtain t r where \<open>finite t\<close> and \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
-        and \<open>\<forall>a\<in>t. \<langle>a, a\<rangle> > 0\<close> and \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
+      then obtain t r where \<open>finite t\<close> and \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
+        and \<open>\<forall>a\<in>t. (a \<bullet>\<^sub>C a) > 0\<close> and \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
         by blast
-      have \<open>\<langle>x, x\<rangle> = (\<Sum>a\<in>t. (norm (r a))^2 * \<langle>a, a\<rangle>)\<close>
-        using \<open>\<And>x::'a \<otimes>\<^sub>a 'b.  \<And> t r. \<lbrakk>finite t; x = (\<Sum>a\<in>t. r a *\<^sub>C a); \<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<rbrakk> \<Longrightarrow> \<langle>x, x\<rangle> = (\<Sum>a\<in>t. complex_of_real ((cmod (r a))\<^sup>2) * \<langle>a, a\<rangle>)\<close> \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> \<open>finite t\<close> \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
+      have \<open>(x \<bullet>\<^sub>C x) = (\<Sum>a\<in>t. (norm (r a))^2 * (a \<bullet>\<^sub>C a))\<close>
+        using \<open>\<And>x::'a \<otimes>\<^sub>a 'b.  \<And> t r. \<lbrakk>finite t; x = (\<Sum>a\<in>t. r a *\<^sub>C a); \<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<rbrakk> \<Longrightarrow> (x \<bullet>\<^sub>C x) = (\<Sum>a\<in>t. complex_of_real ((cmod (r a))\<^sup>2) * (a \<bullet>\<^sub>C a))\<close> \<open>\<forall>a\<in>t. \<forall>a'\<in>t. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> \<open>finite t\<close> \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>
         by auto
-      hence \<open>0 = (\<Sum>a\<in>t. (norm (r a))^2 * \<langle>a, a\<rangle>)\<close>
+      hence \<open>0 = (\<Sum>a\<in>t. (norm (r a))^2 * (a \<bullet>\<^sub>C a))\<close>
         using that by auto
-      moreover have \<open>a\<in>t \<Longrightarrow> (norm (r a))^2 * \<langle>a, a\<rangle> \<ge> 0\<close>
+      moreover have \<open>a\<in>t \<Longrightarrow> (norm (r a))^2 * (a \<bullet>\<^sub>C a) \<ge> 0\<close>
         for a
       proof-
         assume \<open>a\<in>t\<close>
         have \<open>(norm (r a))^2 \<ge> 0\<close>
           by simp          
-        moreover have \<open>\<langle>a, a\<rangle> \<ge> 0\<close>
-          by (metis \<open>\<And>x::'a\<otimes>\<^sub>a'b. 0 \<le> \<langle>x, x\<rangle>\<close>) 
+        moreover have \<open>(a \<bullet>\<^sub>C a) \<ge> 0\<close>
+          by (metis \<open>\<And>x::'a\<otimes>\<^sub>a'b. 0 \<le> (x \<bullet>\<^sub>C x)\<close>) 
         ultimately show ?thesis
           using complex_of_real_nn_iff mult_nonneg_nonneg 
           by blast 
       qed
-      ultimately have zero: \<open>a\<in>t \<Longrightarrow> (norm (r a))^2 *\<^sub>C \<langle>a, a\<rangle> = 0\<close>
+      ultimately have zero: \<open>a\<in>t \<Longrightarrow> (norm (r a))^2 *\<^sub>C (a \<bullet>\<^sub>C a) = 0\<close>
         for a
         by (metis (mono_tags, lifting) \<open>finite t\<close> complex_scaleC_def sum_nonneg_0)
       hence \<open>a\<in>t \<Longrightarrow> r a = 0\<close>
         for a
       proof-
         assume \<open>a\<in>t\<close>
-        hence \<open>(norm (r a))^2 *\<^sub>C \<langle>a, a\<rangle> = 0\<close>
+        hence \<open>(norm (r a))^2 *\<^sub>C (a \<bullet>\<^sub>C a) = 0\<close>
           using zero by blast
-        moreover have \<open>\<langle>a, a\<rangle> > 0\<close>
-          using \<open>a\<in>t\<close>  \<open>\<forall>a\<in>t. \<langle>a, a\<rangle> > 0\<close>
+        moreover have \<open>(a \<bullet>\<^sub>C a) > 0\<close>
+          using \<open>a\<in>t\<close>  \<open>\<forall>a\<in>t. (a \<bullet>\<^sub>C a) > 0\<close>
           by blast
         ultimately have \<open>(norm (r a))^2  = 0\<close>
           by auto
@@ -3340,7 +3340,7 @@ proof
         by (simp add: \<open>x = (\<Sum>a\<in>t. r a *\<^sub>C a)\<close>)        
     qed
 
-    show "\<langle>x, x\<rangle> = 0"
+    show "(x \<bullet>\<^sub>C x) = 0"
       if "x = 0"
       using that unfolding cinner_atensor_def
       by (metis F_atensor_clinear_scaleC cinner_complex_def cinner_zero_left complex_vector.scale_zero_left)
@@ -3448,14 +3448,14 @@ qed
 text \<open>A part of Proposition 1 on page 186 in @{cite Helemskii}\<close>
 lemma atensor_cinner_mult:
   fixes f1 g1 :: \<open>'a::complex_inner\<close> and f2 g2 :: \<open>'b::complex_inner\<close>
-  shows \<open>\<langle>f1 \<otimes>\<^sub>a f2, g1 \<otimes>\<^sub>a g2\<rangle> = \<langle>f1, g1\<rangle> * \<langle>f2, g2\<rangle>\<close>
+  shows \<open>((f1 \<otimes>\<^sub>a f2) \<bullet>\<^sub>C (g1 \<otimes>\<^sub>a g2)) = (f1 \<bullet>\<^sub>C g1) * (f2 \<bullet>\<^sub>C g2)\<close>
   by (metis F_atensor_cbilinear_def F_atensor_clinear_cbilinear cinner_atensor_def cinner_commute' complex_cnj_cnj g_atensor_clinear_cbilinear')
 
 lemma atensor_norm_mult:
   fixes f :: \<open>'a::complex_inner\<close> and g :: \<open>'b::complex_inner\<close>
   shows \<open>norm (f \<otimes>\<^sub>a g) = norm f * norm g\<close>
 proof -
-  have "norm f * norm g = sqrt (cmod \<langle>f, f\<rangle>) * sqrt (cmod \<langle>g, g\<rangle>)"
+  have "norm f * norm g = sqrt (cmod (f \<bullet>\<^sub>C f)) * sqrt (cmod (g \<bullet>\<^sub>C g))"
     by (metis norm_eq_sqrt_cinner)
   thus ?thesis
     by (metis atensor_cinner_mult norm_eq_sqrt_cinner norm_mult real_sqrt_mult)
@@ -3463,22 +3463,22 @@ qed
 
 lemma atensor_norm_ortho_left:
   fixes a c :: \<open>'a::chilbert_space\<close> and b d :: \<open>'a::chilbert_space\<close>
-  assumes \<open>\<langle>a, c\<rangle> = 0\<close> 
-  shows \<open>\<langle> a\<otimes>\<^sub>ab, c\<otimes>\<^sub>ad \<rangle> = 0\<close>
+  assumes \<open>(a \<bullet>\<^sub>C c) = 0\<close> 
+  shows \<open>((a\<otimes>\<^sub>ab) \<bullet>\<^sub>C (c\<otimes>\<^sub>ad)) = 0\<close>
   by (simp add: assms atensor_cinner_mult)
 
 lemma atensor_norm_ortho_right:
   fixes a c :: \<open>'a::chilbert_space\<close> and b d :: \<open>'a::chilbert_space\<close>
-  assumes \<open>\<langle>b, d\<rangle> = 0\<close> 
-  shows \<open>\<langle> a\<otimes>\<^sub>ab, c\<otimes>\<^sub>ad \<rangle> = 0\<close>
+  assumes \<open>(b \<bullet>\<^sub>C d) = 0\<close> 
+  shows \<open>((a\<otimes>\<^sub>ab) \<bullet>\<^sub>C (c\<otimes>\<^sub>ad)) = 0\<close>
   by (simp add: assms atensor_cinner_mult)
 
 lemma atensor_norm_expansion:
   fixes a c :: \<open>'a::chilbert_space\<close> and b d :: \<open>'a::chilbert_space\<close>
-  assumes \<open>\<langle>a, c\<rangle> = 0 \<or> \<langle>b, d\<rangle> = 0\<close>
+  assumes \<open>(a \<bullet>\<^sub>C c) = 0 \<or> (b \<bullet>\<^sub>C d) = 0\<close>
   shows \<open>(norm (a\<otimes>\<^sub>ab + c\<otimes>\<^sub>ad))^2 = (norm (a\<otimes>\<^sub>ab))^2 + (norm (c\<otimes>\<^sub>ad))^2\<close>
 proof-
-  have \<open>\<langle> a\<otimes>\<^sub>ab, c\<otimes>\<^sub>ad \<rangle> = 0\<close>
+  have \<open>((a\<otimes>\<^sub>ab) \<bullet>\<^sub>C (c\<otimes>\<^sub>ad)) = 0\<close>
     by (meson assms atensor_norm_ortho_left atensor_norm_ortho_right)
   thus ?thesis
     by (simp add: pythagorean_theorem) 
@@ -3486,8 +3486,8 @@ qed
 
 
 lemma span_finite_tensor:
-  \<open>\<exists> A B. finite A  \<and> finite B \<and> (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0)
-\<and> (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0) \<and> 
+  \<open>\<exists> A B. finite A  \<and> finite B \<and> (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0)
+\<and> (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0) \<and> 
 z \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
 proof-
   have \<open>z \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
@@ -3551,9 +3551,9 @@ qed
 lemma ortho_tensor_prod:
   assumes \<open>a\<in>(case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close> and \<open>a'\<in>(case_prod (\<otimes>\<^sub>a)) ` (A \<times> B)\<close>
     and \<open>a \<noteq> a'\<close> and \<open>finite A\<close> and \<open>finite B\<close> and 
-    \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> and
-    \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
-  shows \<open>\<langle>a, a'\<rangle> = 0\<close>
+    \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> and
+    \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
+  shows \<open>(a \<bullet>\<^sub>C a') = 0\<close>
 proof-
   have \<open>\<exists> x y. a = x \<otimes>\<^sub>a y \<and> x \<in> A \<and> y \<in> B\<close>
     using case_prod_beta assms(1) by auto
@@ -3563,18 +3563,18 @@ proof-
     using case_prod_beta assms(2) by auto
   then obtain x' y' where \<open>a' = x' \<otimes>\<^sub>a y'\<close> and \<open>x' \<in> A\<close> and \<open>y' \<in> B\<close>
     by blast
-  have \<open>\<langle>a, a'\<rangle> = \<langle>x \<otimes>\<^sub>a y, x' \<otimes>\<^sub>a y'\<rangle>\<close>
+  have \<open>(a \<bullet>\<^sub>C a') = ((x \<otimes>\<^sub>a y) \<bullet>\<^sub>C (x' \<otimes>\<^sub>a y'))\<close>
     by (simp add: \<open>a = x \<otimes>\<^sub>a y\<close> \<open>a' = x' \<otimes>\<^sub>a y'\<close>)
-  also have \<open>\<dots> = \<langle>x, x'\<rangle> * \<langle>y, y'\<rangle>\<close>
+  also have \<open>\<dots> = (x \<bullet>\<^sub>C x') * (y \<bullet>\<^sub>C y')\<close>
     by (simp add: atensor_cinner_mult)
   also have \<open>\<dots> = 0\<close>
   proof-
     have \<open>x \<noteq> x' \<or> y \<noteq> y'\<close>
       using \<open>a \<noteq> a'\<close> \<open>a = x \<otimes>\<^sub>a y\<close> \<open>a' = x' \<otimes>\<^sub>a y'\<close> by auto
-    moreover have \<open>x \<noteq> x' \<Longrightarrow> \<langle>x, x'\<rangle> = 0\<close>
-      by (simp add: \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> \<open>x \<in> A\<close> \<open>x' \<in> A\<close>)        
-    moreover have \<open>y \<noteq> y' \<Longrightarrow> \<langle>y, y'\<rangle> = 0\<close>
-      by (simp add: \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> \<open>y \<in> B\<close> \<open>y' \<in> B\<close>)        
+    moreover have \<open>x \<noteq> x' \<Longrightarrow> (x \<bullet>\<^sub>C x') = 0\<close>
+      by (simp add: \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> \<open>x \<in> A\<close> \<open>x' \<in> A\<close>)        
+    moreover have \<open>y \<noteq> y' \<Longrightarrow> (y \<bullet>\<^sub>C y') = 0\<close>
+      by (simp add: \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> \<open>y \<in> B\<close> \<open>y' \<in> B\<close>)        
     ultimately show ?thesis
       using mult_eq_0_iff by blast 
   qed
@@ -3583,13 +3583,13 @@ qed
 
 
 lemma tensor_prod_expansion:
-  \<open>\<exists> A B S r. finite A  \<and> finite B \<and> (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0)
-\<and> (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0) \<and> S \<subseteq> A \<times> B \<and>
+  \<open>\<exists> A B S r. finite A  \<and> finite B \<and> (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0)
+\<and> (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0) \<and> S \<subseteq> A \<times> B \<and>
 z = (\<Sum>(a,b)\<in>S. (r (a, b)) *\<^sub>C (a \<otimes>\<^sub>a b))\<close>
 proof-
   obtain A B where \<open>finite A\<close> and \<open>finite B\<close> and 
-    \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> and
-    \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> and
+    \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> and
+    \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> and
     \<open>z \<in> cspan ((case_prod (\<otimes>\<^sub>a)) ` (A \<times> B))\<close>
     apply atomize_elim
     using span_finite_tensor by blast
@@ -3612,13 +3612,13 @@ proof-
   hence \<open>z = (\<Sum>(a,b)\<in>S. (r (a, b)) *\<^sub>C (a \<otimes>\<^sub>a b))\<close>
     by (smt \<open>T = (\<lambda>(x, y). x \<otimes>\<^sub>a y) ` S\<close> \<open>inj_on (\<lambda>(x, y). x \<otimes>\<^sub>a y) S\<close> \<open>r \<equiv> \<lambda>u. t (case u of (x, xa) \<Rightarrow> x \<otimes>\<^sub>a xa)\<close> \<open>z = (\<Sum>u\<in>T. t u *\<^sub>C u)\<close> prod.case_distrib split_cong sum.reindex_cong)
   thus ?thesis 
-    using \<open>finite A\<close>  \<open>finite B\<close>  \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> 
-      \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> \<open>S \<subseteq> A \<times> B\<close> by auto
+    using \<open>finite A\<close>  \<open>finite B\<close>  \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> 
+      \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> \<open>S \<subseteq> A \<times> B\<close> by auto
 qed
 
 
 lemma tensor_prod_expansion_right':
-  \<open>\<exists> \<phi> B. finite B \<and> (\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0) \<and> finite B \<and> 0 \<notin> B
+  \<open>\<exists> \<phi> B. finite B \<and> (\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> (b \<bullet>\<^sub>C b') = 0) \<and> finite B \<and> 0 \<notin> B
    \<and> (z::'a::complex_inner\<otimes>\<^sub>a'b::complex_inner) = (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b)\<close>
 proof-
   have \<open>\<exists> V \<psi>. finite V \<and> z = (\<Sum>b\<in>V. (\<psi> b) \<otimes>\<^sub>a b)\<close>
@@ -3714,14 +3714,14 @@ proof-
 qed
 
 lemma tensor_prod_expansion_right:
-  \<open>\<exists> \<phi> B. finite B \<and> (\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0) \<and> (\<forall> b\<in>B. norm b = 1)
+  \<open>\<exists> \<phi> B. finite B \<and> (\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> (b \<bullet>\<^sub>C b') = 0) \<and> (\<forall> b\<in>B. norm b = 1)
    \<and> (z::'a::complex_inner\<otimes>\<^sub>a'b::complex_inner) = (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b)\<close>
 proof-
-  have  \<open>\<exists> \<phi>' B'. finite B' \<and> (\<forall>b\<in>B'. \<forall>b'\<in>B'. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0) \<and> finite B' \<and> 0 \<notin> B'
+  have  \<open>\<exists> \<phi>' B'. finite B' \<and> (\<forall>b\<in>B'. \<forall>b'\<in>B'. b \<noteq> b' \<longrightarrow> (b \<bullet>\<^sub>C b') = 0) \<and> finite B' \<and> 0 \<notin> B'
    \<and> z = (\<Sum>b\<in>B'. (\<phi>' b) \<otimes>\<^sub>a b)\<close>
     using tensor_prod_expansion_right'
     by blast
-  then obtain \<phi>' B' where \<open>finite B'\<close> and \<open>\<forall>b\<in>B'. \<forall>b'\<in>B'. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0\<close> and \<open>finite B'\<close>
+  then obtain \<phi>' B' where \<open>finite B'\<close> and \<open>\<forall>b\<in>B'. \<forall>b'\<in>B'. b \<noteq> b' \<longrightarrow> (b \<bullet>\<^sub>C b') = 0\<close> and \<open>finite B'\<close>
     and \<open>0 \<notin> B'\<close> and \<open>z = (\<Sum>b\<in>B'. (\<phi>' b) \<otimes>\<^sub>a b)\<close>
     by blast
   define B where \<open>B = (\<lambda> b. b/\<^sub>C(norm b)) ` B'\<close>
@@ -3744,12 +3744,12 @@ proof-
       have \<open>x \<noteq> 0\<close>
         using that(1) \<open>0 \<notin> B'\<close>
         by auto
-      have \<open>\<langle>x /\<^sub>C complex_of_real (norm x), y\<rangle> = \<langle> y /\<^sub>C complex_of_real (norm y), y\<rangle>\<close>
+      have \<open>((x /\<^sub>C complex_of_real (norm x)) \<bullet>\<^sub>C y) = ((y /\<^sub>C complex_of_real (norm y)) \<bullet>\<^sub>C y)\<close>
         using that(3) by simp
-      have \<open>(cnj (inverse (complex_of_real (norm x)))) * \<langle>x , y\<rangle> 
-          = (cnj (inverse (complex_of_real (norm y)))) * \<langle>y, y\<rangle>\<close>
-        using \<open>\<langle>x /\<^sub>C complex_of_real (norm x), y\<rangle> = \<langle>y /\<^sub>C complex_of_real (norm y), y\<rangle>\<close> by auto
-      moreover have \<open>\<langle>y, y\<rangle> \<noteq> 0\<close>
+      have \<open>(cnj (inverse (complex_of_real (norm x)))) * (x \<bullet>\<^sub>C y) 
+          = (cnj (inverse (complex_of_real (norm y)))) * (y \<bullet>\<^sub>C y)\<close>
+        using \<open>((x /\<^sub>C complex_of_real (norm x)) \<bullet>\<^sub>C y) = ((y /\<^sub>C complex_of_real (norm y)) \<bullet>\<^sub>C y)\<close> by auto
+      moreover have \<open>(y \<bullet>\<^sub>C y) \<noteq> 0\<close>
         using \<open>y \<noteq> 0\<close>
         by simp
       moreover have \<open>(cnj (inverse (complex_of_real (norm y)))) \<noteq> 0\<close>
@@ -3758,10 +3758,10 @@ proof-
       moreover have \<open>(cnj (inverse (complex_of_real (norm x)))) \<noteq> 0\<close>
         using  \<open>x \<noteq> 0\<close>
         by simp
-      ultimately have \<open>\<langle>x , y\<rangle> \<noteq> 0\<close>
+      ultimately have \<open>(x \<bullet>\<^sub>C y) \<noteq> 0\<close>
         by auto
       thus ?thesis
-        using \<open>\<forall>b\<in>B'. \<forall>b'\<in>B'. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0\<close>
+        using \<open>\<forall>b\<in>B'. \<forall>b'\<in>B'. b \<noteq> b' \<longrightarrow> (b \<bullet>\<^sub>C b') = 0\<close>
           that(1) that(2) by blast
     qed
   qed
@@ -3783,7 +3783,7 @@ proof-
   have \<open>finite B\<close>
     unfolding B_def
     by (simp add: \<open>finite B'\<close>)
-  moreover have \<open>b\<in>B \<Longrightarrow> b'\<in>B \<Longrightarrow> b \<noteq> b' \<Longrightarrow> \<langle>b, b'\<rangle> = 0\<close>
+  moreover have \<open>b\<in>B \<Longrightarrow> b'\<in>B \<Longrightarrow> b \<noteq> b' \<Longrightarrow> (b \<bullet>\<^sub>C b') = 0\<close>
     for b b'
   proof-
     assume \<open>b\<in>B\<close> and \<open>b'\<in>B\<close> and \<open>b \<noteq> b'\<close>
@@ -3797,17 +3797,17 @@ proof-
       using B_def by blast
     then obtain bb' where \<open>bb' \<in> B'\<close> and \<open>b' = bb'/\<^sub>C(norm bb')\<close>
       by blast
-    have \<open>\<langle>b, b'\<rangle> = \<langle>bb/\<^sub>C(norm bb), bb'/\<^sub>C(norm bb')\<rangle>\<close>
+    have \<open>(b \<bullet>\<^sub>C b') = (bb/\<^sub>C(norm bb)) \<bullet>\<^sub>C (bb'/\<^sub>C(norm bb'))\<close>
       by (simp add: \<open>b = bb /\<^sub>C complex_of_real (norm bb)\<close> \<open>b' = bb' /\<^sub>C complex_of_real (norm bb')\<close>)
-    also have \<open>\<dots> = (cnj (inverse (norm bb))) * (inverse (norm bb')) * \<langle>bb, bb'\<rangle>\<close>
+    also have \<open>\<dots> = (cnj (inverse (norm bb))) * (inverse (norm bb')) * (bb \<bullet>\<^sub>C bb')\<close>
       by simp
     also have \<open>\<dots> = 0\<close>
     proof-
       have \<open>bb \<noteq> bb'\<close>
         using \<open>b = bb /\<^sub>C complex_of_real (norm bb)\<close> \<open>b \<noteq> b'\<close> \<open>b' = bb' /\<^sub>C complex_of_real (norm bb')\<close> 
         by auto
-      hence \<open>\<langle>bb, bb'\<rangle> = 0\<close>
-        using \<open>\<forall>b\<in>B'. \<forall>b'\<in>B'. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0\<close> \<open>bb \<in> B'\<close> \<open>bb' \<in> B'\<close> 
+      hence \<open>(bb \<bullet>\<^sub>C bb') = 0\<close>
+        using \<open>\<forall>b\<in>B'. \<forall>b'\<in>B'. b \<noteq> b' \<longrightarrow> (b \<bullet>\<^sub>C b') = 0\<close> \<open>bb \<in> B'\<close> \<open>bb' \<in> B'\<close> 
         by auto
       thus ?thesis by simp
     qed
@@ -3909,10 +3909,10 @@ proof-
     have \<open>norm ((f \<otimes>\<^sub>A (id::'c \<Rightarrow> _)) z) \<le> norm z * K\<close>
       for z
     proof-
-      have  \<open>\<exists> \<phi> B. finite B \<and> (\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0) \<and> (\<forall>b\<in>B. norm b = 1)
+      have  \<open>\<exists> \<phi> B. finite B \<and> (\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> (b \<bullet>\<^sub>C b') = 0) \<and> (\<forall>b\<in>B. norm b = 1)
            \<and> z = (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b)\<close>
         by (simp add: tensor_prod_expansion_right)
-      then obtain \<phi> B where \<open>finite B\<close> and \<open>\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0\<close>
+      then obtain \<phi> B where \<open>finite B\<close> and \<open>\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> (b \<bullet>\<^sub>C b') = 0\<close>
         and \<open>\<forall>b\<in>B. norm b = 1\<close> and \<open>z = (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b)\<close>
         by blast
       from \<open>z = (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b)\<close>
@@ -3929,30 +3929,30 @@ proof-
         by blast
       hence \<open>(norm ((f \<otimes>\<^sub>A id) z))^2 = (norm (\<Sum>b\<in>B. (f (\<phi> b)) \<otimes>\<^sub>a b))^2\<close>
         by simp
-      also have \<open>\<dots>  = \<langle>(\<Sum>b\<in>B. (f (\<phi> b)) \<otimes>\<^sub>a b), (\<Sum>b'\<in>B. (f (\<phi> b')) \<otimes>\<^sub>a b')\<rangle>\<close>
+      also have \<open>\<dots>  = (\<Sum>b\<in>B. (f (\<phi> b)) \<otimes>\<^sub>a b) \<bullet>\<^sub>C (\<Sum>b'\<in>B. (f (\<phi> b')) \<otimes>\<^sub>a b')\<close>
         by (simp add: cdot_square_norm)
-      also have \<open>\<dots>  = (\<Sum>b'\<in>B. \<langle>(\<Sum>b\<in>B. (f (\<phi> b)) \<otimes>\<^sub>a b), (f (\<phi> b')) \<otimes>\<^sub>a b'\<rangle>)\<close>
+      also have \<open>\<dots>  = (\<Sum>b'\<in>B. (\<Sum>b\<in>B. (f (\<phi> b)) \<otimes>\<^sub>a b) \<bullet>\<^sub>C (f (\<phi> b') \<otimes>\<^sub>a b'))\<close>
         using cinner_sum_right by auto
-      also have \<open>\<dots>  = (\<Sum>b'\<in>B. (\<Sum>b\<in>B. \<langle>(f (\<phi> b)) \<otimes>\<^sub>a b, (f (\<phi> b')) \<otimes>\<^sub>a b'\<rangle>))\<close>
+      also have \<open>\<dots>  = (\<Sum>b'\<in>B. (\<Sum>b\<in>B. (f (\<phi> b) \<otimes>\<^sub>a b) \<bullet>\<^sub>C (f (\<phi> b') \<otimes>\<^sub>a b')))\<close>
         by (simp add: cinner_sum_left)
-      also have \<open>\<dots>  = (\<Sum>b'\<in>B. (\<Sum>b\<in>B. \<langle>f (\<phi> b), f (\<phi> b')\<rangle>* \<langle>b, b'\<rangle>))\<close>
+      also have \<open>\<dots>  = (\<Sum>b'\<in>B. (\<Sum>b\<in>B. (f (\<phi> b) \<bullet>\<^sub>C f (\<phi> b'))* (b \<bullet>\<^sub>C b')))\<close>
       proof-
-        have \<open>\<langle> (f (\<phi> b)) \<otimes>\<^sub>a b, (f (\<phi> b')) \<otimes>\<^sub>a b'\<rangle> = \<langle>f (\<phi> b), f (\<phi> b')\<rangle>* \<langle>b, b'\<rangle>\<close>
+        have \<open>(f (\<phi> b) \<otimes>\<^sub>a b) \<bullet>\<^sub>C (f (\<phi> b') \<otimes>\<^sub>a b') = (f (\<phi> b) \<bullet>\<^sub>C f (\<phi> b')) * (b \<bullet>\<^sub>C b')\<close>
           for b b'
           by (simp add: atensor_cinner_mult)
         thus ?thesis by simp
       qed
-      also have \<open>\<dots>  = (\<Sum>b\<in>B. \<langle>f (\<phi> b), f (\<phi> b)\<rangle>)\<close>
+      also have \<open>\<dots>  = (\<Sum>b\<in>B. f (\<phi> b) \<bullet>\<^sub>C f (\<phi> b))\<close>
       proof-
-        have \<open>b' \<in> B \<Longrightarrow> (\<Sum>b\<in>B. \<langle>f (\<phi> b), f (\<phi> b')\<rangle>*\<langle>b, b'\<rangle>) = \<langle>f (\<phi> b'), f (\<phi> b')\<rangle>\<close>
+        have \<open>b' \<in> B \<Longrightarrow> (\<Sum>b\<in>B. (f (\<phi> b)  \<bullet>\<^sub>C f (\<phi> b')) * (b \<bullet>\<^sub>C b')) = (f (\<phi> b') \<bullet>\<^sub>C f (\<phi> b'))\<close>
           for b'
         proof-
           assume \<open>b' \<in> B\<close>
-          hence \<open>(\<Sum>b\<in>B. \<langle>f (\<phi> b), f (\<phi> b')\<rangle>*\<langle>b, b'\<rangle>) = 
-             \<langle>f (\<phi> b'), f (\<phi> b')\<rangle>* \<langle>b', b'\<rangle>
-          + (\<Sum>b\<in>B-{b'}. \<langle>f (\<phi> b), f (\<phi> b')\<rangle>*\<langle>b, b'\<rangle>)\<close>
+          hence \<open>(\<Sum>b\<in>B. (f (\<phi> b) \<bullet>\<^sub>C f (\<phi> b'))*(b \<bullet>\<^sub>C b')) = 
+             (f (\<phi> b') \<bullet>\<^sub>C f (\<phi> b'))* (b' \<bullet>\<^sub>C b')
+          + (\<Sum>b\<in>B-{b'}. (f (\<phi> b) \<bullet>\<^sub>C f (\<phi> b'))*(b \<bullet>\<^sub>C b'))\<close>
             by (meson \<open>finite B\<close> sum.remove)
-          moreover have \<open>\<langle>b', b'\<rangle> = 1\<close>
+          moreover have \<open>(b' \<bullet>\<^sub>C b') = 1\<close>
           proof-
             have \<open>norm b' = 1\<close>
               using \<open>b' \<in> B\<close> \<open>\<forall>b\<in>B. norm b = 1\<close>
@@ -3960,22 +3960,22 @@ proof-
             thus ?thesis
               by (meson \<open>norm b' = 1\<close> cnorm_eq_1)
           qed
-          moreover have \<open>(\<Sum>b\<in>B-{b'}. \<langle>f (\<phi> b), f (\<phi> b')\<rangle>*\<langle>b, b'\<rangle>) = 0\<close>
+          moreover have \<open>(\<Sum>b\<in>B-{b'}. (f (\<phi> b) \<bullet>\<^sub>C f (\<phi> b'))*(b \<bullet>\<^sub>C b')) = 0\<close>
           proof-
-            have \<open>b\<in>B-{b'} \<Longrightarrow> \<langle>f (\<phi> b), f (\<phi> b')\<rangle>*\<langle>b, b'\<rangle> = 0\<close>
+            have \<open>b\<in>B-{b'} \<Longrightarrow> (f (\<phi> b) \<bullet>\<^sub>C f (\<phi> b'))*(b \<bullet>\<^sub>C b') = 0\<close>
               for b
             proof-
               assume \<open>b\<in>B-{b'}\<close>
               hence \<open>b \<noteq> b'\<close>
                 by simp
-              hence \<open>\<langle>b, b'\<rangle> = 0\<close>
-                using \<open>\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0\<close> \<open>b \<in> B - {b'}\<close> \<open>b' \<in> B\<close> 
+              hence \<open>(b \<bullet>\<^sub>C b') = 0\<close>
+                using \<open>\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> (b \<bullet>\<^sub>C b') = 0\<close> \<open>b \<in> B - {b'}\<close> \<open>b' \<in> B\<close> 
                 by auto
               thus ?thesis
                 by simp 
             qed
             thus ?thesis
-              by (simp add: \<open>\<And>ba. ba \<in> B - {b'} \<Longrightarrow> \<langle>f (\<phi> ba), f (\<phi> b')\<rangle> * \<langle>ba, b'\<rangle> = 0\<close>) 
+              by (meson sum.not_neutral_contains_not_neutral)
           qed
           ultimately show ?thesis by simp
         qed
@@ -4000,24 +4000,24 @@ proof-
           have \<open>(norm z)^2 = (norm (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b))^2\<close>
             using \<open>z = (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b)\<close> 
             by simp
-          also have \<open>\<dots> = \<langle>(\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b), (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b)\<rangle>\<close>
+          also have \<open>\<dots> = ((\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b) \<bullet>\<^sub>C (\<Sum>b\<in>B. (\<phi> b) \<otimes>\<^sub>a b))\<close>
             by (simp add: cdot_square_norm)
-          also have \<open>\<dots> = (\<Sum>b\<in>B. \<langle>(\<phi> b) \<otimes>\<^sub>a b, (\<Sum>b'\<in>B. (\<phi> b') \<otimes>\<^sub>a b')\<rangle>)\<close>
+          also have \<open>\<dots> = (\<Sum>b\<in>B. ((\<phi> b) \<otimes>\<^sub>a b) \<bullet>\<^sub>C (\<Sum>b'\<in>B. (\<phi> b') \<otimes>\<^sub>a b'))\<close>
             using cinner_sum_left by auto
-          also have \<open>\<dots> = (\<Sum>b\<in>B. (\<Sum>b'\<in>B. \<langle>(\<phi> b) \<otimes>\<^sub>a b,  (\<phi> b') \<otimes>\<^sub>a b'\<rangle>))\<close>
+          also have \<open>\<dots> = (\<Sum>b\<in>B. (\<Sum>b'\<in>B. (\<phi> b \<otimes>\<^sub>a b) \<bullet>\<^sub>C (\<phi> b' \<otimes>\<^sub>a b')))\<close>
             by (metis (mono_tags, lifting) cinner_sum_right sum.cong)
-          also have \<open>\<dots> = (\<Sum>b\<in>B. (\<Sum>b'\<in>B. \<langle>\<phi> b, \<phi> b'\<rangle>*\<langle>b, b'\<rangle>))\<close>
+          also have \<open>\<dots> = (\<Sum>b\<in>B. (\<Sum>b'\<in>B. (\<phi> b \<bullet>\<^sub>C \<phi> b')*(b \<bullet>\<^sub>C b')))\<close>
             by (meson atensor_cinner_mult sum.cong)
-          also have \<open>\<dots> = (\<Sum>b\<in>B. \<langle>\<phi> b, \<phi> b\<rangle>)\<close>
+          also have \<open>\<dots> = (\<Sum>b\<in>B. (\<phi> b \<bullet>\<^sub>C \<phi> b))\<close>
           proof-
-            have \<open>b \<in> B \<Longrightarrow> (\<Sum>b'\<in>B. \<langle>\<phi> b, \<phi> b'\<rangle>*\<langle>b, b'\<rangle>) = \<langle>\<phi> b, \<phi> b\<rangle>\<close>
+            have \<open>b \<in> B \<Longrightarrow> (\<Sum>b'\<in>B. (\<phi> b \<bullet>\<^sub>C \<phi> b')*(b \<bullet>\<^sub>C b')) = (\<phi> b \<bullet>\<^sub>C \<phi> b)\<close>
               for b
             proof-
               assume \<open>b \<in> B\<close>
-              hence \<open>(\<Sum>b'\<in>B. \<langle>\<phi> b, \<phi> b'\<rangle>*\<langle>b, b'\<rangle>) = \<langle>\<phi> b, \<phi> b\<rangle>*\<langle>b, b\<rangle>
-                + (\<Sum>b'\<in>B-{b}. \<langle>\<phi> b, \<phi> b'\<rangle>*\<langle>b, b'\<rangle>)\<close>
+              hence \<open>(\<Sum>b'\<in>B. (\<phi> b \<bullet>\<^sub>C \<phi> b')*(b \<bullet>\<^sub>C b')) = (\<phi> b \<bullet>\<^sub>C \<phi> b)*(b \<bullet>\<^sub>C b)
+                + (\<Sum>b'\<in>B-{b}. (\<phi> b \<bullet>\<^sub>C \<phi> b')*(b \<bullet>\<^sub>C b'))\<close>
                 by (meson \<open>finite B\<close> sum.remove)
-              moreover have \<open>\<langle>b, b\<rangle> = 1\<close>
+              moreover have \<open>(b \<bullet>\<^sub>C b) = 1\<close>
               proof-
                 have \<open>norm b = 1\<close>
                   by (simp add: \<open>\<forall>b\<in>B. norm b = 1\<close> \<open>b \<in> B\<close>)
@@ -4026,21 +4026,21 @@ proof-
                 thus ?thesis
                   by (simp add: cdot_square_norm)
               qed
-              moreover have \<open>(\<Sum>b'\<in>B-{b}. \<langle>\<phi> b, \<phi> b'\<rangle>*\<langle>b, b'\<rangle>) = 0\<close>
+              moreover have \<open>(\<Sum>b'\<in>B-{b}. (\<phi> b \<bullet>\<^sub>C \<phi> b')*(b \<bullet>\<^sub>C b')) = 0\<close>
               proof-
-                have \<open>b'\<in>B-{b} \<Longrightarrow>  \<langle>\<phi> b, \<phi> b'\<rangle>*\<langle>b, b'\<rangle> = 0\<close>
+                have \<open>b'\<in>B-{b} \<Longrightarrow>  (\<phi> b \<bullet>\<^sub>C \<phi> b')*(b \<bullet>\<^sub>C b') = 0\<close>
                   for b'
                 proof-
                   assume \<open>b'\<in>B-{b}\<close>
                   hence \<open>b' \<noteq> b\<close>
                     by simp
-                  hence \<open>\<langle>b, b'\<rangle> = 0\<close>
-                    using \<open>\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> \<langle>b, b'\<rangle> = 0\<close> \<open>b \<in> B\<close> \<open>b' \<in> B - {b}\<close> 
+                  hence \<open>(b \<bullet>\<^sub>C b') = 0\<close>
+                    using \<open>\<forall>b\<in>B. \<forall>b'\<in>B. b \<noteq> b' \<longrightarrow> (b \<bullet>\<^sub>C b') = 0\<close> \<open>b \<in> B\<close> \<open>b' \<in> B - {b}\<close> 
                     by auto
                   thus ?thesis by simp
                 qed
                 thus ?thesis
-                  by (simp add: \<open>\<And>b'. b' \<in> B - {b} \<Longrightarrow> \<langle>\<phi> b, \<phi> b'\<rangle> * \<langle>b, b'\<rangle> = 0\<close>) 
+                  by (simp add: \<open>\<And>b'. b' \<in> B - {b} \<Longrightarrow> (\<phi> b \<bullet>\<^sub>C \<phi> b') * (b \<bullet>\<^sub>C b') = 0\<close>) 
               qed
               ultimately show ?thesis by simp
             qed
@@ -4048,9 +4048,9 @@ proof-
           qed
           also have \<open>\<dots> = (\<Sum>b\<in>B. (norm (\<phi> b))^2 )\<close>
           proof-
-            have \<open>\<langle>\<phi> b, \<phi> b\<rangle> = (norm (\<phi> b))^2\<close> for b
+            have \<open>(\<phi> b \<bullet>\<^sub>C \<phi> b) = (norm (\<phi> b))^2\<close> for b
               by (simp add: cdot_square_norm)
-            hence \<open>(\<Sum>b\<in>B. \<langle>\<phi> b, \<phi> b\<rangle>) = (\<Sum>b\<in>B. complex_of_real ((norm (\<phi> b))\<^sup>2))\<close>
+            hence \<open>(\<Sum>b\<in>B. (\<phi> b \<bullet>\<^sub>C \<phi> b)) = (\<Sum>b\<in>B. complex_of_real ((norm (\<phi> b))\<^sup>2))\<close>
               by simp
             also have \<open>\<dots> = complex_of_real (\<Sum>b\<in>B. ((norm (\<phi> b))\<^sup>2))\<close>
               using \<open>finite B\<close>
@@ -4128,13 +4128,13 @@ proof-
   proof-
     have \<open>z \<in> cspan (range (case_prod (\<otimes>\<^sub>a)))\<close>
       by (simp add: atensor_onto)
-    have \<open>\<exists> A B S r. finite A  \<and> finite B \<and> (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0)
-  \<and> (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0) \<and> S \<subseteq> A \<times> B \<and>
+    have \<open>\<exists> A B S r. finite A  \<and> finite B \<and> (\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0)
+  \<and> (\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0) \<and> S \<subseteq> A \<times> B \<and>
   z = (\<Sum>(a,b)\<in>S. (r (a, b)) *\<^sub>C (a \<otimes>\<^sub>a b))\<close>
       using tensor_prod_expansion by blast
     then obtain A B S r where \<open>finite A\<close> and \<open>finite B\<close> and 
-      \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> and 
-      \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close> and \<open>S \<subseteq> A \<times> B\<close> and
+      \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> and 
+      \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close> and \<open>S \<subseteq> A \<times> B\<close> and
       \<open>z = (\<Sum>(a,b)\<in>S. (r (a, b)) *\<^sub>C (a \<otimes>\<^sub>a b))\<close>
       by blast
     have \<open>finite S\<close>
@@ -4153,26 +4153,26 @@ proof-
     finally have \<open>swap_atensor z = (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a))\<close>
       by blast
     have \<open>complex_of_real ((norm (swap_atensor z))\<^sup>2) =
-    (\<Sum>(a, b)\<in>S. (cnj (r (a, b))) * (r (a, b)) * \<langle>a \<otimes>\<^sub>a b, a \<otimes>\<^sub>a b\<rangle>)\<close>
+    (\<Sum>(a, b)\<in>S. (cnj (r (a, b))) * (r (a, b)) * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a \<otimes>\<^sub>a b)))\<close>
     proof-
       have \<open>(norm (swap_atensor z))^2 = (norm (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)))^2\<close>
         using \<open>swap_atensor z = (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a))\<close>
         by simp
-      also have \<open>\<dots> = \<langle> (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)), (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)) \<rangle>\<close>
+      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)) \<bullet>\<^sub>C (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a))\<close>
         by (simp add: cdot_square_norm)
-      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. \<langle> r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a),  (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a))\<rangle> )\<close>
+      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)) \<bullet>\<^sub>C (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)))\<close>
         by (metis (mono_tags, lifting) case_prod_conv cinner_sum_left cond_case_prod_eta)
-      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (\<Sum>(a', b')\<in>S. \<langle>r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a), r (a', b') *\<^sub>C (b' \<otimes>\<^sub>a a')\<rangle>))\<close>
+      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (\<Sum>(a', b')\<in>S. (r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)) \<bullet>\<^sub>C (r (a', b') *\<^sub>C (b' \<otimes>\<^sub>a a'))))\<close>
         by (smt cinner_sum_right prod.case_distrib split_cong sum.cong)
           (* > 1 s *)
-      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * \<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle>))\<close>
+      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a'))))\<close>
       proof-
-        have \<open>(\<Sum>(a', b')\<in>S. \<langle>r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a), r (a', b') *\<^sub>C (b' \<otimes>\<^sub>a a')\<rangle>)
-            = (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * \<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle>)\<close>
+        have \<open>(\<Sum>(a', b')\<in>S. (r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)) \<bullet>\<^sub>C (r (a', b') *\<^sub>C (b' \<otimes>\<^sub>a a')))
+            = (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a')))\<close>
           for a b
         proof-
-          have \<open>\<langle>r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a), r (a', b') *\<^sub>C (b' \<otimes>\<^sub>a a')\<rangle> = 
-              (cnj (r (a, b))) * r (a', b') * \<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle>\<close>
+          have \<open>(r (a, b) *\<^sub>C (b \<otimes>\<^sub>a a)) \<bullet>\<^sub>C (r (a', b') *\<^sub>C (b' \<otimes>\<^sub>a a')) = 
+              (cnj (r (a, b))) * r (a', b') * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a'))\<close>
             for a' b'
             by simp            
           thus ?thesis
@@ -4180,10 +4180,10 @@ proof-
         qed
         thus ?thesis by simp
       qed
-      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (cnj (r (a, b))) * r (a, b) * \<langle>b \<otimes>\<^sub>a a, b \<otimes>\<^sub>a a\<rangle>)\<close>
+      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (cnj (r (a, b))) * r (a, b) * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b \<otimes>\<^sub>a a)))\<close>
       proof-
-        have \<open>(a,b) \<in> S \<Longrightarrow> (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * \<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle>) = 
-              (cnj (r (a, b))) * r (a, b) * \<langle>b \<otimes>\<^sub>a a, b \<otimes>\<^sub>a a\<rangle>\<close>
+        have \<open>(a,b) \<in> S \<Longrightarrow> (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a'))) = 
+              (cnj (r (a, b))) * r (a, b) * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b \<otimes>\<^sub>a a))\<close>
           for a b
         proof-
           assume \<open>(a,b) \<in> S\<close>
@@ -4194,14 +4194,14 @@ proof-
           from \<open>(a, b) \<in> A\<times>B\<close>
           have \<open>b \<in> B\<close>
             by simp
-          have  \<open>(\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * \<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle>)
-  = (cnj (r (a, b))) * r (a, b) * \<langle>b \<otimes>\<^sub>a a, b \<otimes>\<^sub>a a\<rangle>
-  + (\<Sum>(a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * \<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle>)\<close>
+          have  \<open>(\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a')))
+  = (cnj (r (a, b))) * r (a, b) * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b \<otimes>\<^sub>a a))
+  + (\<Sum>(a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a')))\<close>
             using \<open>finite S\<close> \<open>(a,b) \<in> S\<close>
             by (metis (no_types, lifting) case_prod_conv sum.remove)
-          moreover have \<open>(\<Sum>(a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * \<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle>) = 0\<close>
+          moreover have \<open>(\<Sum>(a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a'))) = 0\<close>
           proof-
-            have \<open>(a', b')\<in>S-{(a, b)} \<Longrightarrow> (cnj (r (a, b))) * r (a', b') * \<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle> = 0\<close>
+            have \<open>(a', b')\<in>S-{(a, b)} \<Longrightarrow> (cnj (r (a, b))) * r (a', b') * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a')) = 0\<close>
               for a' b'
             proof-
               assume \<open>(a', b')\<in>S-{(a, b)}\<close>
@@ -4217,20 +4217,20 @@ proof-
                 by simp
               hence \<open>a' \<noteq> a \<or> b' \<noteq> b\<close>
                 by simp
-              moreover have \<open>\<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle> = \<langle>b, b'\<rangle> * \<langle>a, a'\<rangle>\<close>
+              moreover have \<open>((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a')) = (b \<bullet>\<^sub>C b') * (a \<bullet>\<^sub>C a')\<close>
                 by (simp add: atensor_cinner_mult)
-              moreover have \<open>b \<noteq> b' \<Longrightarrow> \<langle>b, b'\<rangle> = 0\<close>
-                using  \<open>b \<in> B\<close> \<open>b' \<in> B\<close> \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
+              moreover have \<open>b \<noteq> b' \<Longrightarrow> (b \<bullet>\<^sub>C b') = 0\<close>
+                using  \<open>b \<in> B\<close> \<open>b' \<in> B\<close> \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
                 by simp
-              moreover have \<open>a \<noteq> a' \<Longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
-                using  \<open>a \<in> A\<close> \<open>a' \<in> A\<close> \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
+              moreover have \<open>a \<noteq> a' \<Longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
+                using  \<open>a \<in> A\<close> \<open>a' \<in> A\<close> \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
                 by simp
-              ultimately have \<open>\<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle> = 0\<close>
+              ultimately have \<open>((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a')) = 0\<close>
                 by auto
               thus ?thesis
                 by simp 
             qed
-            hence \<open>\<forall> (a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * \<langle>b \<otimes>\<^sub>a a, b' \<otimes>\<^sub>a a'\<rangle> = 0\<close>
+            hence \<open>\<forall> (a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * ((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b' \<otimes>\<^sub>a a')) = 0\<close>
               by blast
             thus ?thesis
               by (smt case_prodE case_prod_conv sum.not_neutral_contains_not_neutral) 
@@ -4241,14 +4241,14 @@ proof-
           by (metis (no_types, lifting) split_cong sum.cong) 
       qed
       also have \<open>\<dots> =
-  (\<Sum>(a, b)\<in>S. cnj (r (a, b)) * r (a, b) * \<langle>a \<otimes>\<^sub>a b, a \<otimes>\<^sub>a b\<rangle>)\<close>
+  (\<Sum>(a, b)\<in>S. cnj (r (a, b)) * r (a, b) * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a \<otimes>\<^sub>a b)))\<close>
       proof-
-        have \<open>\<langle>b \<otimes>\<^sub>a a, b \<otimes>\<^sub>a a\<rangle> = \<langle>a \<otimes>\<^sub>a b, a \<otimes>\<^sub>a b\<rangle>\<close>
+        have \<open>((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b \<otimes>\<^sub>a a)) = ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a \<otimes>\<^sub>a b))\<close>
           for a::'a and b::'b
         proof-
-          have \<open>\<langle>b \<otimes>\<^sub>a a, b \<otimes>\<^sub>a a\<rangle> = \<langle>b, b\<rangle> * \<langle>a, a\<rangle>\<close>
+          have \<open>((b \<otimes>\<^sub>a a) \<bullet>\<^sub>C (b \<otimes>\<^sub>a a)) = (b \<bullet>\<^sub>C b) * (a \<bullet>\<^sub>C a)\<close>
             by (simp add: atensor_cinner_mult)            
-          moreover have \<open>\<langle>a \<otimes>\<^sub>a b, a \<otimes>\<^sub>a b\<rangle> = \<langle>a, a\<rangle> * \<langle>b, b\<rangle>\<close>
+          moreover have \<open>((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a \<otimes>\<^sub>a b)) = (a \<bullet>\<^sub>C a) * (b \<bullet>\<^sub>C b)\<close>
             by (simp add: atensor_cinner_mult)            
           ultimately show ?thesis by simp
         qed
@@ -4257,26 +4257,26 @@ proof-
       finally show ?thesis by blast
     qed
     moreover have \<open>complex_of_real ((norm  z)\<^sup>2) =
-  (\<Sum>(a, b)\<in>S. cnj (r (a, b)) * r (a, b) * \<langle>a \<otimes>\<^sub>a b, a \<otimes>\<^sub>a b\<rangle>)\<close>
+  (\<Sum>(a, b)\<in>S. cnj (r (a, b)) * r (a, b) * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a \<otimes>\<^sub>a b)))\<close>
     proof-
       have \<open>(norm  z)^2 = (norm (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b)))^2\<close>
         using \<open>z = (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b))\<close>
         by simp
-      also have \<open>\<dots> = \<langle> (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b)), (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b)) \<rangle>\<close>
+      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b)) \<bullet>\<^sub>C (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b))\<close>
         by (simp add: cdot_square_norm)
-      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. \<langle> r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b),  (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b))\<rangle> )\<close>
+      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b)) \<bullet>\<^sub>C (\<Sum>(a, b)\<in>S. r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b)))\<close>
         by (metis (mono_tags, lifting) case_prod_conv cinner_sum_left cond_case_prod_eta)
-      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (\<Sum>(a', b')\<in>S. \<langle>r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b), r (a', b') *\<^sub>C (a' \<otimes>\<^sub>a b')\<rangle>))\<close>
+      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (\<Sum>(a', b')\<in>S. (r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b)) \<bullet>\<^sub>C r (a', b') *\<^sub>C (a' \<otimes>\<^sub>a b')))\<close>
         by (smt cinner_sum_right prod.case_distrib split_cong sum.cong)
           (* > 1 s *)
-      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * \<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle>))\<close>
+      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b'))))\<close>
       proof-
-        have \<open>(\<Sum>(a', b')\<in>S. \<langle>r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b), r (a', b') *\<^sub>C (a' \<otimes>\<^sub>a b')\<rangle>)
-            = (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * \<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle>)\<close>
+        have \<open>(\<Sum>(a', b')\<in>S. (r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (r (a', b') *\<^sub>C (a' \<otimes>\<^sub>a b'))))
+            = (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b')))\<close>
           for a b
         proof-
-          have \<open>\<langle>r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b), r (a', b') *\<^sub>C (a' \<otimes>\<^sub>a b')\<rangle> = 
-              (cnj (r (a, b))) * r (a', b') * \<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle>\<close>
+          have \<open>(r (a, b) *\<^sub>C (a \<otimes>\<^sub>a b)) \<bullet>\<^sub>C (r (a', b') *\<^sub>C (a' \<otimes>\<^sub>a b')) = 
+              (cnj (r (a, b))) * r (a', b') * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b'))\<close>
             for a' b'
             by simp            
           thus ?thesis
@@ -4284,10 +4284,10 @@ proof-
         qed
         thus ?thesis by simp
       qed
-      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (cnj (r (a, b))) * r (a, b) * \<langle>a \<otimes>\<^sub>a b, a \<otimes>\<^sub>a b\<rangle>)\<close>
+      also have \<open>\<dots> = (\<Sum>(a, b)\<in>S. (cnj (r (a, b))) * r (a, b) * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a \<otimes>\<^sub>a b)))\<close>
       proof-
-        have \<open>(a,b) \<in> S \<Longrightarrow> (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * \<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle>) = 
-              (cnj (r (a, b))) * r (a, b) * \<langle>a \<otimes>\<^sub>a b, a \<otimes>\<^sub>a b\<rangle>\<close>
+        have \<open>(a,b) \<in> S \<Longrightarrow> (\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b'))) = 
+              (cnj (r (a, b))) * r (a, b) * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a \<otimes>\<^sub>a b))\<close>
           for a b
         proof-
           assume \<open>(a,b) \<in> S\<close>
@@ -4298,14 +4298,14 @@ proof-
           from \<open>(a, b) \<in> A\<times>B\<close>
           have \<open>b \<in> B\<close>
             by simp
-          have  \<open>(\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * \<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle>)
-  = (cnj (r (a, b))) * r (a, b) * \<langle>a \<otimes>\<^sub>a b, a \<otimes>\<^sub>a b\<rangle>
-  + (\<Sum>(a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * \<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle>)\<close>
+          have  \<open>(\<Sum>(a', b')\<in>S. (cnj (r (a, b))) * r (a', b') * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b')))
+  = (cnj (r (a, b))) * r (a, b) * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a \<otimes>\<^sub>a b))
+  + (\<Sum>(a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b')))\<close>
             using \<open>finite S\<close> \<open>(a,b) \<in> S\<close>
             by (metis (no_types, lifting) case_prod_conv sum.remove)
-          moreover have \<open>(\<Sum>(a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * \<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle>) = 0\<close>
+          moreover have \<open>(\<Sum>(a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b'))) = 0\<close>
           proof-
-            have \<open>(a', b')\<in>S-{(a, b)} \<Longrightarrow> (cnj (r (a, b))) * r (a', b') * \<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle> = 0\<close>
+            have \<open>(a', b')\<in>S-{(a, b)} \<Longrightarrow> (cnj (r (a, b))) * r (a', b') * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b')) = 0\<close>
               for a' b'
             proof-
               assume \<open>(a', b')\<in>S-{(a, b)}\<close>
@@ -4321,20 +4321,20 @@ proof-
                 by simp
               hence \<open>a' \<noteq> a \<or> b' \<noteq> b\<close>
                 by simp
-              moreover have \<open>\<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle> = \<langle>a, a'\<rangle> * \<langle>b, b'\<rangle>\<close>
+              moreover have \<open>((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b')) = (a \<bullet>\<^sub>C a') * (b \<bullet>\<^sub>C b')\<close>
                 by (simp add: atensor_cinner_mult)
-              moreover have \<open>b \<noteq> b' \<Longrightarrow> \<langle>b, b'\<rangle> = 0\<close>
-                using  \<open>b \<in> B\<close> \<open>b' \<in> B\<close> \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
+              moreover have \<open>b \<noteq> b' \<Longrightarrow> (b \<bullet>\<^sub>C b') = 0\<close>
+                using  \<open>b \<in> B\<close> \<open>b' \<in> B\<close> \<open>\<forall>a\<in>B. \<forall>a'\<in>B. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
                 by simp
-              moreover have \<open>a \<noteq> a' \<Longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
-                using  \<open>a \<in> A\<close> \<open>a' \<in> A\<close> \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> \<langle>a, a'\<rangle> = 0\<close>
+              moreover have \<open>a \<noteq> a' \<Longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
+                using  \<open>a \<in> A\<close> \<open>a' \<in> A\<close> \<open>\<forall>a\<in>A. \<forall>a'\<in>A. a \<noteq> a' \<longrightarrow> (a \<bullet>\<^sub>C a') = 0\<close>
                 by simp
-              ultimately have \<open>\<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle> = 0\<close>
+              ultimately have \<open>((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b')) = 0\<close>
                 by auto
               thus ?thesis
                 by simp 
             qed
-            hence \<open>\<forall> (a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * \<langle>a \<otimes>\<^sub>a b, a' \<otimes>\<^sub>a b'\<rangle> = 0\<close>
+            hence \<open>\<forall> (a', b')\<in>S-{(a, b)}. (cnj (r (a, b))) * r (a', b') * ((a \<otimes>\<^sub>a b) \<bullet>\<^sub>C (a' \<otimes>\<^sub>a b')) = 0\<close>
               by blast
             thus ?thesis
               by (smt case_prodE case_prod_conv sum.not_neutral_contains_not_neutral) 

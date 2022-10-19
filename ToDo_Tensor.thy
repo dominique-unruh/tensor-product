@@ -2,19 +2,19 @@ theory ToDo_Tensor
   imports Tensor_Product 
 begin
 
-lemma cinner_tensor: "\<langle>\<gamma> \<otimes> \<psi>, \<delta> \<otimes> \<phi>\<rangle> = \<langle>\<psi>, \<phi>\<rangle> * \<langle>\<gamma>, \<delta>\<rangle>" for \<gamma> \<psi> \<delta> \<phi> :: \<open>_ ell2\<close>
+lemma cinner_tensor: "(\<gamma> \<otimes> \<psi>) \<bullet>\<^sub>C (\<delta> \<otimes> \<phi>) = (\<psi> \<bullet>\<^sub>C \<phi>) * (\<gamma> \<bullet>\<^sub>C \<delta>)" for \<gamma> \<psi> \<delta> \<phi> :: \<open>_ ell2\<close>
   sorry
 
 lemma addState_adj_times_addState[simp]: 
   includes cblinfun_notation no_blinfun_notation
   fixes \<psi> \<phi> :: "'a ell2"
-  shows "addState \<psi>* o\<^sub>C\<^sub>L addState \<phi> = \<langle>\<psi>, \<phi>\<rangle> *\<^sub>C (id_cblinfun::('b ell2,'b ell2) cblinfun)"
+  shows "addState \<psi>* o\<^sub>C\<^sub>L addState \<phi> = (\<psi> \<bullet>\<^sub>C \<phi>) *\<^sub>C (id_cblinfun::('b ell2,'b ell2) cblinfun)"
 proof -
-  have "\<langle>\<gamma>, (addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta>\<rangle> = \<langle>\<gamma>, (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C id_cblinfun) *\<^sub>V \<delta>\<rangle>" for \<gamma> \<delta> :: "'b ell2"
+  have "\<gamma> \<bullet>\<^sub>C ((addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta>) = \<gamma> \<bullet>\<^sub>C (((\<psi> \<bullet>\<^sub>C \<phi>) *\<^sub>C id_cblinfun) *\<^sub>V \<delta>)" for \<gamma> \<delta> :: "'b ell2"
     apply (simp add: cblinfun_compose_image cinner_adj_right)
     apply (transfer fixing: \<psi> \<phi> \<delta> \<gamma>)
     by (simp add: cinner_tensor)
-  hence "(addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta> = (\<langle>\<psi>, \<phi>\<rangle> *\<^sub>C id_cblinfun) *\<^sub>V \<delta>" for \<delta> :: "'b ell2"
+  hence "(addState \<psi>* o\<^sub>C\<^sub>L addState \<phi>) *\<^sub>V \<delta> = ((\<psi> \<bullet>\<^sub>C \<phi>) *\<^sub>C id_cblinfun) *\<^sub>V \<delta>" for \<delta> :: "'b ell2"
     by (metis (no_types, lifting) adjoint_eqI cinner_adj_left double_adj)
   thus ?thesis
     by (rule cblinfun_eqI)

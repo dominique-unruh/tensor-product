@@ -34,7 +34,7 @@ type_notation
 instantiation htensor :: (chilbert_space, chilbert_space) complex_inner
 begin
 lift_definition cinner_htensor :: \<open>'a \<otimes>\<^sub>h 'b \<Rightarrow> 'a \<otimes>\<^sub>h 'b \<Rightarrow> complex\<close>
-  is "\<lambda> x y. \<langle> x, y \<rangle>".
+  is "\<lambda> x y. (x \<bullet>\<^sub>C y)".
 
 lift_definition scaleC_htensor :: \<open>complex \<Rightarrow> 'a \<otimes>\<^sub>h 'b \<Rightarrow> 'a \<otimes>\<^sub>h 'b\<close>
   is "\<lambda> c x. c *\<^sub>C x".
@@ -140,32 +140,32 @@ proof
     for U :: "('a \<otimes>\<^sub>h 'b) set"
     by (simp add: Tensor_Product.open_htensor_def)
 
-  show "\<langle>x::'a \<otimes>\<^sub>h 'b, y\<rangle> = cnj \<langle>y, x\<rangle>"
+  show "(x::'a \<otimes>\<^sub>h 'b) \<bullet>\<^sub>C y = cnj (y \<bullet>\<^sub>C x)"
     for x :: "'a \<otimes>\<^sub>h 'b"
       and y :: "'a \<otimes>\<^sub>h 'b"
     by (simp add: cinner_htensor.rep_eq)
 
-  show "\<langle>(x::'a \<otimes>\<^sub>h 'b) + y, z\<rangle> = \<langle>x, z\<rangle> + \<langle>y, z\<rangle>"
+  show "((x::'a \<otimes>\<^sub>h 'b) + y) \<bullet>\<^sub>C z = (x \<bullet>\<^sub>C z) + (y \<bullet>\<^sub>C z)"
     for x :: "'a \<otimes>\<^sub>h 'b"
       and y :: "'a \<otimes>\<^sub>h 'b"
       and z :: "'a \<otimes>\<^sub>h 'b"
     by (simp add: Tensor_Product.cinner_htensor.rep_eq Tensor_Product.plus_htensor.rep_eq cinner_add_left)
 
-  show "\<langle>r *\<^sub>C (x::'a \<otimes>\<^sub>h 'b), y\<rangle> = cnj r * \<langle>x, y\<rangle>"
+  show "(r *\<^sub>C (x::'a \<otimes>\<^sub>h 'b)) \<bullet>\<^sub>C y = cnj r * (x \<bullet>\<^sub>C y)"
     for r :: complex
       and x :: "'a \<otimes>\<^sub>h 'b"
       and y :: "'a \<otimes>\<^sub>h 'b"
     by (simp add: Tensor_Product.cinner_htensor.rep_eq Tensor_Product.scaleC_htensor.rep_eq)
 
-  show "0 \<le> \<langle>x::'a \<otimes>\<^sub>h 'b, x\<rangle>"
+  show "0 \<le> (x::'a \<otimes>\<^sub>h 'b) \<bullet>\<^sub>C x"
     for x :: "'a \<otimes>\<^sub>h 'b"
     using cinner_ge_zero cinner_htensor.rep_eq by auto
 
-  show "(\<langle>x::'a \<otimes>\<^sub>h 'b, x\<rangle> = 0) = (x = 0)"
+  show "(x::'a \<otimes>\<^sub>h 'b) \<bullet>\<^sub>C x = 0 \<longleftrightarrow> x = 0"
     for x :: "'a \<otimes>\<^sub>h 'b"
     using Rep_htensor_inject Tensor_Product.zero_htensor.rep_eq cinner_htensor.rep_eq by fastforce
 
-  show "norm (x::'a \<otimes>\<^sub>h 'b) = sqrt (cmod \<langle>x, x\<rangle>)"
+  show "norm (x::'a \<otimes>\<^sub>h 'b) = sqrt (cmod (x \<bullet>\<^sub>C x))"
     for x :: "'a \<otimes>\<^sub>h 'b"
     using cinner_htensor.rep_eq norm_eq_sqrt_cinner norm_htensor.rep_eq by auto
 
@@ -385,14 +385,14 @@ proof-
 qed
 
 lemma htensor_cinner_mult:
-  \<open>\<langle>x\<^sub>1 \<otimes>\<^sub>h y\<^sub>1, x\<^sub>2 \<otimes>\<^sub>h y\<^sub>2\<rangle> = \<langle>x\<^sub>1, x\<^sub>2\<rangle> * \<langle>y\<^sub>1, y\<^sub>2\<rangle>\<close>
+  \<open>(x\<^sub>1 \<otimes>\<^sub>h y\<^sub>1) \<bullet>\<^sub>C (x\<^sub>2 \<otimes>\<^sub>h y\<^sub>2) = (x\<^sub>1 \<bullet>\<^sub>C x\<^sub>2) * (y\<^sub>1 \<bullet>\<^sub>C y\<^sub>2)\<close>
   apply transfer
   by (simp add: atensor_cinner_mult inclusion_completion_cinner)
 
 lemma htensor_norm_mult:
   \<open>norm (x \<otimes>\<^sub>h y) = norm x * norm y\<close>
 proof -
-  have "norm x * norm y = sqrt (cmod \<langle>x, x\<rangle>) * sqrt (cmod \<langle>y, y\<rangle>)"
+  have "norm x * norm y = sqrt (cmod (x \<bullet>\<^sub>C x)) * sqrt (cmod (y \<bullet>\<^sub>C y))"
     by (metis norm_eq_sqrt_cinner)
   thus ?thesis
     by (metis htensor_cinner_mult norm_eq_sqrt_cinner norm_mult real_sqrt_mult)

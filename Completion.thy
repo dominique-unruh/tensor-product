@@ -1464,7 +1464,7 @@ end
 instantiation completion :: (complex_inner) chilbert_space
 begin
 lift_definition cinner_completion :: \<open>'a completion \<Rightarrow> 'a completion \<Rightarrow> complex\<close>
-  is \<open>\<lambda> x y. lim (\<lambda> n. \<langle>x n, y n\<rangle>)\<close>
+  is \<open>\<lambda> x y. lim (\<lambda> n. x n \<bullet>\<^sub>C y n)\<close>
 proof-
   fix f1 f2 f3 f4::\<open>nat \<Rightarrow> 'a::complex_inner\<close>
   assume \<open>completion_rel f1 f2\<close> and \<open>completion_rel f3 f4\<close>
@@ -1476,7 +1476,7 @@ proof-
     using \<open>completion_rel f3 f4\<close> unfolding completion_rel_def by blast
   have \<open>Cauchy f4\<close>
     using \<open>completion_rel f3 f4\<close> unfolding completion_rel_def by blast
-  have \<open>lim (\<lambda>n. \<langle>f1 n, f3 n\<rangle>) = lim (\<lambda>n. \<langle>f2 n, f3 n\<rangle>)\<close>
+  have \<open>lim (\<lambda>n. f1 n \<bullet>\<^sub>C f3 n) = lim (\<lambda>n. f2 n \<bullet>\<^sub>C f3 n)\<close>
   proof-
     have \<open>Cauchy f3\<close>
       using \<open>completion_rel f3 f4\<close> unfolding completion_rel_def by blast
@@ -1488,9 +1488,9 @@ proof-
       by blast
     hence \<open>M \<ge> 0\<close>
       using dual_order.trans norm_imp_pos_and_ge by blast        
-    have \<open>norm \<langle>f1 n - f2 n, f3 n\<rangle> \<le> norm (f1 n - f2 n) * norm (f3 n)\<close> for n
+    have \<open>norm ((f1 n - f2 n) \<bullet>\<^sub>C f3 n) \<le> norm (f1 n - f2 n) * norm (f3 n)\<close> for n
       by (simp add: complex_inner_class.Cauchy_Schwarz_ineq2)
-    hence \<open>norm \<langle>f1 n - f2 n, f3 n\<rangle> \<le> norm (f1 n - f2 n) * M\<close> for n
+    hence \<open>norm ((f1 n - f2 n) \<bullet>\<^sub>C f3 n) \<le> norm (f1 n - f2 n) * M\<close> for n
       using \<open>\<forall> n. norm (f3 n) \<le> M\<close>
       by (meson dual_order.trans mult_left_mono norm_ge_zero)
     moreover have \<open>(\<lambda> n. norm (f1 n - f2 n) * M) \<longlonglongrightarrow> 0\<close>
@@ -1502,32 +1502,32 @@ proof-
       thus ?thesis
         by (simp add: tendsto_mult_left_zero) 
     qed
-    ultimately have \<open>(\<lambda> n. \<langle>f1 n - f2 n, f3 n\<rangle>) \<longlonglongrightarrow> 0\<close>
+    ultimately have \<open>(\<lambda> n. (f1 n - f2 n) \<bullet>\<^sub>C f3 n) \<longlonglongrightarrow> 0\<close>
       by (metis (no_types, lifting) Lim_null_comparison eventually_sequentiallyI) 
-    hence \<open>lim (\<lambda> n. \<langle>f1 n - f2 n, f3 n\<rangle>) = 0\<close>
+    hence \<open>lim (\<lambda> n. (f1 n - f2 n) \<bullet>\<^sub>C f3 n) = 0\<close>
       by (simp add: limI)
-    have \<open>lim (\<lambda> n. \<langle>f1 n, f3 n\<rangle> - \<langle>f2 n, f3 n\<rangle>) = 0\<close>
+    have \<open>lim (\<lambda> n. (f1 n \<bullet>\<^sub>C f3 n) - (f2 n \<bullet>\<^sub>C f3 n)) = 0\<close>
     proof-
-      have \<open>\<langle>f1 n - f2 n, f3 n\<rangle> = \<langle>f1 n, f3 n\<rangle> - \<langle>f2 n, f3 n\<rangle>\<close>
+      have \<open>(f1 n - f2 n) \<bullet>\<^sub>C f3 n = (f1 n \<bullet>\<^sub>C f3 n) - (f2 n \<bullet>\<^sub>C f3 n)\<close>
         for n
         by (simp add: cinner_diff_left)
       thus ?thesis 
-        using \<open>lim (\<lambda> n. \<langle>f1 n - f2 n, f3 n\<rangle>) = 0\<close> by simp
+        using \<open>lim (\<lambda> n. ((f1 n - f2 n) \<bullet>\<^sub>C f3 n)) = 0\<close> by simp
     qed
-    moreover have \<open>convergent (\<lambda> n. \<langle>f1 n, f3 n\<rangle>)\<close>
+    moreover have \<open>convergent (\<lambda> n. (f1 n \<bullet>\<^sub>C f3 n))\<close>
       using Cauchy_cinner_Cauchy \<open>Cauchy f1\<close> \<open>Cauchy f3\<close> complex_Cauchy_convergent by blast
-    moreover have \<open>convergent (\<lambda> n. \<langle>f2 n, f3 n\<rangle>)\<close>
+    moreover have \<open>convergent (\<lambda> n. (f2 n \<bullet>\<^sub>C f3 n))\<close>
       by (simp add: Cauchy_cinner_Cauchy \<open>Cauchy f2\<close> \<open>Cauchy f3\<close> complex_Cauchy_convergent)
-    ultimately have \<open>lim (\<lambda> n. \<langle>f1 n, f3 n\<rangle>) - lim (\<lambda> n. \<langle>f2 n, f3 n\<rangle>) = 0\<close>
+    ultimately have \<open>lim (\<lambda> n. (f1 n \<bullet>\<^sub>C f3 n)) - lim (\<lambda> n. (f2 n \<bullet>\<^sub>C f3 n)) = 0\<close>
     proof -
-      have "\<And>c. \<not> (\<lambda>n. \<langle>f1 n, f3 n\<rangle>) \<longlonglongrightarrow> c \<or> (\<lambda>n. \<langle>f1 n, f3 n\<rangle> - \<langle>f2 n, f3 n\<rangle>) \<longlonglongrightarrow> c - lim (\<lambda>n. \<langle>f2 n, f3 n\<rangle>)"
-        using \<open>convergent (\<lambda>n. \<langle>f2 n, f3 n\<rangle>)\<close> convergent_LIMSEQ_iff tendsto_diff by blast
+      have "\<And>c. \<not> (\<lambda>n. (f1 n \<bullet>\<^sub>C f3 n)) \<longlonglongrightarrow> c \<or> (\<lambda>n. (f1 n \<bullet>\<^sub>C f3 n) - (f2 n \<bullet>\<^sub>C f3 n)) \<longlonglongrightarrow> c - lim (\<lambda>n. (f2 n \<bullet>\<^sub>C f3 n))"
+        using \<open>convergent (\<lambda>n. (f2 n \<bullet>\<^sub>C f3 n))\<close> convergent_LIMSEQ_iff tendsto_diff by blast
       thus ?thesis
-        by (metis (no_types) LIMSEQ_unique \<open>convergent (\<lambda>n. \<langle>f1 n, f3 n\<rangle>)\<close> \<open>lim (\<lambda>n. \<langle>f1 n, f3 n\<rangle> - \<langle>f2 n, f3 n\<rangle>) = 0\<close> convergentI convergent_LIMSEQ_iff)
+        by (metis (no_types) LIMSEQ_unique \<open>convergent (\<lambda>n. (f1 n \<bullet>\<^sub>C f3 n))\<close> \<open>lim (\<lambda>n. (f1 n \<bullet>\<^sub>C f3 n) - (f2 n \<bullet>\<^sub>C f3 n)) = 0\<close> convergentI convergent_LIMSEQ_iff)
     qed
     thus ?thesis by simp
   qed
-  also have \<open>\<dots>= lim (\<lambda>n. \<langle>f2 n, f4 n\<rangle>)\<close>
+  also have \<open>\<dots>= lim (\<lambda>n. (f2 n \<bullet>\<^sub>C f4 n))\<close>
   proof-
     have \<open>Cauchy f2\<close>
       using \<open>completion_rel f1 f2\<close> unfolding completion_rel_def by blast
@@ -1539,9 +1539,9 @@ proof-
       by blast
     hence \<open>M \<ge> 0\<close>
       using dual_order.trans norm_imp_pos_and_ge by blast        
-    have \<open>norm \<langle>f1 n - f2 n, f3 n\<rangle> \<le> norm (f1 n - f2 n) * norm (f3 n)\<close> for n
+    have \<open>norm ((f1 n - f2 n) \<bullet>\<^sub>C f3 n) \<le> norm (f1 n - f2 n) * norm (f3 n)\<close> for n
       by (simp add: complex_inner_class.Cauchy_Schwarz_ineq2)
-    hence \<open>norm \<langle>f2 n, f3 n - f4 n\<rangle> \<le> M * norm (f3 n - f4 n)\<close> for n
+    hence \<open>norm (f2 n \<bullet>\<^sub>C (f3 n - f4 n)) \<le> M * norm (f3 n - f4 n)\<close> for n
       using \<open>\<forall> n. norm (f2 n) \<le> M\<close>
       by (meson complex_inner_class.Cauchy_Schwarz_ineq2 dual_order.trans mult_right_mono norm_ge_zero)
     moreover have \<open>(\<lambda> n. M * norm (f3 n - f4 n)) \<longlonglongrightarrow> 0\<close>
@@ -1553,36 +1553,36 @@ proof-
       thus ?thesis
         by (simp add: tendsto_mult_right_zero) 
     qed
-    ultimately have \<open>(\<lambda> n. \<langle>f2 n, f3 n - f4 n\<rangle>) \<longlonglongrightarrow> 0\<close>
+    ultimately have \<open>(\<lambda> n. (f2 n \<bullet>\<^sub>C (f3 n - f4 n))) \<longlonglongrightarrow> 0\<close>
       by (metis (no_types, lifting) Lim_null_comparison eventually_sequentiallyI) 
-    hence \<open>lim (\<lambda> n. \<langle>f2 n, f3 n - f4 n\<rangle>) = 0\<close>
+    hence \<open>lim (\<lambda> n. (f2 n \<bullet>\<^sub>C (f3 n - f4 n))) = 0\<close>
       by (simp add: limI)
-    have \<open>lim (\<lambda> n. \<langle>f2 n, f3 n\<rangle> - \<langle>f2 n, f4 n\<rangle>) = 0\<close>
+    have \<open>lim (\<lambda> n. (f2 n \<bullet>\<^sub>C f3 n) - (f2 n \<bullet>\<^sub>C f4 n)) = 0\<close>
     proof-
-      have \<open>\<langle>f2 n, f3 n - f4 n\<rangle> = \<langle>f2 n, f3 n\<rangle> - \<langle>f2 n, f4 n\<rangle>\<close>
+      have \<open>(f2 n \<bullet>\<^sub>C (f3 n - f4 n)) = (f2 n \<bullet>\<^sub>C f3 n) - (f2 n \<bullet>\<^sub>C f4 n)\<close>
         for n
         by (simp add: cinner_diff_right)
       thus ?thesis 
-        using \<open>lim (\<lambda> n. \<langle>f2 n, f3 n - f4 n\<rangle>) = 0\<close> by simp
+        using \<open>lim (\<lambda> n. (f2 n \<bullet>\<^sub>C (f3 n - f4 n))) = 0\<close> by simp
     qed
-    have \<open>convergent (\<lambda> n. \<langle>f2 n, f3 n\<rangle>)\<close>
+    have \<open>convergent (\<lambda> n. (f2 n \<bullet>\<^sub>C f3 n))\<close>
       by (simp add: Cauchy_cinner_Cauchy \<open>Cauchy f2\<close> \<open>Cauchy f3\<close> complex_Cauchy_convergent)
-    moreover have \<open>convergent (\<lambda> n. \<langle>f2 n, f4 n\<rangle>)\<close>
+    moreover have \<open>convergent (\<lambda> n. (f2 n \<bullet>\<^sub>C f4 n))\<close>
       by (simp add: Cauchy_cinner_Cauchy \<open>Cauchy f2\<close> \<open>Cauchy f4\<close> complex_Cauchy_convergent)
-    ultimately have \<open>lim ( \<lambda> m. (\<lambda> n. \<langle>f2 n, f3 n\<rangle>) m - (\<lambda> n. \<langle>f2 n, f4 n\<rangle>) m)
-      = lim (\<lambda> n. \<langle>f2 n, f3 n\<rangle>) - lim (\<lambda> n. \<langle>f2 n, f4 n\<rangle>)\<close>
+    ultimately have \<open>lim ( \<lambda> m. (\<lambda> n. (f2 n \<bullet>\<^sub>C f3 n)) m - (\<lambda> n. (f2 n \<bullet>\<^sub>C f4 n)) m)
+      = lim (\<lambda> n. (f2 n \<bullet>\<^sub>C f3 n)) - lim (\<lambda> n. (f2 n \<bullet>\<^sub>C f4 n))\<close>
     proof -
-      have "(\<lambda>n. \<langle>f2 n, f3 n\<rangle>) \<longlonglongrightarrow> lim (\<lambda>n. \<langle>f2 n, f4 n\<rangle>)"
-        by (metis (no_types) Lim_transform \<open>convergent (\<lambda>n. \<langle>f2 n, f3 n\<rangle>)\<close> \<open>convergent (\<lambda>n. \<langle>f2 n, f4 n\<rangle>)\<close> \<open>lim (\<lambda>n. \<langle>f2 n, f3 n\<rangle> - \<langle>f2 n, f4 n\<rangle>) = 0\<close> convergent_LIMSEQ_iff convergent_diff)
+      have "(\<lambda>n. (f2 n \<bullet>\<^sub>C f3 n)) \<longlonglongrightarrow> lim (\<lambda>n. (f2 n \<bullet>\<^sub>C f4 n))"
+        by (metis (no_types) Lim_transform \<open>convergent (\<lambda>n. (f2 n \<bullet>\<^sub>C f3 n))\<close> \<open>convergent (\<lambda>n. (f2 n \<bullet>\<^sub>C f4 n))\<close> \<open>lim (\<lambda>n. (f2 n \<bullet>\<^sub>C f3 n) - (f2 n \<bullet>\<^sub>C f4 n)) = 0\<close> convergent_LIMSEQ_iff convergent_diff)
       thus ?thesis
-        using \<open>lim (\<lambda>n. \<langle>f2 n, f3 n\<rangle> - \<langle>f2 n, f4 n\<rangle>) = 0\<close> limI by auto
+        using \<open>lim (\<lambda>n. (f2 n \<bullet>\<^sub>C f3 n) - (f2 n \<bullet>\<^sub>C f4 n)) = 0\<close> limI by auto
     qed
-    hence \<open>lim (\<lambda> n. \<langle>f2 n, f3 n\<rangle>) - lim (\<lambda> n. \<langle>f2 n, f4 n\<rangle>) = 0\<close>
-      using \<open>lim (\<lambda>n. \<langle>f2 n, f3 n\<rangle> - \<langle>f2 n, f4 n\<rangle>) = 0\<close> by auto      
+    hence \<open>lim (\<lambda> n. (f2 n \<bullet>\<^sub>C f3 n)) - lim (\<lambda> n. (f2 n \<bullet>\<^sub>C f4 n)) = 0\<close>
+      using \<open>lim (\<lambda>n. (f2 n \<bullet>\<^sub>C f3 n) - (f2 n \<bullet>\<^sub>C f4 n)) = 0\<close> by auto      
     thus ?thesis by simp
   qed
 
-  finally show \<open>lim (\<lambda>n. \<langle>f1 n, f3 n\<rangle>) = lim (\<lambda>n. \<langle>f2 n, f4 n\<rangle>)\<close>
+  finally show \<open>lim (\<lambda>n. (f1 n \<bullet>\<^sub>C f3 n)) = lim (\<lambda>n. (f2 n \<bullet>\<^sub>C f4 n))\<close>
     by blast
 qed
 
@@ -1590,78 +1590,78 @@ instance
 proof
   fix x y z :: "'a completion"
   fix r :: complex
-  show "\<langle>x::'a completion, y\<rangle> = cnj \<langle>y, x\<rangle>"
+  show "(x::'a completion) \<bullet>\<^sub>C y = cnj (y \<bullet>\<^sub>C x)"
     apply transfer
     unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto
   proof-
     fix x y :: \<open>nat \<Rightarrow> 'a\<close>
     assume \<open>Cauchy y\<close> and \<open>Cauchy x\<close>
-    have \<open>\<langle>x n, y n\<rangle> = cnj \<langle>y n, x n\<rangle>\<close>
+    have \<open>(x n \<bullet>\<^sub>C y n) = cnj (y n \<bullet>\<^sub>C x n)\<close>
       for n
       by simp
-    hence \<open>(\<lambda> n. \<langle>x n, y n\<rangle>) = (\<lambda> n. cnj \<langle>y n, x n\<rangle>)\<close>
+    hence \<open>(\<lambda> n. (x n \<bullet>\<^sub>C y n)) = (\<lambda> n. cnj (y n \<bullet>\<^sub>C x n))\<close>
       by blast
-    hence \<open>lim (\<lambda> n. \<langle>x n, y n\<rangle>) = lim (\<lambda> n. cnj \<langle>y n, x n\<rangle>)\<close>
+    hence \<open>lim (\<lambda> n. (x n \<bullet>\<^sub>C y n)) = lim (\<lambda> n. cnj (y n \<bullet>\<^sub>C x n))\<close>
       by simp
-    moreover have \<open>lim (\<lambda> n. cnj \<langle>y n, x n\<rangle>) = cnj (lim (\<lambda> n. \<langle>y n, x n\<rangle>))\<close>
+    moreover have \<open>lim (\<lambda> n. cnj (y n \<bullet>\<^sub>C x n)) = cnj (lim (\<lambda> n. (y n \<bullet>\<^sub>C x n)))\<close>
     proof-
-      have \<open>convergent (\<lambda> n. \<langle>y n, x n\<rangle>)\<close>
+      have \<open>convergent (\<lambda> n. (y n \<bullet>\<^sub>C x n))\<close>
         using \<open>Cauchy y\<close> and \<open>Cauchy x\<close>
         using Cauchy_cinner_Cauchy Cauchy_convergent_iff by blast
-      hence \<open>\<exists> l. (\<lambda> n. \<langle>y n, x n\<rangle>) \<longlonglongrightarrow> l\<close>
+      hence \<open>\<exists> l. (\<lambda> n. (y n \<bullet>\<^sub>C x n)) \<longlonglongrightarrow> l\<close>
         by (simp add: convergentD)
-      then obtain l where \<open>(\<lambda> n. \<langle>y n, x n\<rangle>) \<longlonglongrightarrow> l\<close> by blast
-      hence  \<open>(\<lambda> n. cnj \<langle>y n, x n\<rangle>) \<longlonglongrightarrow> cnj l\<close>
+      then obtain l where \<open>(\<lambda> n. (y n \<bullet>\<^sub>C x n)) \<longlonglongrightarrow> l\<close> by blast
+      hence  \<open>(\<lambda> n. cnj (y n \<bullet>\<^sub>C x n)) \<longlonglongrightarrow> cnj l\<close>
         using lim_cnj by force
       thus ?thesis
-        using \<open>(\<lambda>n. \<langle>y n, x n\<rangle>) \<longlonglongrightarrow> l\<close> limI by blast 
+        using \<open>(\<lambda>n. (y n \<bullet>\<^sub>C x n)) \<longlonglongrightarrow> l\<close> limI by blast 
     qed
-    ultimately show \<open>lim (\<lambda>n. \<langle>x n, y n\<rangle>) = cnj (lim (\<lambda>n. \<langle>y n, x n\<rangle>))\<close>
+    ultimately show \<open>lim (\<lambda>n. (x n \<bullet>\<^sub>C y n)) = cnj (lim (\<lambda>n. (y n \<bullet>\<^sub>C x n)))\<close>
       by simp
   qed
-  show "\<langle>x + y, z\<rangle> = \<langle>x, z\<rangle> + \<langle>y, z\<rangle>"
+  show "((x + y) \<bullet>\<^sub>C z) = (x \<bullet>\<^sub>C z) + (y \<bullet>\<^sub>C z)"
     apply transfer
     unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto
   proof-
     fix x y z :: \<open>nat \<Rightarrow> 'a\<close>
     assume \<open>Cauchy y\<close> and \<open>Cauchy z\<close> and \<open>Cauchy x\<close> 
-    have \<open>\<langle>x n + y n, z n\<rangle> = \<langle>x n, z n\<rangle> + \<langle>y n, z n\<rangle>\<close>
+    have \<open>((x n + y n) \<bullet>\<^sub>C z n) = (x n \<bullet>\<^sub>C z n) + (y n \<bullet>\<^sub>C z n)\<close>
       for n
       by (simp add: cinner_add_left)
-    have \<open>convergent (\<lambda>n. \<langle>x n, z n\<rangle>)\<close>
+    have \<open>convergent (\<lambda>n. (x n \<bullet>\<^sub>C z n))\<close>
       using \<open>Cauchy x\<close> \<open>Cauchy z\<close>
       by (simp add: Cauchy_cinner_Cauchy complex_Cauchy_convergent)
-    moreover have \<open>convergent  (\<lambda>n. \<langle>y n, z n\<rangle>)\<close>
+    moreover have \<open>convergent  (\<lambda>n. (y n \<bullet>\<^sub>C z n))\<close>
       using \<open>Cauchy y\<close> \<open>Cauchy z\<close>
       by (simp add: Cauchy_cinner_Cauchy complex_Cauchy_convergent)
-    ultimately have \<open>lim (\<lambda>n. (\<lambda>i. \<langle>x i, z i\<rangle>) n + (\<lambda>i. \<langle>y i, z i\<rangle>) n) = lim (\<lambda>n. \<langle>x n, z n\<rangle>) + lim (\<lambda>n. \<langle>y n, z n\<rangle>)\<close>
+    ultimately have \<open>lim (\<lambda>n. (\<lambda>i. (x i \<bullet>\<^sub>C z i)) n + (\<lambda>i. (y i \<bullet>\<^sub>C z i)) n) = lim (\<lambda>n. (x n \<bullet>\<^sub>C z n)) + lim (\<lambda>n. (y n \<bullet>\<^sub>C z n))\<close>
      sorry
       (* using lim_add by auto *)
-    moreover have \<open>(\<lambda>i. \<langle>x i, z i\<rangle>) n + (\<lambda>i. \<langle>y i, z i\<rangle>) n = \<langle>x n + y n, z n\<rangle>\<close>
+    moreover have \<open>(\<lambda>i. (x i \<bullet>\<^sub>C z i)) n + (\<lambda>i. (y i \<bullet>\<^sub>C z i)) n = ((x n + y n) \<bullet>\<^sub>C z n)\<close>
       for n
-      using \<open>\<langle>x n + y n, z n\<rangle> = \<langle>x n, z n\<rangle> + \<langle>y n, z n\<rangle>\<close> by simp
-    ultimately show \<open>lim (\<lambda>n. \<langle>x n + y n, z n\<rangle>) = lim (\<lambda>n. \<langle>x n, z n\<rangle>) + lim (\<lambda>n. \<langle>y n, z n\<rangle>)\<close>
+      using \<open>((x n + y n) \<bullet>\<^sub>C z n) = (x n \<bullet>\<^sub>C z n) + (y n \<bullet>\<^sub>C z n)\<close> by simp
+    ultimately show \<open>lim (\<lambda>n. ((x n + y n) \<bullet>\<^sub>C z n)) = lim (\<lambda>n. (x n \<bullet>\<^sub>C z n)) + lim (\<lambda>n. (y n \<bullet>\<^sub>C z n))\<close>
       by auto
   qed
-  show "\<langle>r *\<^sub>C x, y\<rangle> = cnj r * \<langle>x, y\<rangle>"
+  show "((r *\<^sub>C x) \<bullet>\<^sub>C y) = cnj r * (x \<bullet>\<^sub>C y)"
     apply transfer
     unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto
   proof-
     fix x y :: \<open>nat \<Rightarrow> 'a\<close> and r::complex
     assume \<open>Cauchy y\<close> and \<open>Cauchy x\<close>
-    hence \<open>convergent (\<lambda>n. \<langle>x n, y n\<rangle>)\<close>
+    hence \<open>convergent (\<lambda>n. (x n \<bullet>\<^sub>C y n))\<close>
       by (simp add: Cauchy_cinner_Cauchy complex_Cauchy_convergent)
-    thus \<open>lim (\<lambda>n. cnj r * \<langle>x n, y n\<rangle>) = cnj r * lim (\<lambda>n. \<langle>x n, y n\<rangle>)\<close>
+    thus \<open>lim (\<lambda>n. cnj r * (x n \<bullet>\<^sub>C y n)) = cnj r * lim (\<lambda>n. (x n \<bullet>\<^sub>C y n))\<close>
      sorry
-(*       using lim_scaleC[where r = "cnj r" and x = "(\<lambda>n. \<langle>x n, y n\<rangle>)"]
+(*       using lim_scaleC[where r = "cnj r" and x = "(\<lambda>n. (x n \<bullet>\<^sub>C y n))"]
       by simp
  *)
 qed
 
-  show "0 \<le> \<langle>x, x\<rangle>"
+  show "0 \<le> (x \<bullet>\<^sub>C x)"
 (*     apply transfer
     unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto *)
@@ -1669,90 +1669,90 @@ qed
     fix x::\<open>nat \<Rightarrow> 'a\<close>
     assume \<open>Cauchy x \<and> Cauchy x \<and> (\<lambda>n. x n - x n) \<longlonglongrightarrow> 0\<close>
     then have \<open>Cauchy x\<close> by simp
-    have \<open>0 \<le> \<langle>x n, x n\<rangle>\<close> for n
+    have \<open>0 \<le> (x n \<bullet>\<^sub>C x n)\<close> for n
       by (meson cinner_ge_zero)
-    have \<open>\<langle>x n, x n\<rangle> \<in> \<real>\<close> for n
+    have \<open>(x n \<bullet>\<^sub>C x n) \<in> \<real>\<close> for n
       by (simp add: cinner_real)
-    hence \<open>\<langle>x n, x n\<rangle> = Re \<langle>x n, x n\<rangle>\<close>
+    hence \<open>(x n \<bullet>\<^sub>C x n) = Re (x n \<bullet>\<^sub>C x n)\<close>
       for n by simp
-    have  \<open>convergent (\<lambda>n. \<langle>x n, x n\<rangle>)\<close>
+    have  \<open>convergent (\<lambda>n. (x n \<bullet>\<^sub>C x n))\<close>
       using \<open>Cauchy x\<close>
       using Cauchy_cinner_Cauchy Cauchy_convergent by blast
-    have \<open>\<forall> n \<ge> 0. 0 \<le> Re \<langle>x n, x n\<rangle>\<close>
-      by (metis \<open>\<And>n. \<langle>x n, x n\<rangle> = complex_of_real (Re \<langle>x n, x n\<rangle>)\<close> cinner_ge_zero complex_of_real_nn_iff)      
-    moreover have \<open>convergent (\<lambda>n. Re \<langle>x n, x n\<rangle>)\<close>
-      by (simp add: Cauchy_Re \<open>convergent (\<lambda>n. \<langle>x n, x n\<rangle>)\<close> convergent_Cauchy real_Cauchy_convergent)
-    ultimately have \<open>0 \<le> lim (\<lambda>n. Re \<langle>x n, x n\<rangle>)\<close>
-      using Lim_bounded2[where N = "0" and f = "(\<lambda>n. Re (\<langle>x n, x n\<rangle>))" and C = "0"]
+    have \<open>\<forall> n \<ge> 0. 0 \<le> Re (x n \<bullet>\<^sub>C x n)\<close>
+      by (metis \<open>\<And>n. (x n \<bullet>\<^sub>C x n) = complex_of_real (Re (x n \<bullet>\<^sub>C x n))\<close> cinner_ge_zero complex_of_real_nn_iff)      
+    moreover have \<open>convergent (\<lambda>n. Re (x n \<bullet>\<^sub>C x n))\<close>
+      by (simp add: Cauchy_Re \<open>convergent (\<lambda>n. (x n \<bullet>\<^sub>C x n))\<close> convergent_Cauchy real_Cauchy_convergent)
+    ultimately have \<open>0 \<le> lim (\<lambda>n. Re (x n \<bullet>\<^sub>C x n))\<close>
+      using Lim_bounded2[where N = "0" and f = "(\<lambda>n. Re ((x n \<bullet>\<^sub>C x n)))" and C = "0"]
       using convergent_LIMSEQ_iff by blast
-    have \<open>lim (\<lambda>n. \<langle>x n, x n\<rangle>) = complex_of_real (lim (\<lambda>n. Re \<langle>x n, x n\<rangle>))\<close>
+    have \<open>lim (\<lambda>n. (x n \<bullet>\<^sub>C x n)) = complex_of_real (lim (\<lambda>n. Re (x n \<bullet>\<^sub>C x n)))\<close>
     proof-
-      have \<open>(\<lambda>n. \<langle>x n, x n\<rangle>) = (\<lambda>n. complex_of_real (Re \<langle>x n, x n\<rangle>))\<close>
-        using \<open>\<And>n. \<langle>x n, x n\<rangle> = complex_of_real (Re \<langle>x n, x n\<rangle>)\<close> by auto        
-      moreover have \<open>(lim (\<lambda>n. complex_of_real (Re \<langle>x n, x n\<rangle>))) = complex_of_real (lim (\<lambda>n. Re \<langle>x n, x n\<rangle>))\<close>
-        using tendsto_of_real[where g = "(\<lambda> n. Re \<langle>x n, x n\<rangle>)"]
+      have \<open>(\<lambda>n. (x n \<bullet>\<^sub>C x n)) = (\<lambda>n. complex_of_real (Re (x n \<bullet>\<^sub>C x n)))\<close>
+        using \<open>\<And>n. (x n \<bullet>\<^sub>C x n) = complex_of_real (Re (x n \<bullet>\<^sub>C x n))\<close> by auto        
+      moreover have \<open>(lim (\<lambda>n. complex_of_real (Re (x n \<bullet>\<^sub>C x n)))) = complex_of_real (lim (\<lambda>n. Re (x n \<bullet>\<^sub>C x n)))\<close>
+        using tendsto_of_real[where g = "(\<lambda> n. Re (x n \<bullet>\<^sub>C x n))"]
         sorry
       ultimately show ?thesis by simp
     qed
-    then show \<open>0 \<le> lim (\<lambda>n. \<langle>x n, x n\<rangle>)\<close>
-      by (simp add: \<open>0 \<le> lim (\<lambda>n. Re \<langle>x n, x n\<rangle>)\<close>)
+    then show \<open>0 \<le> lim (\<lambda>n. (x n \<bullet>\<^sub>C x n))\<close>
+      by (simp add: \<open>0 \<le> lim (\<lambda>n. Re (x n \<bullet>\<^sub>C x n))\<close>)
   qed
 
-  show "(\<langle>x, x\<rangle> = 0) \<longleftrightarrow> (x = 0)"
+  show "((x \<bullet>\<^sub>C x) = 0) \<longleftrightarrow> (x = 0)"
     apply transfer unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto
     using convergent_Cauchy convergent_const apply auto[1]
   proof
     show "\<forall>\<^sub>F n in sequentially. dist (x n) (0::'a) < e"
       if "Cauchy (x::nat \<Rightarrow> 'a)"
-        and "lim (\<lambda>n. \<langle>x n::'a, x n\<rangle>) = 0"
+        and "lim (\<lambda>n. (x n::'a) \<bullet>\<^sub>C x n) = 0"
         and "(0::real) < e"
       for x :: "nat \<Rightarrow> 'a"
         and e :: real
     proof-
-      have \<open>(\<lambda>n. \<langle>x n, x n\<rangle>) \<longlonglongrightarrow> 0\<close>
+      have \<open>(\<lambda>n. (x n \<bullet>\<^sub>C x n)) \<longlonglongrightarrow> 0\<close>
         using that(2)
         by (metis Cauchy_cinner_Cauchy convergent_eq_Cauchy limI that(1))
-      hence \<open>\<forall>\<^sub>F n in sequentially. dist (\<langle> x n,  x n \<rangle>) 0 < e^2\<close>
+      hence \<open>\<forall>\<^sub>F n in sequentially. dist ((x n \<bullet>\<^sub>C x n)) 0 < e^2\<close>
         using tendstoD that(3) by fastforce      
-      hence \<open>\<forall>\<^sub>F n in sequentially. (norm (\<langle> x n,  x n \<rangle> - 0)) < e^2\<close>
+      hence \<open>\<forall>\<^sub>F n in sequentially. (norm ((x n \<bullet>\<^sub>C x n) - 0)) < e^2\<close>
         using dist_norm
         by auto 
-      hence \<open>\<forall>\<^sub>F n in sequentially. (norm \<langle> x n,  x n \<rangle>) < e^2\<close>
+      hence \<open>\<forall>\<^sub>F n in sequentially. (norm (x n \<bullet>\<^sub>C x n)) < e^2\<close>
         by simp
-      hence \<open>\<forall>\<^sub>F n in sequentially. sqrt (norm \<langle> x n,  x n \<rangle>) < e\<close>
+      hence \<open>\<forall>\<^sub>F n in sequentially. sqrt (norm (x n \<bullet>\<^sub>C x n)) < e\<close>
         using eventually_elim2 real_less_lsqrt that(3) by force
       hence \<open>\<forall>\<^sub>F n in sequentially. norm (x n)  < e\<close>
         by (metis (mono_tags, lifting) eventually_mono norm_eq_sqrt_cinner)      
       thus ?thesis using dist_norm
         by (simp add: \<open>\<forall>\<^sub>F n in sequentially. norm (x n) < e\<close>) 
     qed
-    show "lim (\<lambda>n. \<langle>x n::'a, x n\<rangle>) = 0"
+    show "lim (\<lambda>n. (x n::'a) \<bullet>\<^sub>C x n) = 0"
       if "Cauchy (x::nat \<Rightarrow> 'a)"
         and "Cauchy (\<lambda>n. 0::'a)"
         and "x \<longlonglongrightarrow> (0::'a)"
       for x :: "nat \<Rightarrow> 'a"
       using tendsto_cinner limI that(3) by fastforce
   qed
-  show "norm x = sqrt (norm \<langle>x, x\<rangle>)"
+  show "norm x = sqrt (norm (x \<bullet>\<^sub>C x))"
     apply transfer unfolding completion_rel_def
     apply auto unfolding Vanishes_def apply auto
   proof-
     fix x :: \<open>nat \<Rightarrow> 'a\<close>
     assume \<open>Cauchy x\<close>
-    have \<open>lim (\<lambda>n. sqrt ( norm \<langle>x n, x n\<rangle> )) = sqrt ( lim (\<lambda>n.  norm \<langle>x n, x n\<rangle> ) )\<close>
-      using tendsto_real_sqrt[where f = \<open>(\<lambda>n.  norm \<langle>x n, x n\<rangle> )\<close>]
+    have \<open>lim (\<lambda>n. sqrt ( norm (x n \<bullet>\<^sub>C x n) )) = sqrt ( lim (\<lambda>n.  norm (x n \<bullet>\<^sub>C x n) ) )\<close>
+      using tendsto_real_sqrt[where f = \<open>(\<lambda>n.  norm (x n \<bullet>\<^sub>C x n) )\<close>]
       sorry
-    moreover have \<open>lim (\<lambda>n.  norm \<langle>x n, x n\<rangle> ) = norm (lim (\<lambda>n. \<langle>x n, x n\<rangle> ))\<close>
-      using tendsto_norm[where f = "(\<lambda>n. \<langle>x n, x n\<rangle> )"]
+    moreover have \<open>lim (\<lambda>n.  norm (x n \<bullet>\<^sub>C x n) ) = norm (lim (\<lambda>n. (x n \<bullet>\<^sub>C x n) ))\<close>
+      using tendsto_norm[where f = "(\<lambda>n. (x n \<bullet>\<^sub>C x n) )"]
       using Cauchy_cinner_Cauchy \<open>Cauchy x\<close> complex_Cauchy_convergent 
       sorry
-    ultimately have \<open>lim (\<lambda>n. sqrt ( norm \<langle>x n, x n\<rangle> )) = sqrt (norm (lim (\<lambda>n. \<langle>x n, x n\<rangle>)))\<close>
+    ultimately have \<open>lim (\<lambda>n. sqrt ( norm (x n \<bullet>\<^sub>C x n) )) = sqrt (norm (lim (\<lambda>n. (x n \<bullet>\<^sub>C x n))))\<close>
       by simp
-    moreover have \<open>norm (x n) =  sqrt ( norm \<langle>x n, x n\<rangle> )\<close>
+    moreover have \<open>norm (x n) =  sqrt ( norm (x n \<bullet>\<^sub>C x n) )\<close>
       for n
       using norm_eq_sqrt_cinner by auto     
-    ultimately show \<open>lim (\<lambda>n. norm (x n)) = sqrt (norm (lim (\<lambda>n. \<langle>x n, x n\<rangle>)))\<close>
+    ultimately show \<open>lim (\<lambda>n. norm (x n)) = sqrt (norm (lim (\<lambda>n. (x n \<bullet>\<^sub>C x n))))\<close>
       by simp
   qed
 qed
@@ -1829,7 +1829,7 @@ lemma inclusion_completion_norm:
   unfolding completion_rel_def Vanishes_def by auto
 
 lemma inclusion_completion_cinner:
-  \<open>\<langle>inclusion_completion x, inclusion_completion y\<rangle> = \<langle>x, y\<rangle>\<close>
+  \<open>inclusion_completion x \<bullet>\<^sub>C inclusion_completion y = x \<bullet>\<^sub>C y\<close>
   apply transfer
   unfolding completion_rel_def Vanishes_def by auto
 
