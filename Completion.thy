@@ -10,6 +10,8 @@ theory Completion
     Complex_Bounded_Operators.Complex_Bounded_Linear_Function
 begin
 
+unbundle cblinfun_notation
+
 (* TODO: I don't think this definition is necessary. Vanishes X is no shorter/clearer than X \<longlonglongrightarrow> 0 *)
 definition Vanishes:: \<open>(nat \<Rightarrow> 'a::real_normed_vector) \<Rightarrow> bool\<close> where
   \<open>Vanishes x = (x \<longlonglongrightarrow> 0)\<close>

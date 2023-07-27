@@ -19,7 +19,7 @@ unbundle cblinfun_notation
 
 section \<open>Hilbert tensor product\<close>
 
-text\<open>Hilbert tensor product as defined in @{cite Helemskii} chapter 2, section 8\<close>
+text\<open>Hilbert tensor product as defined in Helemskii chapter 2, section 8\<close>
 typedef (overloaded) ('a::chilbert_space, 'b::chilbert_space) htensor
   = \<open>(UNIV::(('a \<otimes>\<^sub>a 'b) completion) set)\<close>
   ..
@@ -291,7 +291,7 @@ qed
 
 *)
 
-text \<open>Theorem 1, page 189 in @{cite Helemskii}\<close>
+text \<open>Theorem 1, page 189 in Helemskii\<close>
   (* TODO: Restructure proofs
 
  - remove hilbert_tensor_existence'_uniqueness
@@ -349,7 +349,7 @@ qed
 
 
 
-text\<open>Proposition 2 in @{cite Helemskii}, page 187\<close>
+text\<open>Proposition 2 in Helemskii, page 187\<close>
 lemma htensor_continuous:
   fixes x::\<open>nat \<Rightarrow> 'a::chilbert_space\<close> and y::\<open>nat \<Rightarrow> 'b::chilbert_space\<close>
   assumes \<open>x \<longlonglongrightarrow> a\<close> and \<open>y \<longlonglongrightarrow> b\<close>
@@ -406,8 +406,6 @@ lift_definition htensorOp :: \<open>('a::chilbert_space, 'b::chilbert_space) cbl
   sorry
 
 section \<open>Tensor product ell2\<close>
-
-unbundle blinfun_notation
 
 (* Widening type to allow infinite tensor products *)
 setup \<open>Sign.add_const_constraint (\<^const_name>\<open>tensor_op\<close>, SOME \<^typ>\<open>'a ell2 \<Rightarrow>\<^sub>C\<^sub>L 'b ell2 \<Rightarrow> 'c ell2 \<Rightarrow>\<^sub>C\<^sub>L 'd ell2 \<Rightarrow> ('a \<times> 'c) ell2 \<Rightarrow>\<^sub>C\<^sub>L ('b \<times> 'd) ell2\<close>)\<close>

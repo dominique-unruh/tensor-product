@@ -6,7 +6,7 @@ lemma cinner_tensor: "(\<gamma> \<otimes> \<psi>) \<bullet>\<^sub>C (\<delta> \<
   sorry
 
 lemma addState_adj_times_addState[simp]: 
-  includes cblinfun_notation no_blinfun_notation
+  includes cblinfun_notation
   fixes \<psi> \<phi> :: "'a ell2"
   shows "addState \<psi>* o\<^sub>C\<^sub>L addState \<phi> = (\<psi> \<bullet>\<^sub>C \<phi>) *\<^sub>C (id_cblinfun::('b ell2,'b ell2) cblinfun)"
 proof -
@@ -28,22 +28,22 @@ lemma ket_product: "ket (a,b) = ket a \<otimes> ket b"
   sorry
 
 lemma tensorOp_applyOp_distr:
-  includes cblinfun_notation no_blinfun_notation
+  includes cblinfun_notation
   shows "(A \<otimes> B) *\<^sub>V (\<psi> \<otimes> \<phi>) = (A *\<^sub>V \<psi>) \<otimes> (B *\<^sub>V \<phi>)"
   sorry
 
 lemma assoc_op_apply_tensor[simp]:
-  includes cblinfun_notation no_blinfun_notation
+  includes cblinfun_notation
   shows "assoc_op *\<^sub>V (\<psi> \<otimes> (\<phi> \<otimes> \<tau>)) = (\<psi> \<otimes> \<phi>) \<otimes> \<tau>"
   sorry
 
 lemma comm_op_apply_tensor[simp]: 
-  includes cblinfun_notation no_blinfun_notation
+  includes cblinfun_notation
   shows "comm_op *\<^sub>V (\<psi>\<otimes>\<phi>) = (\<phi>\<otimes>\<psi>)"
   sorry
 
 lemma assoc_op_adj_apply_tensor[simp]:
-  includes cblinfun_notation no_blinfun_notation
+  includes cblinfun_notation
   shows "assoc_op* *\<^sub>V ((\<psi>\<otimes>\<phi>)\<otimes>\<tau>) = \<psi>\<otimes>(\<phi>\<otimes>\<tau>)"
   sorry
 

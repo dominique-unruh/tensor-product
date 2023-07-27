@@ -35,7 +35,7 @@ definition atensor_rel :: "(('a::complex_vector) \<times> ('b::complex_vector)) 
   where "atensor_rel = (\<lambda>x y. x - y \<in> atensor_kernel)"
 
 
-text\<open>Tensor product as defined in @{cite Helemskii} chapter 2, section 8\<close>
+text\<open>Tensor product as defined in Helemskii, chapter 2, section 8\<close>
 quotient_type (overloaded) ('a, 'b) atensor
   = "(('a::complex_vector) \<times> ('b::complex_vector)) free" /  atensor_rel
 proof-
@@ -1299,7 +1299,7 @@ proof-
     unfolding H_def by blast
 qed
 
-text\<open>Universal property of the tensor product. See chapter XVI in @{cite lang2004algebra}\<close>
+text\<open>Universal property of the tensor product. See chapter XVI in lang2004algebra\<close>
 lemma atensor_universal_property:
   fixes h :: \<open>'a::complex_vector \<Rightarrow> 'b::complex_vector \<Rightarrow> 'c::complex_vector\<close>
   assumes \<open>cbilinear h\<close>
@@ -2243,7 +2243,7 @@ definition separable :: \<open>('a::complex_vector \<otimes>\<^sub>a 'b::complex
 abbreviation entagled :: \<open>('a::complex_vector \<otimes>\<^sub>a 'b::complex_vector) \<Rightarrow> bool\<close> where 
   \<open>entagled \<equiv> (\<lambda> \<psi>. \<not>(separable \<psi>) )\<close>
 
-text \<open>See proof of Proposition 1 on page 186 in @{cite Helemskii}\<close>
+text \<open>See proof of Proposition 1 on page 186 in Helemskii\<close>
 definition g_atensor_cbilinear:: \<open>'a::complex_inner \<Rightarrow> 'b::complex_inner \<Rightarrow> 'a \<Rightarrow> 'b \<Rightarrow> complex\<close>
   where \<open>g_atensor_cbilinear x y x\<^sub>1 y\<^sub>1 = (x \<bullet>\<^sub>C x\<^sub>1) * (y \<bullet>\<^sub>C y\<^sub>1)\<close>
 
@@ -2533,7 +2533,7 @@ proof-
     by auto
 qed
 
-text \<open>See proof of Proposition 1 on page 186 in @{cite Helemskii}\<close>
+text \<open>See proof of Proposition 1 on page 186 in Helemskii\<close>
 definition F_atensor_cbilinear::\<open>'a::complex_inner \<otimes>\<^sub>a 'b::complex_inner \<Rightarrow> 'a \<Rightarrow> 'b \<Rightarrow> complex\<close>
   where \<open>F_atensor_cbilinear u x y = cnj (g_atensor_clinear x y u)\<close>
 
@@ -2800,7 +2800,7 @@ proof-
 qed
 
 
-text \<open>Proposition 1 on page 186 in @{cite Helemskii}\<close>
+text \<open>Proposition 1 on page 186 in Helemskii\<close>
 instantiation atensor :: (complex_inner,complex_inner) complex_inner
 begin
 definition cinner_atensor :: \<open>'a \<otimes>\<^sub>a 'b \<Rightarrow> 'a \<otimes>\<^sub>a 'b \<Rightarrow> complex\<close>
@@ -3445,7 +3445,7 @@ proof -
     by blast
 qed
 
-text \<open>A part of Proposition 1 on page 186 in @{cite Helemskii}\<close>
+text \<open>A part of Proposition 1 on page 186 in Helemskii\<close>
 lemma atensor_cinner_mult:
   fixes f1 g1 :: \<open>'a::complex_inner\<close> and f2 g2 :: \<open>'b::complex_inner\<close>
   shows \<open>((f1 \<otimes>\<^sub>a f2) \<bullet>\<^sub>C (g1 \<otimes>\<^sub>a g2)) = (f1 \<bullet>\<^sub>C g1) * (f2 \<bullet>\<^sub>C g2)\<close>
